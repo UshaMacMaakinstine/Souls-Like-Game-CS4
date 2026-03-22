@@ -8,6 +8,8 @@ public class ThirdPersonMovement : MonoBehaviour
     public CharacterController controller;
     public Transform cam;
 
+    public GameObject[] colliders;
+
     public float speed = 6f;
 
     public float turnSmoothTime = 0.1f;
@@ -20,6 +22,22 @@ public class ThirdPersonMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    private void EyeFramesStart()
+    {
+        foreach (GameObject collider in colliders)
+        {
+            collider.SetActive(false);
+        }
+    }
+
+    private void EyeFramesEnd()
+    {
+        foreach (GameObject collider in colliders)
+        {
+            collider.SetActive(true);
+        }
     }
 
     private void Update()
@@ -49,7 +67,9 @@ public class ThirdPersonMovement : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
+                EyeFramesStart();
                 anim.SetTrigger("Slide");
+                EyeFramesEnd();
             }
             float targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
