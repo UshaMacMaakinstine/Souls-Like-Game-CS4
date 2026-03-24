@@ -31,6 +31,7 @@ public class ThirdPersonController : MonoBehaviour
     [Header("Attack")]
     public float lightAttackDuration = 0.6f;
     public float heavyAttackDuration = 0.9f;
+    public bool isLightAttack;
 
     private CharacterController controller;
     private PlayerInput inputActions;
@@ -261,10 +262,12 @@ public class ThirdPersonController : MonoBehaviour
 
     IEnumerator DoLightAttack()
     {
+        isLightAttack = true;
         isAttacking = true;
         animator.SetTrigger("LightAttack");
         yield return new WaitForSeconds(lightAttackDuration);
         isAttacking = false;
+        isLightAttack = false;
     }
 
     IEnumerator DoHeavyAttack()

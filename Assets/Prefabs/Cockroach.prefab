@@ -2053,6 +2053,7 @@ MonoBehaviour:
   rollDuration: 2
   lightAttackDuration: 1.66
   heavyAttackDuration: 2.26
+  isLightAttack: 0
 --- !u!114 &6731860876012329850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2355,10 +2356,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5354693918545357338, guid: 18febda5417b74843ad64e8ca9922771, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6618165497728298622}
   m_SourcePrefab: {fileID: 100100000, guid: 18febda5417b74843ad64e8ca9922771, type: 3}
 --- !u!4 &86163874936374870 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4072622005106539414, guid: 18febda5417b74843ad64e8ca9922771, type: 3}
   m_PrefabInstance: {fileID: 4158724287863045568}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8356833776764622810 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5354693918545357338, guid: 18febda5417b74843ad64e8ca9922771, type: 3}
+  m_PrefabInstance: {fileID: 4158724287863045568}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6618165497728298622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8356833776764622810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6ffe29a87eb04a0994d1d6e9cb1bb07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponFramework
+  lightAttackDamage: 10
+  heavyAttackDamage: 20
+  range: 0
