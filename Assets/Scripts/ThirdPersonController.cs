@@ -47,7 +47,7 @@ public class ThirdPersonController : MonoBehaviour
     private bool isCrouching;
     private bool isRolling;
     private bool isTransitioningCrouch;
-    private bool isAttacking;
+    public bool isAttacking;
 
     void Awake()
     {
@@ -266,6 +266,32 @@ public class ThirdPersonController : MonoBehaviour
         isAttacking = true;
         animator.SetTrigger("LightAttack");
         yield return new WaitForSeconds(lightAttackDuration);
+
+        float window = 0.25f;
+        bool pressedAgain = false;
+
+        while (window > 0f)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                pressedAgain = true;
+                break;
+            }
+
+            window -= Time.deltaTime;
+            yield return null;
+        }
+
+        if (pressedAgain)
+        {
+            // Play Attack 2
+            animator.SetTrigger("Combo");
+        }
+        else
+        {
+            // Player didn't continue → recovery animation
+            animator.SetTrigger("Recovery");
+        }
         isAttacking = false;
         isLightAttack = false;
     }
