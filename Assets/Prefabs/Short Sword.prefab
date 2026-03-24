@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4072622005106539414}
+  - component: {fileID: 6733467994663980540}
   m_Layer: 0
   m_Name: Short Sword
   m_TagString: Untagged
@@ -32,6 +33,27 @@ Transform:
   - {fileID: 4755582818367497730}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6733467994663980540
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5354693918545357338}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.33282658, y: 2.4175076, z: 0.06932635}
+  m_Center: {x: -4.05761, y: 1.4815712, z: -0.35804844}
 --- !u!1 &8765669236413864814
 GameObject:
   m_ObjectHideFlags: 0

@@ -119,7 +119,7 @@ public class ThirdPersonController : MonoBehaviour
         Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
         bool isMoving = inputDirection.magnitude >= 0.1f;
 
-        bool shouldSprint = sprintHeld && !isCrouching && moveInput.y > 0.1f && isMoving;
+        bool shouldSprint = sprintHeld && !isCrouching && isMoving;
 
         if (isCrouching)
             currentSpeed = crouchSpeed;
@@ -161,7 +161,7 @@ public class ThirdPersonController : MonoBehaviour
 
         if (!isCrouching)
             StartCoroutine(EnterCrouch());
-        else if (CanStandUp())
+        else
             StartCoroutine(ExitCrouch());
     }
 
@@ -173,13 +173,13 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnLightAttack(InputAction.CallbackContext ctx)
     {
-        if (!isAttacking && !isRolling && !isTransitioningCrouch)
+        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             StartCoroutine(DoLightAttack());
     }
 
     void OnHeavyAttack(InputAction.CallbackContext ctx)
     {
-        if (!isAttacking && !isRolling && !isTransitioningCrouch)
+        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             StartCoroutine(DoHeavyAttack());
     }
 
@@ -278,7 +278,7 @@ public class ThirdPersonController : MonoBehaviour
     void UpdateAnimator()
     {
         float speed = Mathf.Clamp01(moveInput.magnitude);
-        bool shouldSprint = sprintHeld && !isCrouching && moveInput.y > 0.1f && speed > 0.1f;
+        bool shouldSprint = sprintHeld && !isCrouching && speed > 0.1f;
 
         animator.SetFloat("Speed", speed);
         animator.SetBool("IsGrounded", isGrounded);
