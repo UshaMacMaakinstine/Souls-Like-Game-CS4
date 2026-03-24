@@ -7,24 +7,32 @@ public class WeaponFramework : MonoBehaviour
     public int heavyAttackDamage;
     public int range;
 
+    ThirdPersonController player;
+
+
+    void Start()
+    {
+        player = gameObject.GetComponentInParent<ThirdPersonController>();
+    }
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Enemy") && gameObject.CompareTag("Player"))
+        if(player.isAttacking)
         {
-            GameObject enemy = other.gameObject;
+            if(other.CompareTag("Enemy") && gameObject.CompareTag("Player"))
+            {
+                GameObject enemy = other.gameObject;
 
-            ThirdPersonController player = gameObject.GetComponentInParent<ThirdPersonController>();
+                Enemy enemyComponent = enemy.GetComponent<Enemy>();
 
-            Enemy enemyComponent = enemy.GetComponent<Enemy>();
+                if(player.isLightAttack)
+                    enemyComponent.health -= lightAttackDamage;
+                else
+                    enemyComponent.health -= heavyAttackDamage;
 
-            if(player.isLightAttack)
-                enemyComponent.health -= lightAttackDamage;
-            else
-                enemyComponent.health -= heavyAttackDamage;
+                enemyComponent.Die();
 
-            enemyComponent.Die();
-
-            StartCoroutine(changeColor(enemy, player));
+                StartCoroutine(changeColor(enemy, player));
+            }
         }
     }
 
