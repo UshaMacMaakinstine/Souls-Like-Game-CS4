@@ -48,6 +48,9 @@ public class ThirdPersonController : MonoBehaviour
     private bool isRolling;
     private bool isTransitioningCrouch;
     public bool isAttacking;
+    private bool _isAttackingInternal = false;
+    private bool _inputBuffered = false;
+
 
     void Awake()
     {
@@ -174,8 +177,16 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnLightAttack(InputAction.CallbackContext ctx)
     {
-        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
+        if (!ctx.performed) return;
+
+        if (_isAttackingInternal)
+        {
+            _inputBuffered = true; // Record the click but don't start a new coroutine
+        }
+        else if (!isRolling && !isCrouching)
+        {
             StartCoroutine(DoLightAttack());
+        }
     }
 
     void OnHeavyAttack(InputAction.CallbackContext ctx)
@@ -262,38 +273,41 @@ public class ThirdPersonController : MonoBehaviour
 
     IEnumerator DoLightAttack()
     {
-        isLightAttack = true;
+        _isAttackingInternal = true;
         isAttacking = true;
-        animator.SetTrigger("LightAttack");
-        yield return new WaitForSeconds(lightAttackDuration);
+        isLightAttack = true;
 
-        float window = 0.25f;
-        bool pressedAgain = false;
+        // --- HIT 1 ---
+        animator.SetTrigger("LightAttack1");
+        // Wait for the length of the animation clip (e.g., 0.5s)
+        yield return new WaitForSeconds(1.133f);
+        if (!_inputBuffered) { EndCombo(); yield break; }
 
-        while (window > 0f)
-        {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                pressedAgain = true;
-                break;
-            }
+        // --- HIT 2 ---
+        _inputBuffered = false;
+        animator.SetTrigger("LightAttack2");
+        yield return new WaitForSeconds(0.767f);
+        if (!_inputBuffered) { EndCombo(); yield break; }
 
-            window -= Time.deltaTime;
-            yield return null;
-        }
+        // --- HIT 3 ---
+        _inputBuffered = false;
+        animator.SetTrigger("LightAttack3");
+        yield return new WaitForSeconds(0.75f); // Final hit duration
 
-        if (pressedAgain)
-        {
-            // Play Attack 2
-            animator.SetTrigger("Combo");
-        }
-        else
-        {
-            // Player didn't continue → recovery animation
-            animator.SetTrigger("Recovery");
-        }
+        EndCombo();
+    }
+
+    void EndCombo()
+    {
+        _isAttackingInternal = false;
+        _inputBuffered = false;
         isAttacking = false;
         isLightAttack = false;
+
+        // Safety: Clear all triggers so spamming doesn't restart the loop immediately
+        animator.ResetTrigger("LightAttack1");
+        animator.ResetTrigger("LightAttack2");
+        animator.ResetTrigger("LightAttack3");
     }
 
     IEnumerator DoHeavyAttack()
