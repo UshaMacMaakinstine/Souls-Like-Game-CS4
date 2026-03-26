@@ -3,8 +3,12 @@ using UnityEngine;
 
 public class WeaponFramework : MonoBehaviour
 {
+    public enum AttackMode { lightAttack, heavyAttack, runningHeavy, None }
+
+    public AttackMode attackMode;
     public int lightAttackDamage;
     public int heavyAttackDamage;
+    public int runningHeavyAttackDamage;
     public int range;
 
     ThirdPersonController player;
@@ -24,14 +28,25 @@ public class WeaponFramework : MonoBehaviour
 
                 Enemy enemyComponent = enemy.GetComponent<Enemy>();
 
-                if(player.isLightAttack)
-                    enemyComponent.health -= lightAttackDamage;
-                else
-                    enemyComponent.health -= heavyAttackDamage;
+                switch(attackMode)
+                {
+                    case AttackMode.lightAttack:
+                        //enemyComponent.health -= lightAttackDamage;
+                        StartCoroutine(changeColor(enemy, player));
+                        break;
+                    case AttackMode.heavyAttack:
+                        //enemyComponent.health -= heavyAttackDamage;
+                        StartCoroutine(changeColor(enemy, player));
+                        break;
+                    case AttackMode.runningHeavy:
+                        //enemyComponent.health -= runningHeavyAttackDamage;
+                        StartCoroutine(changeColor(enemy, player));
+                        break;
+                    default:
+                        break;
+                }
 
                 enemyComponent.Die();
-
-                StartCoroutine(changeColor(enemy, player));
             }
         }
     }
@@ -40,17 +55,25 @@ public class WeaponFramework : MonoBehaviour
     {
         if(enemy != null)
         {
-            if(player.isLightAttack)
+            switch(attackMode)
             {
-                enemy.GetComponent<Renderer>().material.color = Color.red;
-                yield return new WaitForSeconds(0.5f);
-                enemy.GetComponent<Renderer>().material.color = Color.white;
-            }
-            else
-            {
-                enemy.GetComponent<Renderer>().material.color = Color.green;
-                yield return new WaitForSeconds(0.5f);
-                enemy.GetComponent<Renderer>().material.color = Color.white;
+                case AttackMode.lightAttack:
+                    enemy.GetComponent<Renderer>().material.color = Color.red;
+                    yield return new WaitForSeconds(0.5f);
+                    enemy.GetComponent<Renderer>().material.color = Color.white;
+                    break;
+                case AttackMode.heavyAttack:
+                    enemy.GetComponent<Renderer>().material.color = Color.green;
+                    yield return new WaitForSeconds(0.5f);
+                    enemy.GetComponent<Renderer>().material.color = Color.white;
+                    break;
+                case AttackMode.runningHeavy:
+                    enemy.GetComponent<Renderer>().material.color = Color.blue;
+                    yield return new WaitForSeconds(0.5f);
+                    enemy.GetComponent<Renderer>().material.color = Color.white;
+                    break;
+                default:
+                    break;
             }
         }
     }

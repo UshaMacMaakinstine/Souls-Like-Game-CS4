@@ -5,6 +5,8 @@ using System.Collections;
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonController : MonoBehaviour
 {
+    private WeaponFramework weaponFramework;
+
     [Header("References")]
     public Transform cameraTransform;
     public Animator animator;
@@ -31,7 +33,9 @@ public class ThirdPersonController : MonoBehaviour
     [Header("Attack")]
     public float lightAttackDuration = 0.6f;
     public float heavyAttackDuration = 0.9f;
+    public float runningHeavyAttackDuration = 1.2f;
     public bool isLightAttack;
+    public bool isHeavyAttack;
 
     private CharacterController controller;
     private PlayerInput inputActions;
@@ -51,6 +55,8 @@ public class ThirdPersonController : MonoBehaviour
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
 
+    public bool isInvincible;
+
 
     void Awake()
     {
@@ -59,10 +65,16 @@ public class ThirdPersonController : MonoBehaviour
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
-        controller.height = standingHeight;
+        controller.height = standingHeight - 0.25f;
         controller.center = new Vector3(0f, standingHeight / 2f, 0f);
 
         inputActions = new PlayerInput();
+        weaponFramework = GetComponentInChildren<WeaponFramework>();
+
+        weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void OnEnable()
@@ -238,7 +250,7 @@ public class ThirdPersonController : MonoBehaviour
             yield return null;
         }
 
-        controller.height = standingHeight;
+        controller.height = standingHeight - 0.25f;
         controller.center = new Vector3(0f, standingHeight / 2f, 0f);
 
         isCrouching = false;
@@ -255,32 +267,46 @@ public class ThirdPersonController : MonoBehaviour
 
     IEnumerator Roll()
     {
+        isInvincible = true;
         isRolling = true;
+        controller.center = new Vector3(0f, (standingHeight / 2f) + 1f, 0f);
         animator.SetTrigger("RollTrigger");
 
         float elapsed = 0f;
         Vector3 rollDirection = transform.forward;
 
-        while (elapsed < rollDuration)
+        while (elapsed < (rollDuration * 0.60f))
         {
             elapsed += Time.deltaTime;
             controller.Move(rollDirection * rollSpeed * Time.deltaTime);
             yield return null;
         }
 
+        while(elapsed < rollDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / rollDuration);
+            float centerY = Mathf.Lerp((standingHeight / 2f) + 1f, (standingHeight / 2f), t);
+            controller.center = new Vector3(0f, centerY, 0f);
+            controller.Move(rollDirection * rollSpeed * Time.deltaTime);
+            yield return null;
+        }
+
         isRolling = false;
+        isInvincible = false;
     }
 
     IEnumerator DoLightAttack()
     {
         _isAttackingInternal = true;
         isAttacking = true;
-        isLightAttack = true;
 
         // --- HIT 1 ---
         animator.SetTrigger("LightAttack1");
-        // Wait for the length of the animation clip (e.g., 0.5s)
-        yield return new WaitForSeconds(1.133f);
+        yield return new WaitForSeconds(0.133f);
+        weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+        // Wait for the length of the animation clip
+        yield return new WaitForSeconds(1f);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         // --- HIT 2 ---
@@ -292,7 +318,7 @@ public class ThirdPersonController : MonoBehaviour
         // --- HIT 3 ---
         _inputBuffered = false;
         animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(0.75f); // Final hit duration
+        yield return new WaitForSeconds(1.333f); // Final hit duration
 
         EndCombo();
     }
@@ -302,7 +328,7 @@ public class ThirdPersonController : MonoBehaviour
         _isAttackingInternal = false;
         _inputBuffered = false;
         isAttacking = false;
-        isLightAttack = false;
+        weaponFramework.attackMode = WeaponFramework.AttackMode.None;
 
         // Safety: Clear all triggers so spamming doesn't restart the loop immediately
         animator.ResetTrigger("LightAttack1");
@@ -313,9 +339,46 @@ public class ThirdPersonController : MonoBehaviour
     IEnumerator DoHeavyAttack()
     {
         isAttacking = true;
-        animator.SetTrigger("HeavyAttack");
-        yield return new WaitForSeconds(heavyAttackDuration);
+        if(sprintHeld && currentSpeed > 0.1f)
+        {
+            animator.SetTrigger("RunningHeavyAttack");
+            float elapsed = 0f;
+            Vector3 attackDirection = transform.forward;
+
+            while (elapsed < 0.75f)
+            {
+                elapsed += Time.deltaTime;
+                controller.Move(attackDirection * sprintSpeed * Time.deltaTime);
+                yield return null;
+            }
+
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            weaponFramework.attackMode = WeaponFramework.AttackMode.runningHeavy;
+
+            while (elapsed < (runningHeavyAttackDuration - 1.6f))
+            {
+                elapsed += Time.deltaTime;
+                controller.Move(attackDirection * walkSpeed * Time.deltaTime);
+                yield return null;
+            }
+
+            weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+
+            yield return new WaitForSeconds(runningHeavyAttackDuration - elapsed);
+            isHeavyAttack = true;
+        }
+        else
+        {
+            isHeavyAttack = true;
+            animator.SetTrigger("HeavyAttack");
+            yield return new WaitForSeconds(0.26f);
+            weaponFramework.attackMode = WeaponFramework.AttackMode.heavyAttack;
+            yield return new WaitForSeconds((heavyAttackDuration - 1.6f));
+            weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+            yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f)));
+        }
         isAttacking = false;
+        isHeavyAttack = false;
     }
 
     void UpdateAnimator()

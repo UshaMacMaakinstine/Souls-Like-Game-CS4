@@ -1951,9 +1951,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2714142083732808772}
   - component: {fileID: 4800998289553537070}
-  - component: {fileID: 8521959238645618341}
-  - component: {fileID: 6346596637172340805}
-  - component: {fileID: 6731860876012329850}
   m_Layer: 0
   m_Name: Cockroach
   m_TagString: Untagged
@@ -2001,89 +1998,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!143 &8521959238645618341
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8011878752588706003}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.35
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &6346596637172340805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8011878752588706003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a54951dea0ec5334788939cb62bdd10c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonController
-  cameraTransform: {fileID: 0}
-  animator: {fileID: 4800998289553537070}
-  walkSpeed: 2.5
-  sprintSpeed: 5.5
-  crouchSpeed: 1.5
-  rotationSmoothTime: 0.1
-  jumpHeight: 3
-  gravity: -20
-  standingHeight: 2
-  crouchHeight: 1.2
-  crouchTransitionDuration: 0.9
-  rollSpeed: 6.5
-  rollDuration: 2
-  lightAttackDuration: 1.66
-  heavyAttackDuration: 2.26
-  isLightAttack: 0
---- !u!114 &6731860876012329850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8011878752588706003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: 5c26f8073d9dbe446a724dbfbe61424f, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: 
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!1 &8044434538580998386
 GameObject:
   m_ObjectHideFlags: 0
@@ -2383,6 +2297,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6ffe29a87eb04a0994d1d6e9cb1bb07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponFramework
+  attackMode: 0
   lightAttackDamage: 10
   heavyAttackDamage: 20
+  runningHeavyAttackDamage: 0
   range: 0
