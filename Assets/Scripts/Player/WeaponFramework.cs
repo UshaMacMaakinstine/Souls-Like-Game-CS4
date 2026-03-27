@@ -26,7 +26,7 @@ public class WeaponFramework : MonoBehaviour
             {
                 GameObject enemy = other.gameObject;
 
-                Enemy enemyComponent = enemy.GetComponent<Enemy>();
+                BaseEnemy enemyComponent = enemy.GetComponent<BaseEnemy>();
 
                 switch(attackMode)
                 {
@@ -45,8 +45,6 @@ public class WeaponFramework : MonoBehaviour
                     default:
                         break;
                 }
-
-                enemyComponent.Die();
             }
         }
     }

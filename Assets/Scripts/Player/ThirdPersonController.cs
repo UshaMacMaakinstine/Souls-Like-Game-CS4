@@ -7,6 +7,8 @@ public class ThirdPersonController : MonoBehaviour
 {
     private WeaponFramework weaponFramework;
 
+    private PlayerProperties playerProperties;
+
     [Header("References")]
     public Transform cameraTransform;
     public Animator animator;
@@ -61,6 +63,7 @@ public class ThirdPersonController : MonoBehaviour
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        playerProperties = GetComponent<PlayerProperties>();
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
@@ -96,6 +99,7 @@ public class ThirdPersonController : MonoBehaviour
         inputActions.Player.Roll.performed += OnRoll;
         inputActions.Player.LightAttack.performed += OnLightAttack;
         inputActions.Player.HeavyAttack.performed += OnHeavyAttack;
+        inputActions.Player.Heal.performed += OnHeal;
     }
 
     void OnDisable()
@@ -105,6 +109,7 @@ public class ThirdPersonController : MonoBehaviour
         inputActions.Player.Roll.performed -= OnRoll;
         inputActions.Player.LightAttack.performed -= OnLightAttack;
         inputActions.Player.HeavyAttack.performed -= OnHeavyAttack;
+        inputActions.Player.Heal.performed -= OnHeal;
 
         inputActions.Player.Disable();
     }
@@ -205,6 +210,12 @@ public class ThirdPersonController : MonoBehaviour
     {
         if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             StartCoroutine(DoHeavyAttack());
+    }
+
+    void OnHeal(InputAction.CallbackContext ctx)
+    {
+        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
+            playerProperties.Heal(10f);
     }
 
     IEnumerator EnterCrouch()
@@ -379,6 +390,16 @@ public class ThirdPersonController : MonoBehaviour
         }
         isAttacking = false;
         isHeavyAttack = false;
+    }
+
+    public IEnumerator TriggerInvincibiltyFrames(float time)
+    {
+        isInvincible = true;
+
+        yield return new WaitForSeconds(time);
+
+        isInvincible = false;
+
     }
 
     void UpdateAnimator()
