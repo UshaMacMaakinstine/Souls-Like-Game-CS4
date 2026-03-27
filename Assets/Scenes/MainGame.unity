@@ -615,8 +615,8 @@ MonoBehaviour:
     m_LegacyVelocityFilterStrength: -1
   m_XAxis:
     Value: 0
-    m_SpeedMode: 0
-    m_MaxSpeed: 450
+    m_SpeedMode: 1
+    m_MaxSpeed: 0.1
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse X
@@ -811,6 +811,7 @@ GameObject:
   - component: {fileID: 506471747}
   - component: {fileID: 506471746}
   - component: {fileID: 506471745}
+  - component: {fileID: 506471748}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -849,6 +850,7 @@ MonoBehaviour:
   isLightAttack: 0
   isHeavyAttack: 0
   isAttacking: 0
+  isInvincible: 0
 --- !u!143 &506471746
 CharacterController:
   m_ObjectHideFlags: 0
@@ -890,6 +892,22 @@ Transform:
   - {fileID: 2755535894057308372}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &506471748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506471744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e1366e358f2b4cce8a2bedfa7aad075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerProperties
+  currentHealth: 100
+  currentWeapon: {fileID: 0}
+  player: {fileID: 0}
+  hurtboxes: []
 --- !u!1 &572925638
 GameObject:
   m_ObjectHideFlags: 0
@@ -1720,10 +1738,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1599830212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f4f21f6a12061e43a8fb1ccf263b3b5, type: 3}
+  m_Script: {fileID: 11500000, guid: 66d2d3445df8145fb90faf5ee3b47727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  health: 100
+  stats: {fileID: 11400000, guid: 77ed24a901a034744b4eb1c0c88c1389, type: 2}
+  currentState: 0
 --- !u!65 &1599830214
 BoxCollider:
   m_ObjectHideFlags: 0
