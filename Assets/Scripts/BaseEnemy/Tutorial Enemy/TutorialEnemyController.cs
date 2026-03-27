@@ -51,10 +51,22 @@ public class TutorialEnemyController : BaseEnemy
     private void StartAttack()
     {
         Debug.Log("Enemy is Attacking!");
-        // We will add the Animation Trigger here once the model is in
+
         PlayerProperties playerComp = player.gameObject.GetComponent<PlayerProperties>();
 
-        playerComp.TakeDamage(20f);
+        if (playerComp != null)
+        {
+            // 1. Create the package
+            DamageData data = new DamageData
+            {
+                damageAmount = 20f, // Your damage value
+                origin = transform.position,
+                knockbackForce = 5f // Add some kick to it!
+            };
+
+            // 2. Send the package (Now the arguments match!)
+            playerComp.TakeDamage(data);
+        }
 
         // After attacking, wait for cooldown
         Invoke("ResetFromAttack", stats.attackCooldown);
