@@ -143,6 +143,7 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: -4902700673955563818}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     m_Position: {x: 270, y: -190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5002343187325915783}
@@ -166,6 +167,20 @@ AnimatorStateMachine:
   - {fileID: 2422606378214083284}
   - {fileID: 4608829118178696165}
   - {fileID: 6019230250553898310}
+=======
+    m_Position: {x: 390, y: -110, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 5002343187325915783}
+    m_Position: {x: 630, y: 80, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 3702025670264510047}
+    m_Position: {x: 640, y: -200, z: 0}
+  m_ChildStateMachines: []
+  m_AnyStateTransitions:
+  - {fileID: 8832279611360366283}
+  - {fileID: 2422606378214083284}
+  - {fileID: 4284805180112695089}
+>>>>>>> Stashed changes
 =======
     m_Position: {x: 390, y: -110, z: 0}
   - serializedVersion: 1
@@ -261,8 +276,11 @@ AnimatorStateTransition:
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 --- !u!1102 &-5316154296929806461
 =======
+=======
+>>>>>>> Stashed changes
 --- !u!1102 &-4902700673955563818
 >>>>>>> Stashed changes
 AnimatorState:
@@ -275,8 +293,12 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   m_Transitions:
   - {fileID: 2072916654056579001}
+=======
+  m_Transitions: []
+>>>>>>> Stashed changes
 =======
   m_Transitions: []
 >>>>>>> Stashed changes
@@ -628,6 +650,7 @@ AnimatorStateTransition:
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 --- !u!1101 &-497787377764388118
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -650,6 +673,8 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!91 &9100000
@@ -940,7 +965,11 @@ AnimatorStateTransition:
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 --- !u!1101 &4608829118178696165
+=======
+--- !u!1101 &4284805180112695089
+>>>>>>> Stashed changes
 =======
 --- !u!1101 &4284805180112695089
 >>>>>>> Stashed changes
@@ -953,7 +982,11 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 1
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     m_ConditionEvent: LightAttack1
+=======
+    m_ConditionEvent: LightAttack
+>>>>>>> Stashed changes
 =======
     m_ConditionEvent: LightAttack
 >>>>>>> Stashed changes
@@ -965,7 +998,11 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   m_TransitionDuration: 0.03
+=======
+  m_TransitionDuration: 0.25
+>>>>>>> Stashed changes
 =======
   m_TransitionDuration: 0.25
 >>>>>>> Stashed changes
@@ -976,6 +1013,7 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 --- !u!1101 &4749447742855994679
 AnimatorStateTransition:
@@ -999,6 +1037,8 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!1102 &5002343187325915783
