@@ -18,10 +18,15 @@ public class PlayerProperties : MonoBehaviour
         currentHealth += potionAmount;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(DamageData data) // Changed from 'float amount' to 'DamageData data'
     {
+        float amount = data.damageAmount; // Pull the number out of the package
+
         currentHealth -= amount;
-        Debug.Log("Player took " + amount + " damage!");
+        Debug.Log("Player took " + amount + " damage from " + data.origin);
+
+        // You now have access to data.knockbackForce here too!
+
         if (currentHealth <= 0) Die();
     }
 

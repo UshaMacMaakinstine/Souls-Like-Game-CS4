@@ -317,19 +317,19 @@ public class ThirdPersonController : MonoBehaviour
         yield return new WaitForSeconds(0.133f);
         weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
         // Wait for the length of the animation clip
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.8f);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         // --- HIT 2 ---
         _inputBuffered = false;
         animator.SetTrigger("LightAttack2");
-        yield return new WaitForSeconds(0.767f);
+        yield return new WaitForSeconds(0.567f);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         // --- HIT 3 ---
         _inputBuffered = false;
         animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(1.333f); // Final hit duration
+        yield return new WaitForSeconds(0.833f); // Final hit duration
 
         EndCombo();
     }
