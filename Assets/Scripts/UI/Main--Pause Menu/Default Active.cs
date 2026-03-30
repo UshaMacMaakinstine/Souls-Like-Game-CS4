@@ -1,23 +1,19 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class ButtonLoadScene : MonoBehaviour
+public class DefaultActive : MonoBehaviour
 {
-    public string scene;
+    public GameObject mainFolder;
+    public GameObject settingsFolder;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        settingsFolder.SetActive(false);
+        mainFolder.SetActive(true);
     }
 
     // Update is called once per frame
     void Update()
     {
         
-    }
-
-    public void loadScene()
-    {
-        SceneManager.LoadScene(scene);
     }
 }
