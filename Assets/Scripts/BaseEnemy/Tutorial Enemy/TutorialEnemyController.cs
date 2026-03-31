@@ -63,7 +63,7 @@ public class TutorialEnemyController : BaseEnemy
 
         // 1. THE TELEGRAPH (The "Wind-up")
         // Give the player 0.5s to see the 'hiss' or 'glow' and ROLL
-        if (bossRender != null) bossRender.material.color = Color.orange;
+        if (bossRender != null) bossRender.material.color = Color.yellow;
 
         Invoke(nameof(ExecuteBite), 0.5f);
     }
