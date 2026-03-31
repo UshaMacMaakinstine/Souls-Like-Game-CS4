@@ -22,7 +22,7 @@ public class WeaponFramework : MonoBehaviour
     {
         if(player.isAttacking)
         {
-            if(other.CompareTag("Enemy") && gameObject.CompareTag("Player"))
+            if(other.CompareTag("Enemy") && gameObject.CompareTag("PlayerWeapon"))
             {
                 GameObject enemy = other.gameObject;
 
