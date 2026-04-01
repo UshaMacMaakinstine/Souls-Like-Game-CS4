@@ -10,7 +10,6 @@ public class TutorialEnemyController : BaseEnemy
     private NavMeshAgent agent;
     private Transform player;
     private Color originalColor;
-    public PlayerProperties playerComp;
 
     protected override void InitializeEnemy()
     {
@@ -76,7 +75,7 @@ public class TutorialEnemyController : BaseEnemy
         if (attackHitbox != null) attackHitbox.SetActive(true);
 
         // Hold the bite active for a short window
-        Invoke(nameof(EndBite), 0.2f);
+        Invoke(nameof(EndBite), 0.5f);
     }
 
     private void EndBite()
@@ -101,7 +100,7 @@ public class TutorialEnemyController : BaseEnemy
         base.Die();
         agent.isStopped = true;
         agent.enabled = false;
-        if (attackHitbox != null) attackHitbox.SetActive(false);
+        if (attackHitbox != null) attackHitbox.gameObject.SetActive(false);
         if (bossRender != null) bossRender.material.color = Color.gray; // Gray out on death
     }
 }
