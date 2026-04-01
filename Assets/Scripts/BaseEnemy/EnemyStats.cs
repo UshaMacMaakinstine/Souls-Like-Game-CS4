@@ -13,8 +13,8 @@ public class EnemyStats : ScriptableObject
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float rotationSpeed = 10f;
-    public float aggroRadius = 15f;    // When it sees the roach
-    public float attackRadius = 3f;     // When it bites the roach
+    public float aggroRadius = 1500f;    // When it sees the roach
+    public float attackRadius = 4f;     // When it bites the roach
 
     [Header("Combat Settings")]
     public float contactDamage = 10f;

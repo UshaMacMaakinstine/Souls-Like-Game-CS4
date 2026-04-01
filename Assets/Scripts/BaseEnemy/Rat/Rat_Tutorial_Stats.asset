@@ -20,5 +20,5 @@ MonoBehaviour:
   aggroRadius: 15
   attackRadius: 3
   contactDamage: 10
-  attackCooldown: 1.5
+  attackCooldown: 0.4
   phaseTwoThreshold: 0.5

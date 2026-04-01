@@ -1,37 +1,50 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class RatController : BaseEnemy
 {
     [Header("Rat Specific Setup")]
-    public EnemyHitbox biteHitbox; // Assign the child object with the trigger here
-    public MeshRenderer ratRenderer; // Assign this to make the rat flash during telegraphs
+    public EnemyHitbox biteHitbox;
+    public MeshRenderer ratRenderer;
+
+    [Header("Visual Feedback")]
+    public Color telegraphColor = Color.red;
+    public float telegraphDuration = 0.5f;
+    public float biteActiveDuration = 0.2f;
 
     private NavMeshAgent agent;
-    private Transform player;
+    private Transform playerTransform;
     private Color originalColor;
+    private bool isAttacking = false;
 
     protected override void InitializeEnemy()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.speed = stats.moveSpeed;
-        agent.stoppingDistance = stats.attackRadius - 0.5f; // Stop slightly before the bite hits
 
-        if (ratRenderer != null) originalColor = ratRenderer.material.color;
+        if (stats != null)
+        {
+            agent.speed = stats.moveSpeed;
+            agent.stoppingDistance = stats.attackRadius - 0.5f;
+            currentHealth = stats.maxHealth;
+        }
 
-        // Find player by tag (Ensure Hussain's player is tagged "Player")
+        if (ratRenderer != null)
+            originalColor = ratRenderer.material.color;
+
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null) player = playerObj.transform;
-    }
+        if (playerObj != null)
+            playerTransform = playerObj.transform;
 
-    // --- STATE LOGIC ---
+        if (biteHitbox != null) biteHitbox.SetActive(false);
+    }
 
     public override void CheckForPlayer()
     {
-        if (player == null) return;
+        if (playerTransform == null || isAttacking || currentState == EnemyState.Dead) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
         if (distance <= stats.aggroRadius)
         {
             currentState = EnemyState.Chasing;
@@ -40,66 +53,80 @@ public class RatController : BaseEnemy
 
     public override void MoveToPlayer()
     {
-        if (player == null || currentState == EnemyState.Attacking) return;
+        if (playerTransform == null || currentState == EnemyState.Attacking || currentState == EnemyState.Dead) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
-        agent.SetDestination(player.position);
+        agent.isStopped = false;
+        agent.SetDestination(playerTransform.position);
 
-        // Transition to Attack if in range
-        if (distance <= stats.attackRadius)
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
+
+        if (distance <= stats.attackRadius && !isAttacking)
         {
-            StartAttackSequence();
+            StartCoroutine(AttackSequence());
         }
     }
 
-    // --- COMBAT SEQUENCE (SOULS-LIKE TELEGRAPH) ---
-
-    private void StartAttackSequence()
+    private IEnumerator AttackSequence()
     {
+        isAttacking = true;
         currentState = EnemyState.Attacking;
-        agent.isStopped = true; // Don't slide while biting
+        agent.isStopped = true;
 
-        // 1. THE TELEGRAPH (The "Wind-up")
-        // Give the player 0.5s to see the 'hiss' or 'glow' and ROLL
-        if (ratRenderer != null) ratRenderer.material.color = Color.red;
+        if (ratRenderer != null) ratRenderer.material.color = telegraphColor;
 
-        Invoke(nameof(ExecuteBite), 0.5f);
-    }
+        float timer = 0;
+        while (timer < telegraphDuration)
+        {
+            LookAtPlayer();
+            timer += Time.deltaTime;
+            yield return null;
+        }
 
-    private void ExecuteBite()
-    {
-        if (currentState == EnemyState.Dead) return;
+        if (currentState != EnemyState.Dead)
+        {
+            if (biteHitbox != null) biteHitbox.SetActive(true);
+            yield return new WaitForSeconds(biteActiveDuration);
+            if (biteHitbox != null) biteHitbox.SetActive(false);
+        }
 
-        // 2. THE HITBOX (Active Frames)
-        if (biteHitbox != null) biteHitbox.SetActive(true);
-
-        // Hold the bite active for a short window
-        Invoke(nameof(EndBite), 0.2f);
-    }
-
-    private void EndBite()
-    {
-        if (biteHitbox != null) biteHitbox.SetActive(false);
         if (ratRenderer != null) ratRenderer.material.color = originalColor;
+        yield return new WaitForSeconds(stats.attackCooldown);
 
-        // 3. RECOVERY (The "Window" for the player to hit back)
-        Invoke(nameof(ResetFromAttack), stats.attackCooldown);
+        ResetFromAttack();
+    }
+
+    private void LookAtPlayer()
+    {
+        if (playerTransform == null) return;
+        Vector3 direction = (playerTransform.position - transform.position).normalized;
+        direction.y = 0;
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
+        }
     }
 
     private void ResetFromAttack()
     {
         if (currentState == EnemyState.Dead) return;
-
+        isAttacking = false;
         agent.isStopped = false;
         currentState = EnemyState.Idle;
     }
 
     protected override void Die()
     {
+        StopAllCoroutines();
         base.Die();
-        agent.isStopped = true;
-        agent.enabled = false;
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
+
         if (biteHitbox != null) biteHitbox.SetActive(false);
-        if (ratRenderer != null) ratRenderer.material.color = Color.gray; // Gray out on death
+        if (ratRenderer != null) ratRenderer.material.color = Color.gray;
     }
 }
