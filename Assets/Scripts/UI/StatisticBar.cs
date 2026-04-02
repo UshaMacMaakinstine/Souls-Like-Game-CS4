@@ -10,8 +10,6 @@ public class StatisticBar : MonoBehaviour
     [SerializeField]
     private Vector2 size;
     [SerializeField]
-    private Vector2 position;
-    [SerializeField]
     private float borderWidth;
     [SerializeField]
     private Image barBG;
@@ -21,31 +19,78 @@ public class StatisticBar : MonoBehaviour
     private Image barFill;
     [SerializeField]
     private Image barFX;
+    private float FXStat;
+    private float FillStat;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // set size of the bar based on size and borderWidth
         barBorder.rectTransform.sizeDelta = size + new Vector2(borderWidth * 2, borderWidth * 2);
-        barBorder.rectTransform.anchoredPosition = position;
         barBG.rectTransform.sizeDelta = size;
-        barBG.rectTransform.anchoredPosition = position;
+        barBG.rectTransform.anchoredPosition = Vector2.zero;
         barFill.rectTransform.sizeDelta = new Vector2(size.x * Mathf.Clamp(stat / max,0,max), size.y);
-        barFill.rectTransform.anchoredPosition = position;
+        barFill.rectTransform.anchoredPosition = Vector2.zero;
         barFX.rectTransform.sizeDelta = size;
-        barFX.rectTransform.anchoredPosition = position;
+        barFX.rectTransform.anchoredPosition = Vector2.zero + new Vector2(-size.x * (1 - Mathf.Clamp(stat / max,0,max)) / 2, 0);
+        FXStat = stat;
+        FillStat = stat;
     }
 
     // Update is called once per frame
     void Update()
     {
-        barFill.rectTransform.sizeDelta = new Vector2(size.x * Mathf.Clamp(stat / max,0,max), size.y);
+        if(FillStat != stat)
+        {
+            if(FillStat < stat)
+            {
+                FillStat = Mathf.Lerp(FillStat, stat, Time.deltaTime * 10);
+                if(Mathf.Abs(FillStat - stat) < 0.01f)
+                {
+                    FillStat = stat;
+                }
+            }
+            else
+            {
+                FillStat = stat;
+            }
+            barFill.rectTransform.sizeDelta = new Vector2(size.x * Mathf.Clamp(stat / max,0,max), size.y);
+            barFill.rectTransform.anchoredPosition = Vector2.zero + new Vector2(-size.x * (1 - Mathf.Clamp(stat / max,0,max)) / 2, 0);
+        }
+
+        if(FXStat != stat)
+        {
+            FXStat = Mathf.Lerp(FXStat, stat, Time.deltaTime * 5);
+            barFX.rectTransform.sizeDelta = new Vector2(size.x * Mathf.Clamp(FXStat / max,0,max), size.y);
+            barFX.rectTransform.anchoredPosition = Vector2.zero + new Vector2(-size.x * (1 - Mathf.Clamp(FXStat / max,0,max)) / 2, 0);
+
+            if(Mathf.Abs(FXStat - stat) < 0.01f)
+            {
+                FXStat = stat;
+            }
+
+        }
     }
 
     // set the stat value and update the bar
     public void SetStat(float newStat)
     {
         stat = newStat;
+    }
+
+    public float GetStat()
+    {
+        return stat;
+    }
+
+    public void SetMax(float newMax)
+    {
+        max = newMax;
         barFill.rectTransform.sizeDelta = new Vector2(size.x * Mathf.Clamp(stat / max,0,max), size.y);
-        // update the bar based on the new stat value
+        barFill.rectTransform.anchoredPosition = Vector2.zero + new Vector2(-size.x * (1 - Mathf.Clamp(stat / max,0,max)) / 2, 0);
+    }
+
+    public float GetMax()
+    {
+        return max;
     }
 }
