@@ -11,68 +11,67 @@ public class WeaponFramework : MonoBehaviour
     public int runningHeavyAttackDamage;
     public int range;
 
-    ThirdPersonController player;
-
+    private ThirdPersonController player;
 
     void Start()
     {
         player = gameObject.GetComponentInParent<ThirdPersonController>();
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(player.isAttacking)
+        // Ensure player exists and is currently in an attack state
+        if (player != null && player.isAttacking)
         {
-            if(other.CompareTag("Enemy") && gameObject.CompareTag("PlayerWeapon"))
+            if (other.CompareTag("Enemy") && gameObject.CompareTag("PlayerWeapon"))
             {
-                GameObject enemy = other.gameObject;
+                BaseEnemy enemyComponent = other.GetComponent<BaseEnemy>();
 
-                BaseEnemy enemyComponent = enemy.GetComponent<BaseEnemy>();
-
-                switch(attackMode)
+                if (enemyComponent != null)
                 {
-                    case AttackMode.lightAttack:
-                        //enemyComponent.health -= lightAttackDamage;
-                        StartCoroutine(changeColor(enemy, player));
-                        break;
-                    case AttackMode.heavyAttack:
-                        //enemyComponent.health -= heavyAttackDamage;
-                        StartCoroutine(changeColor(enemy, player));
-                        break;
-                    case AttackMode.runningHeavy:
-                        //enemyComponent.health -= runningHeavyAttackDamage;
-                        StartCoroutine(changeColor(enemy, player));
-                        break;
-                    default:
-                        break;
+                    float damageToApply = 0;
+
+                    switch (attackMode)
+                    {
+                        case AttackMode.lightAttack:
+                            damageToApply = lightAttackDamage;
+                            break;
+                        case AttackMode.heavyAttack:
+                            damageToApply = heavyAttackDamage;
+                            break;
+                        case AttackMode.runningHeavy:
+                            damageToApply = runningHeavyAttackDamage;
+                            break;
+                    }
+
+                    if (damageToApply > 0)
+                    {
+                        enemyComponent.TakeDamage(damageToApply);
+                        StartCoroutine(ChangeColorFeedback(other.gameObject));
+                    }
                 }
             }
         }
     }
 
-    IEnumerator changeColor(GameObject enemy, ThirdPersonController player)
+    IEnumerator ChangeColorFeedback(GameObject enemy)
     {
-        if(enemy != null)
+        if (enemy != null)
         {
-            switch(attackMode)
+            Renderer enemyRenderer = enemy.GetComponent<Renderer>();
+            if (enemyRenderer == null) yield break;
+
+            Color feedbackColor = Color.white;
+            switch (attackMode)
             {
-                case AttackMode.lightAttack:
-                    enemy.GetComponent<Renderer>().material.color = Color.red;
-                    yield return new WaitForSeconds(0.5f);
-                    enemy.GetComponent<Renderer>().material.color = Color.white;
-                    break;
-                case AttackMode.heavyAttack:
-                    enemy.GetComponent<Renderer>().material.color = Color.green;
-                    yield return new WaitForSeconds(0.5f);
-                    enemy.GetComponent<Renderer>().material.color = Color.white;
-                    break;
-                case AttackMode.runningHeavy:
-                    enemy.GetComponent<Renderer>().material.color = Color.blue;
-                    yield return new WaitForSeconds(0.5f);
-                    enemy.GetComponent<Renderer>().material.color = Color.white;
-                    break;
-                default:
-                    break;
+                case AttackMode.lightAttack: feedbackColor = Color.red; break;
+                case AttackMode.heavyAttack: feedbackColor = Color.green; break;
+                case AttackMode.runningHeavy: feedbackColor = Color.blue; break;
             }
+
+            enemyRenderer.material.color = feedbackColor;
+            yield return new WaitForSeconds(0.2f);
+            enemyRenderer.material.color = Color.white;
         }
     }
 }
