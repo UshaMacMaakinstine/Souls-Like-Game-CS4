@@ -6,8 +6,23 @@ public class EnemyHitbox : MonoBehaviour
     public float knockback = 5f;
     [SerializeField]
     private bool isActive = false;
+    private Collider hitboxCollider;
 
-    public void SetActive(bool active) => isActive = active; 
+    private void Awake()
+    {
+        hitboxCollider = GetComponent<Collider>();
+        // Force the collider off at the start so the green box disappears
+        if (hitboxCollider != null) hitboxCollider.enabled = false;
+    }
+
+    public void SetActive(bool active)
+    {
+        isActive = active;
+        if (hitboxCollider != null)
+        {
+            hitboxCollider.enabled = active;
+        }
+    }
 
     private void OnTriggerStay(Collider other) // Changed to Stay for reliability
     {

@@ -6,7 +6,6 @@ using System.Collections;
 public class ThirdPersonController : MonoBehaviour
 {
     private WeaponFramework weaponFramework;
-
     private PlayerProperties playerProperties;
 
     [Header("References")]
@@ -58,6 +57,8 @@ public class ThirdPersonController : MonoBehaviour
     private bool _inputBuffered = false;
 
     public bool isInvincible;
+    // Added this helper so your Hitbox script can find it!
+    public bool isDodging => isInvincible;
 
 
     void Awake()
@@ -74,7 +75,8 @@ public class ThirdPersonController : MonoBehaviour
         inputActions = new PlayerInput();
         weaponFramework = GetComponentInChildren<WeaponFramework>();
 
-        weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+        if (weaponFramework != null)
+            weaponFramework.attackMode = WeaponFramework.AttackMode.None;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -82,7 +84,6 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnEnable()
     {
-
         inputActions.Player.Enable();
 
         inputActions.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
@@ -198,7 +199,7 @@ public class ThirdPersonController : MonoBehaviour
 
         if (_isAttackingInternal)
         {
-            _inputBuffered = true; // Record the click but don't start a new coroutine
+            _inputBuffered = true;
         }
         else if (!isRolling && !isCrouching)
         {
@@ -268,14 +269,6 @@ public class ThirdPersonController : MonoBehaviour
         isTransitioningCrouch = false;
     }
 
-    bool CanStandUp()
-    {
-        Vector3 origin = transform.position + Vector3.up * crouchHeight;
-        float checkDistance = standingHeight - crouchHeight + 0.1f;
-
-        return !Physics.SphereCast(origin, controller.radius * 0.9f, Vector3.up, out _, checkDistance);
-    }
-
     IEnumerator Roll()
     {
         isInvincible = true;
@@ -293,7 +286,7 @@ public class ThirdPersonController : MonoBehaviour
             yield return null;
         }
 
-        while(elapsed < rollDuration)
+        while (elapsed < rollDuration)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / rollDuration);
@@ -312,24 +305,20 @@ public class ThirdPersonController : MonoBehaviour
         _isAttackingInternal = true;
         isAttacking = true;
 
-        // --- HIT 1 ---
         animator.SetTrigger("LightAttack1");
         yield return new WaitForSeconds(0.133f);
-        weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-        // Wait for the length of the animation clip
+        if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
         yield return new WaitForSeconds(0.8f);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
-        // --- HIT 2 ---
         _inputBuffered = false;
         animator.SetTrigger("LightAttack2");
         yield return new WaitForSeconds(0.567f);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
-        // --- HIT 3 ---
         _inputBuffered = false;
         animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(0.833f); // Final hit duration
+        yield return new WaitForSeconds(0.833f);
 
         EndCombo();
     }
@@ -339,9 +328,8 @@ public class ThirdPersonController : MonoBehaviour
         _isAttackingInternal = false;
         _inputBuffered = false;
         isAttacking = false;
-        weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+        if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
 
-        // Safety: Clear all triggers so spamming doesn't restart the loop immediately
         animator.ResetTrigger("LightAttack1");
         animator.ResetTrigger("LightAttack2");
         animator.ResetTrigger("LightAttack3");
@@ -350,7 +338,7 @@ public class ThirdPersonController : MonoBehaviour
     IEnumerator DoHeavyAttack()
     {
         isAttacking = true;
-        if(sprintHeld && currentSpeed > 0.1f)
+        if (sprintHeld && currentSpeed > 0.1f)
         {
             animator.SetTrigger("RunningHeavyAttack");
             float elapsed = 0f;
@@ -364,7 +352,7 @@ public class ThirdPersonController : MonoBehaviour
             }
 
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            weaponFramework.attackMode = WeaponFramework.AttackMode.runningHeavy;
+            if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.runningHeavy;
 
             while (elapsed < (runningHeavyAttackDuration - 1.6f))
             {
@@ -373,7 +361,7 @@ public class ThirdPersonController : MonoBehaviour
                 yield return null;
             }
 
-            weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+            if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
 
             yield return new WaitForSeconds(runningHeavyAttackDuration - elapsed);
             isHeavyAttack = true;
@@ -383,9 +371,9 @@ public class ThirdPersonController : MonoBehaviour
             isHeavyAttack = true;
             animator.SetTrigger("HeavyAttack");
             yield return new WaitForSeconds(0.26f);
-            weaponFramework.attackMode = WeaponFramework.AttackMode.heavyAttack;
+            if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.heavyAttack;
             yield return new WaitForSeconds((heavyAttackDuration - 1.6f));
-            weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+            if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
             yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f)));
         }
         isAttacking = false;
@@ -395,11 +383,8 @@ public class ThirdPersonController : MonoBehaviour
     public IEnumerator TriggerInvincibiltyFrames(float time)
     {
         isInvincible = true;
-
         yield return new WaitForSeconds(time);
-
         isInvincible = false;
-
     }
 
     void UpdateAnimator()
