@@ -25,13 +25,16 @@ public class PlayerProperties : MonoBehaviour
 
     public void TakeDamage(DamageData data) // Changed from 'float amount' to 'DamageData data'
     {
-        float amount = data.damageAmount; // Pull the number out of the package
+        if(!player.isInvincible)
+        {
+            float amount = data.damageAmount; // Pull the number out of the package
 
-        currentHealth -= amount;
-        Debug.Log("Player took " + amount + " damage from " + data.origin);
-        healthText.text = "Health : " + currentHealth;
+            currentHealth -= amount;
+            Debug.Log("Player took " + amount + " damage from " + data.origin);
+            healthText.text = "Health : " + currentHealth;
 
-        // You now have access to data.knockbackForce here too!
+            // You now have access to data.knockbackForce here too!
+        }
 
         if (currentHealth <= 0) Die();
     }

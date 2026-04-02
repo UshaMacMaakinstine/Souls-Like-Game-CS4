@@ -64,7 +64,7 @@ public class TutorialEnemyController : BaseEnemy
         // Give the player 0.5s to see the 'hiss' or 'glow' and ROLL
         if (bossRender != null) bossRender.material.color = Color.yellow;
 
-        Invoke(nameof(ExecuteBite), 0.5f);
+        Invoke(nameof(ExecuteBite), 0.3f);
     }
 
     private void ExecuteBite()
@@ -75,7 +75,7 @@ public class TutorialEnemyController : BaseEnemy
         if (attackHitbox != null) attackHitbox.SetActive(true);
 
         // Hold the bite active for a short window
-        Invoke(nameof(EndBite), 0.5f);
+        Invoke(nameof(EndBite), 0.2f);
     }
 
     private void EndBite()
