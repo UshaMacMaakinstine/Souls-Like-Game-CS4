@@ -53,8 +53,8 @@ public class StatisticBar : MonoBehaviour
             {
                 FillStat = stat;
             }
-            barFill.rectTransform.sizeDelta = new Vector2(size.x * Mathf.Clamp(stat / max,0,max), size.y);
-            barFill.rectTransform.anchoredPosition = Vector2.zero + new Vector2(-size.x * (1 - Mathf.Clamp(stat / max,0,max)) / 2, 0);
+            barFill.rectTransform.sizeDelta = new Vector2(size.x * Mathf.Clamp(FillStat / max,0,max), size.y);
+            barFill.rectTransform.anchoredPosition = Vector2.zero + new Vector2(-size.x * (1 - Mathf.Clamp(FillStat / max,0,max)) / 2, 0);
         }
 
         if(FXStat != stat)
