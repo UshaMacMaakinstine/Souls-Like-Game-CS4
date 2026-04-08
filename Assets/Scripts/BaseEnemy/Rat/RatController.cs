@@ -10,7 +10,7 @@ public class RatController : BaseEnemy
     public MeshRenderer ratRenderer;
 
     [Header("Visual Feedback")]
-    public Color telegraphColor = Color.red;
+    public Color telegraphColor = Color.yellow;
     public float telegraphDuration = 0.5f;
     public float biteActiveDuration = 0.2f;
 
@@ -26,7 +26,8 @@ public class RatController : BaseEnemy
         if (stats != null)
         {
             agent.speed = stats.moveSpeed;
-            agent.stoppingDistance = stats.attackRadius - 0.5f;
+            // Set stopping distance slightly SHORTER than attack range
+            agent.stoppingDistance = stats.attackRadius - 0.2f;
             currentHealth = stats.maxHealth;
         }
 
@@ -38,6 +39,23 @@ public class RatController : BaseEnemy
             playerTransform = playerObj.transform;
 
         if (biteHitbox != null) biteHitbox.SetActive(false);
+    }
+
+    protected override void HandleStateMachine()
+    {
+        if (isAttacking || currentState == EnemyState.Dead) return;
+
+        base.HandleStateMachine();
+
+        if (playerTransform != null)
+        {
+            float distance = Vector3.Distance(transform.position, playerTransform.position);
+            // Constant rotation toward player when close
+            if (distance <= stats.attackRadius + 1.5f)
+            {
+                LookAtPlayer();
+            }
+        }
     }
 
     public override void CheckForPlayer()
@@ -53,14 +71,15 @@ public class RatController : BaseEnemy
 
     public override void MoveToPlayer()
     {
-        if (playerTransform == null || currentState == EnemyState.Attacking || currentState == EnemyState.Dead) return;
+        if (playerTransform == null || isAttacking || currentState == EnemyState.Dead) return;
 
         agent.isStopped = false;
         agent.SetDestination(playerTransform.position);
 
         float distance = Vector3.Distance(transform.position, playerTransform.position);
 
-        if (distance <= stats.attackRadius && !isAttacking)
+        // BUFFER: Adding +0.5f ensures the trigger happens before the NavMeshAgent fully halts
+        if (distance <= (stats.attackRadius + 0.5f) && !isAttacking)
         {
             StartCoroutine(AttackSequence());
         }
@@ -120,12 +139,7 @@ public class RatController : BaseEnemy
         StopAllCoroutines();
         base.Die();
 
-        if (agent != null)
-        {
-            agent.isStopped = true;
-            agent.enabled = false;
-        }
-
+        // base.Die handles the core physics/sink logic
         if (biteHitbox != null) biteHitbox.SetActive(false);
         if (ratRenderer != null) ratRenderer.material.color = Color.gray;
     }
