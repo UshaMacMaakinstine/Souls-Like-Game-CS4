@@ -17,7 +17,7 @@ MonoBehaviour:
   staggerThreshold: 25
   moveSpeed: 5
   rotationSpeed: 10
-  aggroRadius: 25
+  aggroRadius: 200000
   attackRadius: 5
   contactDamage: 10
   attackCooldown: 1.5

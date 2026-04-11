@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class StatisticBar : MonoBehaviour
@@ -19,6 +20,8 @@ public class StatisticBar : MonoBehaviour
     private Image barFill;
     [SerializeField]
     private Image barFX;
+    [SerializeField]
+    private Text statText;
     private float FXStat;
     private float FillStat;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -92,5 +95,23 @@ public class StatisticBar : MonoBehaviour
     public float GetMax()
     {
         return max;
+    }
+
+    public string GetStatText()
+    {
+        if(statText == null)
+        {
+            return "";
+        }
+        return statText.text.Replace("{stat}", stat.ToString()).Replace("{max}", max.ToString());
+    }
+
+    public void SetStatText(string newText)
+    {
+        if(statText != null)
+        {
+            statText.text = newText;
+        }
+        return;
     }
 }
