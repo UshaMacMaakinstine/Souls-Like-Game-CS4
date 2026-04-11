@@ -7,11 +7,8 @@ public class ChangeKeybind : MonoBehaviour
     public TMP_Text keyText;
     public GameObject excapeText;
     public bool changingKey;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+
+    public PlayerInput playerInput;
 
     // Update is called once per frame
     void Update()
