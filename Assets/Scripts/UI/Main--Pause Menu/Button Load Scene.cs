@@ -1,16 +1,12 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ButtonLoadScene : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public string scene;
+    
+    public void loadScene()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        SceneManager.LoadScene(scene);
     }
 }

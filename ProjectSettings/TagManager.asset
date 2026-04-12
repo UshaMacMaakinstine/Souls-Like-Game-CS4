@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Weapon
   - Enemy
+  - PlayerWeapon
   layers:
   - Default
   - TransparentFX
@@ -13,8 +14,8 @@ TagManager:
   - Colliders
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - EnemyAttack
   - 
   - 
   - 

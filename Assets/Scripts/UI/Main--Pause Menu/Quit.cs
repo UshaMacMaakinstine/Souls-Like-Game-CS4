@@ -1,16 +1,18 @@
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class Quit : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void quitGame()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        #if UNITY_EDITOR
+            // Stop playing the scene in the editor
+            EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+        Debug.Log("quit game");
     }
 }

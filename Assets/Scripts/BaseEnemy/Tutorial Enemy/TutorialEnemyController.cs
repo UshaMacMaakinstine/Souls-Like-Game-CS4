@@ -3,14 +3,22 @@ using UnityEngine.AI; // We need this for NavMesh movement
 
 public class TutorialEnemyController : BaseEnemy
 {
+    [Header("Boss Specific Setup")]
+    public EnemyHitbox attackHitbox; // Assign the child object with the trigger here
+    public MeshRenderer bossRender; // Assign this to make the rat flash during telegraphs
+
     private NavMeshAgent agent;
     private Transform player;
+    private Color originalColor;
 
     protected override void InitializeEnemy()
     {
         // Setup the NavMeshAgent component
         agent = GetComponent<NavMeshAgent>();
         agent.speed = stats.moveSpeed;
+        agent.stoppingDistance = stats.attackRadius - 0.5f; // Stop slightly before the bite hits
+
+        if (bossRender != null) originalColor = bossRender.material.color;
 
         // Temporary: Find the player by tag
         // Hussain needs to make sure the Player object is tagged "Player"
@@ -33,7 +41,7 @@ public class TutorialEnemyController : BaseEnemy
 
     public override void MoveToPlayer()
     {
-        if (player == null) return;
+        if (player == null || currentState == EnemyState.Attacking) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -43,38 +51,56 @@ public class TutorialEnemyController : BaseEnemy
         // If close enough, stop and attack
         if (distance <= stats.attackRadius)
         {
-            currentState = EnemyState.Attacking;
-            StartAttack();
+            StartAttackSequence();
         }
     }
 
-    private void StartAttack()
+    private void StartAttackSequence()
     {
-        Debug.Log("Enemy is Attacking!");
+        currentState = EnemyState.Attacking;
+        agent.isStopped = true; // Don't slide while biting
 
-        PlayerProperties playerComp = player.gameObject.GetComponent<PlayerProperties>();
+        // 1. THE TELEGRAPH (The "Wind-up")
+        // Give the player 0.5s to see the 'hiss' or 'glow' and ROLL
+        if (bossRender != null) bossRender.material.color = Color.yellow;
 
-        if (playerComp != null)
-        {
-            // 1. Create the package
-            DamageData data = new DamageData
-            {
-                damageAmount = 20f, // Your damage value
-                origin = transform.position,
-                knockbackForce = 5f // Add some kick to it!
-            };
-
-            // 2. Send the package (Now the arguments match!)
-            playerComp.TakeDamage(data);
-        }
-
-        // After attacking, wait for cooldown
-        Invoke("ResetFromAttack", stats.attackCooldown);
+        Invoke(nameof(ExecuteBite), 0.3f);
     }
+
+    private void ExecuteBite()
+    {
+        if (currentState == EnemyState.Dead) return;
+
+        // 2. THE HITBOX (Active Frames)
+        if (attackHitbox != null) attackHitbox.SetActive(true);
+
+        // Hold the bite active for a short window
+        Invoke(nameof(EndBite), 0.2f);
+    }
+
+    private void EndBite()
+    {
+        if (attackHitbox != null) attackHitbox.SetActive(false);
+        if (bossRender != null) bossRender.material.color = originalColor;
+
+        // 3. RECOVERY (The "Window" for the player to hit back)
+        Invoke(nameof(ResetFromAttack), stats.attackCooldown);
+    } 
 
     private void ResetFromAttack()
     {
-        if (currentState != EnemyState.Dead)
-            currentState = EnemyState.Idle;
+        if (currentState == EnemyState.Dead) return;
+
+        agent.isStopped = false;
+        currentState = EnemyState.Idle;
+    }
+
+    protected override void Die()
+    {
+        base.Die();
+        agent.isStopped = true;
+        agent.enabled = false;
+        if (attackHitbox != null) attackHitbox.gameObject.SetActive(false);
+        if (bossRender != null) bossRender.material.color = Color.gray; // Gray out on death
     }
 }

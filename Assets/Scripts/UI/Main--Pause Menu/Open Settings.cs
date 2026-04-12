@@ -1,16 +1,22 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OpenSettings : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public GameObject settingsFolder;
+    public GameObject mainFolder;
+    public Button GameButton;
+    
+    public void openSettings()
     {
-        
+        settingsFolder.SetActive(true);
+        GameButton.Select();
+        mainFolder.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void closeSettings()
     {
-        
+        settingsFolder.SetActive(false);
+        mainFolder.SetActive(true);
     }
 }
