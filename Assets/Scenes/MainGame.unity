@@ -2162,7 +2162,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072989031}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.2008294, y: 0, z: 0, w: 0.97962624}
+  m_LocalRotation: {x: -0.20082937, y: 0, z: 0, w: 0.97962624}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2439,7 +2439,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1570218112}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.26843965, y: 0, z: 0, w: 0.96329653}
+  m_LocalRotation: {x: -0.2684396, y: 0, z: 0, w: 0.96329653}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2595,7 +2595,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1599830213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2610,6 +2610,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   stats: {fileID: 11400000, guid: 77ed24a901a034744b4eb1c0c88c1389, type: 2}
   currentState: 0
+  deathEffect: {fileID: 0}
+  maxSinkSpeed: 0.05
+  dissolveTime: 3
+  postBlackSinkTime: 5
+  maxEmissionBase: 100
+  maxSizeMultiplier: 0.15
+  particleLifetime: 6
   attackHitbox: {fileID: 360020719}
   bossRender: {fileID: 1599830215}
 --- !u!23 &1599830215

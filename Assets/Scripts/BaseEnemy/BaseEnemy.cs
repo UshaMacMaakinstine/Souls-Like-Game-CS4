@@ -64,7 +64,7 @@ public class BaseEnemy : MonoBehaviour
         if (charController != null) charController.enabled = false;
 
         var rb = GetComponent<Rigidbody>();
-        if (rb != null) { rb.isKinematic = true; rb.velocity = Vector3.zero; }
+        if (rb != null) { rb.isKinematic = true; rb.linearVelocity = Vector3.zero; }
 
         if (deathEffect != null)
         {
