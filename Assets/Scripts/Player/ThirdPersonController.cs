@@ -39,13 +39,16 @@ public class ThirdPersonController : MonoBehaviour
     public bool isHeavyAttack;
 
     private CharacterController controller;
-    private PlayerInput inputActions;
+    private PlayerInput inputActions; // Your generated class
+    private InputActionAsset activeAsset; // The actual data container
 
     private Vector2 moveInput;
     private Vector2 lookInput;
     private Vector3 velocity;
     private float currentSpeed;
     private float turnSmoothVelocity;
+
+    public GameObject Settings;
 
     private bool isGrounded;
     private bool sprintHeld;
@@ -60,7 +63,6 @@ public class ThirdPersonController : MonoBehaviour
     // Added this helper so your Hitbox script can find it!
     public bool isDodging => isInvincible;
 
-
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -72,7 +74,27 @@ public class ThirdPersonController : MonoBehaviour
         controller.height = standingHeight - 0.25f;
         controller.center = new Vector3(0f, standingHeight / 2f, 0f);
 
-        inputActions = new PlayerInput();
+        var playerInputComponent = GetComponent<UnityEngine.InputSystem.PlayerInput>();
+
+        if (playerInputComponent != null)
+        {
+            // 2. Initialize the wrapper using the empty constructor
+            inputActions = new PlayerInput();
+
+            // 3. Manually swap the internal asset for the one on the component
+            // This is the "backdoor" to fix the read-only error
+            activeAsset = playerInputComponent.actions;
+
+            // Use the common property name for the generated wrapper's asset
+            // If your generated script is named PlayerInput, it usually stores its asset in .asset
+            // But since we can't assign it directly, we ensure the wrapper IS using the instance
+            inputActions.devices = playerInputComponent.devices;
+        }
+        else
+        {
+            Debug.LogError("Missing Player Input component on " + gameObject.name);
+        }
+
         weaponFramework = GetComponentInChildren<WeaponFramework>();
 
         if (weaponFramework != null)
@@ -84,35 +106,47 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnEnable()
     {
-        inputActions.Player.Enable();
+        // 3. Enable the asset
+        if (activeAsset != null)
+        {
+            activeAsset.Enable();
+            var playerMap = activeAsset.FindActionMap("Player");
 
-        inputActions.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        inputActions.Player.Move.canceled += ctx => moveInput = Vector2.zero;
+            // FindAction is much more reliable than the wrapper in this case
+            playerMap.FindAction("Move").performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+            playerMap.FindAction("Move").canceled += ctx => moveInput = Vector2.zero;
 
-        inputActions.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
-        inputActions.Player.Look.canceled += ctx => lookInput = Vector2.zero;
+            playerMap.FindAction("Look").performed += ctx => lookInput = ctx.ReadValue<Vector2>();
+            playerMap.FindAction("Look").canceled += ctx => lookInput = Vector2.zero;
 
-        inputActions.Player.Sprint.performed += ctx => sprintHeld = true;
-        inputActions.Player.Sprint.canceled += ctx => sprintHeld = false;
+            playerMap.FindAction("Sprint").performed += ctx => sprintHeld = true;
+            playerMap.FindAction("Sprint").canceled += ctx => sprintHeld = false;
 
-        inputActions.Player.Jump.performed += OnJump;
-        inputActions.Player.Crouch.performed += OnCrouch;
-        inputActions.Player.Roll.performed += OnRoll;
-        inputActions.Player.LightAttack.performed += OnLightAttack;
-        inputActions.Player.HeavyAttack.performed += OnHeavyAttack;
-        inputActions.Player.Heal.performed += OnHeal;
+            playerMap.FindAction("Jump").performed += OnJump;
+            playerMap.FindAction("Crouch").performed += OnCrouch;
+            playerMap.FindAction("Roll").performed += OnRoll;
+            playerMap.FindAction("LightAttack").performed += OnLightAttack;
+            playerMap.FindAction("HeavyAttack").performed += OnHeavyAttack;
+            playerMap.FindAction("Heal").performed += OnHeal;
+
+            playerMap.FindAction("Pause").performed += OnPause;
+        }
     }
 
     void OnDisable()
     {
-        inputActions.Player.Jump.performed -= OnJump;
-        inputActions.Player.Crouch.performed -= OnCrouch;
-        inputActions.Player.Roll.performed -= OnRoll;
-        inputActions.Player.LightAttack.performed -= OnLightAttack;
-        inputActions.Player.HeavyAttack.performed -= OnHeavyAttack;
-        inputActions.Player.Heal.performed -= OnHeal;
+        if (inputActions != null)
+        {
+            inputActions.Player.Jump.performed -= OnJump;
+            inputActions.Player.Crouch.performed -= OnCrouch;
+            inputActions.Player.Roll.performed -= OnRoll;
+            inputActions.Player.LightAttack.performed -= OnLightAttack;
+            inputActions.Player.HeavyAttack.performed -= OnHeavyAttack;
+            inputActions.Player.Heal.performed -= OnHeal;
+            inputActions.Player.Pause.performed -= OnPause;
 
-        inputActions.Player.Disable();
+            inputActions.Player.Disable();
+        }
     }
 
     void Update()
@@ -217,6 +251,24 @@ public class ThirdPersonController : MonoBehaviour
     {
         if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             playerProperties.Heal(10f);
+    }
+
+    void OnPause(InputAction.CallbackContext ctx)
+    {
+        if(Settings.activeInHierarchy)
+        {
+            Settings.SetActive(false);
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Settings.SetActive(true);
+            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+        }
     }
 
     IEnumerator EnterCrouch()

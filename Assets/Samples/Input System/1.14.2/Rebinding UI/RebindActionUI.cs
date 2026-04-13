@@ -252,6 +252,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
             }
         }
 
+        [Obsolete]
         private void PerformInteractiveRebind(InputAction action, int bindingIndex, bool allCompositeParts = false)
         {
             m_RebindOperation?.Cancel(); // Will null out m_RebindOperation.
@@ -297,6 +298,8 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
                         m_RebindStopEvent?.Invoke(this, operation);
                         UpdateBindingDisplay();
                         CleanUp();
+
+                        FindObjectOfType<RebindSaveLoad>().SaveOverrides();
 
                         // If there's more composite parts we should bind, initiate a rebind
                         // for the next part.

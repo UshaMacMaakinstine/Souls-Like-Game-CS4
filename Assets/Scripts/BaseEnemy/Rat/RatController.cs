@@ -18,6 +18,8 @@ public class RatController : BaseEnemy
     private Transform playerTransform;
     private Color originalColor;
     private bool isAttacking = false;
+    public Animator anim;
+    private bool isMoving;
 
     protected override void InitializeEnemy()
     {
@@ -31,14 +33,19 @@ public class RatController : BaseEnemy
             currentHealth = stats.maxHealth;
         }
 
-        if (ratRenderer != null)
-            originalColor = ratRenderer.material.color;
+        //if (ratRenderer != null)
+            //originalColor = ratRenderer.material.color;
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             playerTransform = playerObj.transform;
 
         if (biteHitbox != null) biteHitbox.SetActive(false);
+    }
+
+    private void Update()
+    {
+        UpdateAnimator();
     }
 
     protected override void HandleStateMachine()
@@ -71,6 +78,7 @@ public class RatController : BaseEnemy
 
     public override void MoveToPlayer()
     {
+        isMoving = true;
         if (playerTransform == null || isAttacking || currentState == EnemyState.Dead) return;
 
         agent.isStopped = false;
@@ -87,11 +95,12 @@ public class RatController : BaseEnemy
 
     private IEnumerator AttackSequence()
     {
+        isMoving = false;
         isAttacking = true;
         currentState = EnemyState.Attacking;
         agent.isStopped = true;
 
-        if (ratRenderer != null) ratRenderer.material.color = telegraphColor;
+        // (ratRenderer != null) ratRenderer.material.color = telegraphColor;
 
         float timer = 0;
         while (timer < telegraphDuration)
@@ -108,7 +117,7 @@ public class RatController : BaseEnemy
             if (biteHitbox != null) biteHitbox.SetActive(false);
         }
 
-        if (ratRenderer != null) ratRenderer.material.color = originalColor;
+        //if (ratRenderer != null) ratRenderer.material.color = originalColor;
         yield return new WaitForSeconds(stats.attackCooldown);
 
         ResetFromAttack();
@@ -141,6 +150,11 @@ public class RatController : BaseEnemy
 
         // base.Die handles the core physics/sink logic
         if (biteHitbox != null) biteHitbox.SetActive(false);
-        if (ratRenderer != null) ratRenderer.material.color = Color.gray;
+        //if (ratRenderer != null) ratRenderer.material.color = Color.gray;
+    }
+
+    void UpdateAnimator()
+    {
+        anim.SetBool("IsMoving", isMoving);
     }
 }

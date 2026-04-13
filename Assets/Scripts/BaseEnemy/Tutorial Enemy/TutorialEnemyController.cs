@@ -5,11 +5,16 @@ public class TutorialEnemyController : BaseEnemy
 {
     [Header("Boss Specific Setup")]
     public EnemyHitbox attackHitbox; // Assign the child object with the trigger here
-    public MeshRenderer bossRender; // Assign this to make the rat flash during telegraphs
+    //public MeshRenderer bossRender; // Assign this to make the rat flash during telegraphs
 
     private NavMeshAgent agent;
     private Transform player;
     private Color originalColor;
+    public Animator anim;
+
+
+    private bool isAttacking = false;
+    private bool isMoving = false;
 
     protected override void InitializeEnemy()
     {
@@ -18,7 +23,7 @@ public class TutorialEnemyController : BaseEnemy
         agent.speed = stats.moveSpeed;
         agent.stoppingDistance = stats.attackRadius - 0.5f; // Stop slightly before the bite hits
 
-        if (bossRender != null) originalColor = bossRender.material.color;
+        //if (bossRender != null) originalColor = bossRender.material.color;
 
         // Temporary: Find the player by tag
         // Hussain needs to make sure the Player object is tagged "Player"
@@ -41,6 +46,7 @@ public class TutorialEnemyController : BaseEnemy
 
     public override void MoveToPlayer()
     {
+        anim.SetBool("IsMoving", true);
         if (player == null || currentState == EnemyState.Attacking) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
@@ -57,12 +63,13 @@ public class TutorialEnemyController : BaseEnemy
 
     private void StartAttackSequence()
     {
+        anim.SetBool("IsMoving", false);
         currentState = EnemyState.Attacking;
         agent.isStopped = true; // Don't slide while biting
 
         // 1. THE TELEGRAPH (The "Wind-up")
         // Give the player 0.5s to see the 'hiss' or 'glow' and ROLL
-        if (bossRender != null) bossRender.material.color = Color.yellow;
+        //if (bossRender != null) bossRender.material.color = Color.yellow;
 
         Invoke(nameof(ExecuteBite), 0.3f);
     }
@@ -73,6 +80,7 @@ public class TutorialEnemyController : BaseEnemy
 
         // 2. THE HITBOX (Active Frames)
         if (attackHitbox != null) attackHitbox.SetActive(true);
+        anim.SetTrigger("IsAttacking");
 
         // Hold the bite active for a short window
         Invoke(nameof(EndBite), 0.2f);
@@ -81,7 +89,8 @@ public class TutorialEnemyController : BaseEnemy
     private void EndBite()
     {
         if (attackHitbox != null) attackHitbox.SetActive(false);
-        if (bossRender != null) bossRender.material.color = originalColor;
+        isAttacking = false;
+        //if (bossRender != null) bossRender.material.color = originalColor;
 
         // 3. RECOVERY (The "Window" for the player to hit back)
         Invoke(nameof(ResetFromAttack), stats.attackCooldown);
@@ -101,6 +110,11 @@ public class TutorialEnemyController : BaseEnemy
         agent.isStopped = true;
         agent.enabled = false;
         if (attackHitbox != null) attackHitbox.gameObject.SetActive(false);
-        if (bossRender != null) bossRender.material.color = Color.gray; // Gray out on death
+        //if (bossRender != null) bossRender.material.color = Color.gray; // Gray out on death
+    }
+
+    void UpdateAnimator()
+    {
+        
     }
 }
