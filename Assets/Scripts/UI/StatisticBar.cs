@@ -5,9 +5,9 @@ using UnityEngine.UI;
 public class StatisticBar : MonoBehaviour
 {
     [SerializeField]
-    public float stat;
+    private float stat;
     [SerializeField]
-    public float max;
+    private float max;
     [SerializeField]
     private Vector2 size;
     [SerializeField]
