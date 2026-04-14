@@ -29,15 +29,19 @@ public class PlayerProperties : MonoBehaviour
         UpdateUI();
     }
 
-    public void WhealOfFortune(float multiplier)
+    public void WheelOfFortune(float multiplier)
     {
-        //i spelled wheel wrong on purpose (wheal is also a word)
         //random effect of healing, +atk, +iframes, or the reverse
-    }
-
-    public void lateAssignment(float multiplier)
-    {
-        currentHealth = Mathf.Max(1, currentHealth * 0.9f);
+        switch(Random.Range(0, 1))
+        {
+            //HP Change
+            case 0: // Heal
+                Heal(10f * multiplier);
+                break;
+            case 1: // Hurt
+                Heal(-10f * multiplier);
+                break;
+        }
     }
 
     public void TakeDamage(DamageData data)
