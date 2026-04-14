@@ -30,6 +30,21 @@ public class PlayerProperties : MonoBehaviour
         UpdateUI();
     }
 
+    public void WheelOfFortune(float multiplier)
+    {
+        //random effect of healing, +atk, +iframes, or the reverse
+        switch(Random.Range(0, 1))
+        {
+            //HP Change
+            case 0: // Heal
+                Heal(10f * multiplier);
+                break;
+            case 1: // Hurt
+                Heal(-10f * multiplier);
+                break;
+        }
+    }
+
     public void TakeDamage(DamageData data)
     {
         if (currentHealth <= 0) return;
