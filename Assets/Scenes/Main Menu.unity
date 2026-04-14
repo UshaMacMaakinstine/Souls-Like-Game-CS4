@@ -521,7 +521,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -1787,43 +1787,7 @@ RectTransform:
   - {fileID: 1564184218}
   - {fileID: 1262517085}
   - {fileID: 987447767}
-  - {fileID: 530026985}
   m_Father: {fileID: 21743715}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &530026984
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 530026985}
-  m_Layer: 5
-  m_Name: Page3
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &530026985
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 530026984}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 509181946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3171,7 +3135,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -3751,12 +3715,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9bd60128d98ceb4c985d522566f967b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useDefault: 0
-  mainFolder: {fileID: 1269700592}
-  settingsFolder: {fileID: 21743714}
-  GameSet: {fileID: 1166279763}
-  AudioSet: {fileID: 351822280}
-  KeybindSet: {fileID: 509181945}
+  useDefault: 1
+  onObj:
+  - {fileID: 1269700592}
+  - {fileID: 1166279763}
+  offObj:
+  - {fileID: 351822280}
+  - {fileID: 509181945}
+  - {fileID: 21743714}
 --- !u!1 &817521008
 GameObject:
   m_ObjectHideFlags: 0
@@ -5461,7 +5427,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -5726,7 +5692,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -6182,7 +6148,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -8251,7 +8217,6 @@ MonoBehaviour:
   pages:
   - {fileID: 1262517084}
   - {fileID: 987447766}
-  - {fileID: 530026984}
   PreviousButton: {fileID: 2108104477}
   NextButton: {fileID: 1032760593}
 --- !u!1 &1577182261

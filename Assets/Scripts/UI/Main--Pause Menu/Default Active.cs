@@ -3,21 +3,22 @@ using UnityEngine;
 public class DefaultActive : MonoBehaviour
 {
     public bool useDefault;
-    public GameObject mainFolder;
-    public GameObject settingsFolder;
-    public GameObject GameSet;
-    public GameObject AudioSet;
-    public GameObject KeybindSet;
+    public GameObject[] onObj;
+    public GameObject[] offObj;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if(useDefault)
         {
-            GameSet.SetActive(true);
-            AudioSet.SetActive(false);
-            KeybindSet.SetActive(false);
-            settingsFolder.SetActive(false);
-            mainFolder.SetActive(true);
+
+            for(int i = 0; i < onObj.Length;i++)
+            {
+                onObj[i].SetActive(true);
+            }
+            for(int i = 0; i < offObj.Length;i++)
+            {
+                offObj[i].SetActive(false);
+            }
         }
     }
 }
