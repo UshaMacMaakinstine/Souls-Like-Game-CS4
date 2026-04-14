@@ -9,6 +9,7 @@ public class PlayerProperties : MonoBehaviour
     public ThirdPersonController player;
     public BoxCollider[] hurtboxes;
     public TMP_Text healthText;
+    public GameObject healthBar;
 
     [Header("Death UI")]
     public GameObject deathScreenCanvas;
@@ -70,6 +71,7 @@ public class PlayerProperties : MonoBehaviour
     {
         if (healthText != null)
             healthText.text = "Health : " + Mathf.Max(0, currentHealth);
+            healthBar.GetComponent<StatisticBar>().stat = currentHealth;
     }
 
     protected virtual void Die()
