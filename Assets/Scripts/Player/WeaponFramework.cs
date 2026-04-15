@@ -10,7 +10,7 @@ public class WeaponFramework : MonoBehaviour
     public int heavyAttackDamage;
     public int runningHeavyAttackDamage;
     public int range;
-
+    public float attackSpeed;
     private ThirdPersonController player;
 
     void Start()
@@ -68,7 +68,7 @@ public class WeaponFramework : MonoBehaviour
                 case AttackMode.heavyAttack: feedbackColor = Color.green; break;
                 case AttackMode.runningHeavy: feedbackColor = Color.blue; break;
             }
-
+    
             enemyRenderer.material.color = feedbackColor;
             yield return new WaitForSeconds(0.2f);
             enemyRenderer.material.color = Color.white;
