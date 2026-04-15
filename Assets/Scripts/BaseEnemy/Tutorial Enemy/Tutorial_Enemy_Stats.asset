@@ -18,7 +18,7 @@ MonoBehaviour:
   moveSpeed: 20
   rotationSpeed: 20
   aggroRadius: 10
-  attackRadius: 5
+  attackRadius: 2
   contactDamage: 10
   attackCooldown: 1.5
   phaseTwoThreshold: 0.5
