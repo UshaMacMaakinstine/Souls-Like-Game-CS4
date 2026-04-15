@@ -9,6 +9,7 @@ public class PlayerProperties : MonoBehaviour
     public ThirdPersonController player;
     public BoxCollider[] hurtboxes;
     public TMP_Text healthText;
+    public GameObject healthBar;
 
     [Header("Death UI")]
     public GameObject deathScreenCanvas;
@@ -27,6 +28,21 @@ public class PlayerProperties : MonoBehaviour
         if (currentHealth <= 0) return;
         currentHealth += potionAmount;
         UpdateUI();
+    }
+
+    public void WheelOfFortune(float multiplier)
+    {
+        //random effect of healing, +atk, +iframes, or the reverse
+        switch(Random.Range(0, 1))
+        {
+            //HP Change
+            case 0: // Heal
+                Heal(10f * multiplier);
+                break;
+            case 1: // Hurt
+                Heal(-10f * multiplier);
+                break;
+        }
     }
 
     public void TakeDamage(DamageData data)
@@ -55,6 +71,7 @@ public class PlayerProperties : MonoBehaviour
     {
         if (healthText != null)
             healthText.text = "Health : " + Mathf.Max(0, currentHealth);
+            healthBar.GetComponent<StatisticBar>().stat = currentHealth;
     }
 
     protected virtual void Die()
