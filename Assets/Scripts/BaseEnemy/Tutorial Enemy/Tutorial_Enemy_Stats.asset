@@ -15,10 +15,10 @@ MonoBehaviour:
   enemyName: Tutorial Enemy
   maxHealth: 100
   staggerThreshold: 25
-  moveSpeed: 10
-  rotationSpeed: 10
-  aggroRadius: 20
-  attackRadius: 5
+  moveSpeed: 20
+  rotationSpeed: 20
+  aggroRadius: 10
+  attackRadius: 2
   contactDamage: 10
   attackCooldown: 1.5
   phaseTwoThreshold: 0.5

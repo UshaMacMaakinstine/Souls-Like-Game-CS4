@@ -66,12 +66,13 @@ public class TutorialEnemyController : BaseEnemy
         anim.SetBool("IsMoving", false);
         currentState = EnemyState.Attacking;
         agent.isStopped = true; // Don't slide while biting
+        anim.SetTrigger("IsAttacking");
 
         // 1. THE TELEGRAPH (The "Wind-up")
         // Give the player 0.5s to see the 'hiss' or 'glow' and ROLL
         //if (bossRender != null) bossRender.material.color = Color.yellow;
 
-        Invoke(nameof(ExecuteBite), 0.3f);
+        Invoke(nameof(ExecuteBite), 1.22f);
     }
 
     private void ExecuteBite()
@@ -80,7 +81,6 @@ public class TutorialEnemyController : BaseEnemy
 
         // 2. THE HITBOX (Active Frames)
         if (attackHitbox != null) attackHitbox.SetActive(true);
-        anim.SetTrigger("IsAttacking");
 
         // Hold the bite active for a short window
         Invoke(nameof(EndBite), 0.2f);
