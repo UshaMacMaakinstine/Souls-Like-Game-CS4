@@ -6,12 +6,9 @@ public class WeaponFramework : MonoBehaviour
     public enum AttackMode { lightAttack, heavyAttack, runningHeavy, None }
 
     public AttackMode attackMode;
-    public int lightAttackDamage;
-    public int heavyAttackDamage;
-    public int runningHeavyAttackDamage;
-    public int range;
-    public float attackSpeed;
+    public WeaponStats weaponStats;
     private ThirdPersonController player;
+    
 
     void Start()
     {
@@ -34,13 +31,13 @@ public class WeaponFramework : MonoBehaviour
                     switch (attackMode)
                     {
                         case AttackMode.lightAttack:
-                            damageToApply = lightAttackDamage;
+                            damageToApply = weaponStats.lightAttackDamage;
                             break;
                         case AttackMode.heavyAttack:
-                            damageToApply = heavyAttackDamage;
+                            damageToApply = weaponStats.heavyAttackDamage;
                             break;
                         case AttackMode.runningHeavy:
-                            damageToApply = runningHeavyAttackDamage;
+                            damageToApply = weaponStats.runningHeavyAttackDamage;
                             break;
                     }
 
