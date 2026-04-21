@@ -358,19 +358,19 @@ public class ThirdPersonController : MonoBehaviour
         isAttacking = true;
 
         animator.SetTrigger("LightAttack1");
-        yield return new WaitForSeconds(0.133f*animator.speed);
+        yield return new WaitForSeconds(0.133f/animator.speed);
         if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-        yield return new WaitForSeconds(lightAttackDuration[0]*animator.speed);
+        yield return new WaitForSeconds(lightAttackDuration[0]/animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         _inputBuffered = false;
         animator.SetTrigger("LightAttack2");
-        yield return new WaitForSeconds(lightAttackDuration[1]*animator.speed);
+        yield return new WaitForSeconds(lightAttackDuration[1]/animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         _inputBuffered = false;
         animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(lightAttackDuration[2]*animator.speed);
+        yield return new WaitForSeconds(lightAttackDuration[2]/animator.speed);
 
         EndCombo();
     }
@@ -424,9 +424,9 @@ public class ThirdPersonController : MonoBehaviour
             animator.SetTrigger("HeavyAttack");
             yield return new WaitForSeconds(0.26f*animator.speed);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.heavyAttack;
-            yield return new WaitForSeconds((heavyAttackDuration - 1.6f)*animator.speed);
+            yield return new WaitForSeconds((heavyAttackDuration - 1.6f)/animator.speed);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
-            yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f))*animator.speed);
+            yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f))/animator.speed);
         }
         isAttacking = false;
         isHeavyAttack = false;
@@ -439,25 +439,6 @@ public class ThirdPersonController : MonoBehaviour
         isInvincible = false;
     }
 
-    //changes animation speed for attack animations
-    public IEnumerator animationSpeedAdjustment(float time)
-    {
-        // Safety checks to prevent errors
-        if(weaponFramework == null) yield break;
-        if(animator == null) yield break;
-        if (weaponFramework.weaponStats.attackSpeed <= 0) yield break;
-
-        // Reset to normal speed if not attacking
-        if (!isAttacking) 
-        {
-            animator.speed = 1f;
-            yield break;
-        }
-
-        animator.speed = 1f/weaponFramework.weaponStats.attackSpeed;
-        yield return new WaitForSeconds(time);
-    }
-
     void UpdateAnimator()
     {
         float speed = Mathf.Clamp01(moveInput.magnitude);
@@ -468,5 +449,26 @@ public class ThirdPersonController : MonoBehaviour
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsSprinting", shouldSprint);
         animator.SetBool("IsAttacking", isAttacking);
+
+        animationSpeedAdjustment();
+    }
+
+    //changes animation speed for attack animations
+    void animationSpeedAdjustment()
+    {
+        // Safety checks to prevent errors
+        if(weaponFramework == null) return;
+        if(animator == null) return;
+        if (weaponFramework.weaponStats.attackSpeed <= 0) return;
+
+        // Reset to normal speed if not attacking
+        if (!isAttacking) 
+        {
+            animator.speed = 1f;
+            return;
+        }
+
+        animator.speed = weaponFramework.weaponStats.attackSpeed;
+        return;
     }
 }
