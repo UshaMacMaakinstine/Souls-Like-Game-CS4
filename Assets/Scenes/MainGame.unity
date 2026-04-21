@@ -16085,7 +16085,7 @@ PrefabInstance:
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: Settings
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1575436529}
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: cameraTransform
       value: 
