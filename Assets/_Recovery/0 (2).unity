@@ -134,7 +134,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &21743715
 RectTransform:
   m_ObjectHideFlags: 0
@@ -172,6 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 42186964}
   - component: {fileID: 42186963}
+  - component: {fileID: 42186962}
   m_Layer: 5
   m_Name: SoudFxSlider
   m_TagString: Untagged
@@ -179,6 +180,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &42186962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42186961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 42186963}
+  value: 100
+  input: {fileID: 1251613697}
+  AudioChange: 0
+  stuff: {fileID: 0}
 --- !u!114 &42186963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1336,6 +1354,7 @@ GameObject:
   - component: {fileID: 377464886}
   - component: {fileID: 377464885}
   - component: {fileID: 377464884}
+  - component: {fileID: 377464883}
   m_Layer: 5
   m_Name: Back
   m_TagString: Untagged
@@ -1363,6 +1382,21 @@ RectTransform:
   m_AnchoredPosition: {x: 101, y: 120.2}
   m_SizeDelta: {x: 70, y: 17.9473}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &377464883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 377464881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7851eb3ebfe2a4469f2e51b2a947107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OpenSettings
+  settingsFolder: {fileID: 21743714}
+  mainFolder: {fileID: 1269700592}
+  GameButton: {fileID: 1496834763}
 --- !u!114 &377464884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1407,8 +1441,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 279496690}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+      - m_Target: {fileID: 377464883}
+        m_TargetAssemblyTypeName: OpenSettings, Assembly-CSharp
         m_MethodName: closeSettings
         m_Mode: 1
         m_Arguments:
@@ -1842,6 +1876,7 @@ GameObject:
   m_Component:
   - component: {fileID: 571029817}
   - component: {fileID: 571029816}
+  - component: {fileID: 571029815}
   m_Layer: 5
   m_Name: MainSlider
   m_TagString: Untagged
@@ -1849,6 +1884,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &571029815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571029814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 571029816}
+  value: 100
+  input: {fileID: 774968355}
+  AudioChange: 0
+  stuff: {fileID: 0}
 --- !u!114 &571029816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3208,6 +3260,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 774968353}
   m_CullTransparentMesh: 1
+--- !u!1 &775672271
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 775672272}
+  - component: {fileID: 775672273}
+  m_Layer: 0
+  m_Name: JsonStuff
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &775672272
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775672271}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.09298, y: 2.04911, z: -0.2942}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &775672273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775672271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f67c562ff694d21be51d7b9945f2ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &788352848
 GameObject:
   m_ObjectHideFlags: 0
@@ -3581,6 +3677,7 @@ GameObject:
   - component: {fileID: 810647502}
   - component: {fileID: 810647501}
   - component: {fileID: 810647500}
+  - component: {fileID: 810647504}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3675,6 +3772,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &810647504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 810647499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9bd60128d98ceb4c985d522566f967b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useDefault: 1
+  onObj:
+  - {fileID: 1269700592}
+  - {fileID: 1166279763}
+  offObj:
+  - {fileID: 351822280}
+  - {fileID: 509181945}
+  - {fileID: 21743714}
 --- !u!1 &817521008
 GameObject:
   m_ObjectHideFlags: 0
@@ -4567,8 +4684,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1081969049}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4620,6 +4737,7 @@ GameObject:
   m_Component:
   - component: {fileID: 964741903}
   - component: {fileID: 964741902}
+  - component: {fileID: 964741901}
   m_Layer: 5
   m_Name: MusicSlider
   m_TagString: Untagged
@@ -4627,6 +4745,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &964741901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964741900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 964741902}
+  value: 100
+  input: {fileID: 1127664881}
+  AudioChange: 0
+  stuff: {fileID: 0}
 --- !u!114 &964741902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4722,6 +4857,7 @@ GameObject:
   m_Component:
   - component: {fileID: 978414941}
   - component: {fileID: 978414940}
+  - component: {fileID: 978414939}
   m_Layer: 5
   m_Name: VoiclinesSlider
   m_TagString: Untagged
@@ -4729,6 +4865,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &978414939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978414938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 978414940}
+  value: 100
+  input: {fileID: 1097006173}
+  AudioChange: 0
+  stuff: {fileID: 0}
 --- !u!114 &978414940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5101,8 +5254,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 279496690}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+      - m_Target: {fileID: 1564184219}
+        m_TargetAssemblyTypeName: NextPage, Assembly-CSharp
         m_MethodName: PageNext
         m_Mode: 1
         m_Arguments:
@@ -6081,7 +6234,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 279496690}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: sfxInputChange
+        m_MethodName: sensInputChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6207,7 +6360,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1269700593
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8041,6 +8194,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1564184218}
+  - component: {fileID: 1564184219}
   m_Layer: 5
   m_Name: Page Buttons
   m_TagString: Untagged
@@ -8069,6 +8223,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1564184219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564184217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21db01788255d49329a898ba33694dba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NextPage
+  pages:
+  - {fileID: 1262517084}
+  - {fileID: 987447766}
+  PreviousButton: {fileID: 2108104477}
+  NextButton: {fileID: 1032760593}
 --- !u!1 &1577182261
 GameObject:
   m_ObjectHideFlags: 0
@@ -8105,6 +8276,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 94, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1595640169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1595640170}
+  m_Layer: 0
+  m_Name: InputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1595640170
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595640169}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 532.59955, y: 239.32567, z: 73.7275}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1619128338
 GameObject:
   m_ObjectHideFlags: 0
@@ -10746,8 +10948,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 279496690}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+      - m_Target: {fileID: 1564184219}
+        m_TargetAssemblyTypeName: NextPage, Assembly-CSharp
         m_MethodName: PagePrev
         m_Mode: 1
         m_Arguments:
@@ -10965,7 +11167,7 @@ RectTransform:
   m_Father: {fileID: 230298661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11015,5 +11217,7 @@ SceneRoots:
   - {fileID: 1487095322}
   - {fileID: 810647503}
   - {fileID: 1183195649}
+  - {fileID: 1595640170}
   - {fileID: 1302894764}
+  - {fileID: 775672272}
   - {fileID: 279496691}
