@@ -32,7 +32,7 @@ public class ThirdPersonController : MonoBehaviour
     public float rollDuration = 0.7f;
 
     [Header("Attack")]
-    public float lightAttackDuration = 0.6f;
+    public float[] lightAttackDuration = { 0.8f, 0.567f, 0.833f };
     public float heavyAttackDuration = 0.9f;
     public float runningHeavyAttackDuration = 1.2f;
     public bool isLightAttack;
@@ -422,11 +422,11 @@ public class ThirdPersonController : MonoBehaviour
         {
             isHeavyAttack = true;
             animator.SetTrigger("HeavyAttack");
-            yield return new WaitForSeconds(0.26f);
+            yield return new WaitForSeconds(0.26f*animator.speed);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.heavyAttack;
-            yield return new WaitForSeconds((heavyAttackDuration - 1.6f));
+            yield return new WaitForSeconds((heavyAttackDuration - 1.6f)*animator.speed);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
-            yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f)));
+            yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f))*animator.speed);
         }
         isAttacking = false;
         isHeavyAttack = false;
@@ -437,6 +437,25 @@ public class ThirdPersonController : MonoBehaviour
         isInvincible = true;
         yield return new WaitForSeconds(time);
         isInvincible = false;
+    }
+
+    //changes animation speed for attack animations
+    public IEnumerator animationSpeedAdjustment(float time)
+    {
+        // Safety checks to prevent errors
+        if(weaponFramework == null) yield break;
+        if(animator == null) yield break;
+        if (weaponFramework.weaponStats.attackSpeed <= 0) yield break;
+
+        // Reset to normal speed if not attacking
+        if (!isAttacking) 
+        {
+            animator.speed = 1f;
+            yield break;
+        }
+
+        animator.speed = 1f/weaponFramework.weaponStats.attackSpeed;
+        yield return new WaitForSeconds(time);
     }
 
     void UpdateAnimator()
