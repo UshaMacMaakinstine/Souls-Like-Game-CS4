@@ -16999,6 +16999,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5969683493869525451, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: weaponStats
+      value: 
+      objectReference: {fileID: 11400000, guid: 75e572f1502ca3448863e34fbe9fbcbc, type: 2}
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: menu
       value: 
