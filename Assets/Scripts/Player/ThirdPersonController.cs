@@ -48,7 +48,7 @@ public class ThirdPersonController : MonoBehaviour
     private float currentSpeed;
     private float turnSmoothVelocity;
 
-    public GameObject Settings;
+    public GameObject menu;
 
     private bool isGrounded;
     private bool sprintHeld;
@@ -255,16 +255,16 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnPause(InputAction.CallbackContext ctx)
     {
-        if(Settings.activeInHierarchy)
+        if(menu.activeInHierarchy)
         {
-            Settings.SetActive(false);
+            menu.SetActive(false);
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
-            Settings.SetActive(true);
+            menu.SetActive(true);
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
