@@ -32,7 +32,7 @@ public class ThirdPersonController : MonoBehaviour
     public float rollDuration = 0.7f;
 
     [Header("Attack")]
-    public float[] lightAttackDuration = { 0.8f, 0.567f, 0.833f };
+    public float[] lightAttackDuration = { 0.8f, 0.567f, 0.833f};
     public float heavyAttackDuration = 0.9f;
     public float runningHeavyAttackDuration = 1.2f;
     public bool isLightAttack;
@@ -360,17 +360,17 @@ public class ThirdPersonController : MonoBehaviour
         animator.SetTrigger("LightAttack1");
         yield return new WaitForSeconds(0.133f/animator.speed);
         if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-        yield return new WaitForSeconds(lightAttackDuration[0]/animator.speed);
+        yield return new WaitForSeconds(0.8f / animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         _inputBuffered = false;
         animator.SetTrigger("LightAttack2");
-        yield return new WaitForSeconds(lightAttackDuration[1]/animator.speed);
+        yield return new WaitForSeconds(0.567f / animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         _inputBuffered = false;
         animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(lightAttackDuration[2]/animator.speed);
+        yield return new WaitForSeconds(0.833f / animator.speed);
 
         EndCombo();
     }
