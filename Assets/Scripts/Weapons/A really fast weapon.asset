@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dd455324994113418844240dc9e75f5, type: 3}
   m_Name: A really fast weapon
   m_EditorClassIdentifier: Assembly-CSharp::WeaponStats
-  lightAttackDamage: 5
-  heavyAttackDamage: 15
-  runningHeavyAttackDamage: 18
+  lightAttackDamage: 25
+  heavyAttackDamage: 67
+  runningHeavyAttackDamage: 76
   range: 1
-  attackSpeed: 2
+  attackSpeed: 0.7
