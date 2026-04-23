@@ -3267,7 +3267,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!23 &484245203
 MeshRenderer:
@@ -3391,7 +3391,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 643f7e2ed77f44cabac5cdab7ec7b7ae, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 899c65f3ae351094d897cde323480bfe, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &484889506
 GameObject:
@@ -12031,12 +12031,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1564868056}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.53, z: -3.45}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 4.74, z: 0.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 3217114504959921173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1564868058
 BoxCollider:
@@ -16402,13 +16402,13 @@ GameObject:
   m_Component:
   - component: {fileID: 3217114504959921173}
   - component: {fileID: 8810536534988641903}
-  - component: {fileID: 8810536534988641907}
   - component: {fileID: 8810536534988641906}
   - component: {fileID: 8810536534988641905}
   - component: {fileID: 8810536534988641904}
+  - component: {fileID: 8810536534988641907}
   m_Layer: 0
   m_Name: Rat Maybe
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -16475,6 +16475,7 @@ Transform:
   m_Children:
   - {fileID: 2663717883668645018}
   - {fileID: 6986541336827194497}
+  - {fileID: 1564868057}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &3331308600176262033
@@ -16999,6 +17000,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5969683493869525451, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: weaponStats
+      value: 
+      objectReference: {fileID: 11400000, guid: 75e572f1502ca3448863e34fbe9fbcbc, type: 2}
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: menu
       value: 
@@ -17601,7 +17606,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -17614,19 +17619,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 2877426553410868911}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66d2d3445df8145fb90faf5ee3b47727, type: 3}
+  m_Script: {fileID: 11500000, guid: aff61f963908fc344a638827e99eb9d6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TutorialEnemyController
-  stats: {fileID: 11400000, guid: 77ed24a901a034744b4eb1c0c88c1389, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::RatController
+  stats: {fileID: 11400000, guid: 44ca4741cf5bac4459c00f0ae1f8cd15, type: 2}
   currentState: 0
-  deathEffect: {fileID: 0}
+  deathEffect: {fileID: 5260366097138316157, guid: d77334a5806a36c4d972b6392bd98b2e, type: 3}
   maxSinkSpeed: 0.05
   dissolveTime: 3
   postBlackSinkTime: 5
   maxEmissionBase: 100
   maxSizeMultiplier: 0.15
   particleLifetime: 6
-  attackHitbox: {fileID: 0}
+  biteHitbox: {fileID: 1564868059}
+  ratRenderer: {fileID: 0}
+  telegraphColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  telegraphDuration: 0.5
+  biteActiveDuration: 0.2
   anim: {fileID: 8810536534988641903}
 --- !u!4 &8847865107596811926
 Transform:
@@ -17684,12 +17693,11 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 484245205}
   - {fileID: 477425022}
+  - {fileID: 3217114504959921173}
   - {fileID: 5551463087805561317}
   - {fileID: 1259434385}
   - {fileID: 1934151246}
   - {fileID: 130469365}
   - {fileID: 1469076473}
   - {fileID: 1447191050}
-  - {fileID: 1564868057}
-  - {fileID: 3217114504959921173}
   - {fileID: 1822688305}

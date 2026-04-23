@@ -7,7 +7,8 @@ public class RatController : BaseEnemy
 {
     [Header("Rat Specific Setup")]
     public EnemyHitbox biteHitbox;
-    public MeshRenderer ratRenderer;
+    // Changed to Renderer to be flexible with SkinnedMeshRenderers on children
+    public Renderer ratRenderer;
 
     [Header("Visual Feedback")]
     public Color telegraphColor = Color.yellow;
@@ -25,16 +26,32 @@ public class RatController : BaseEnemy
     {
         agent = GetComponent<NavMeshAgent>();
 
+        // Find the renderer on the child 'meshes[0]' if not assigned in Inspector
+        if (ratRenderer == null)
+        {
+            Transform meshChild = transform.Find("meshes[0]");
+            if (meshChild != null)
+            {
+                ratRenderer = meshChild.GetComponent<Renderer>();
+            }
+            else
+            {
+                // Fallback: search all children if "meshes[0]" name is missing
+                ratRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+            }
+        }
+
         if (stats != null)
         {
             agent.speed = stats.moveSpeed;
-            // Set stopping distance slightly SHORTER than attack range
             agent.stoppingDistance = stats.attackRadius - 0.2f;
             currentHealth = stats.maxHealth;
         }
 
-        //if (ratRenderer != null)
-            //originalColor = ratRenderer.material.color;
+        if (ratRenderer != null)
+        {
+            originalColor = ratRenderer.material.color;
+        }
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -45,19 +62,27 @@ public class RatController : BaseEnemy
 
     private void Update()
     {
+        // FIX: If the rat is idle, he needs to check if the player is close enough to start chasing
+        if (currentState == EnemyState.Idle && !isAttacking)
+        {
+            CheckForPlayer();
+        }
+
+        HandleStateMachine();
         UpdateAnimator();
     }
 
     protected override void HandleStateMachine()
     {
+        // Don't let the base state machine override us if we are mid-attack or dead
         if (isAttacking || currentState == EnemyState.Dead) return;
 
         base.HandleStateMachine();
 
+        // Keep looking at the player if they are within a reasonable distance
         if (playerTransform != null)
         {
             float distance = Vector3.Distance(transform.position, playerTransform.position);
-            // Constant rotation toward player when close
             if (distance <= stats.attackRadius + 1.5f)
             {
                 LookAtPlayer();
@@ -78,15 +103,19 @@ public class RatController : BaseEnemy
 
     public override void MoveToPlayer()
     {
-        isMoving = true;
-        if (playerTransform == null || isAttacking || currentState == EnemyState.Dead) return;
+        if (playerTransform == null || isAttacking || currentState == EnemyState.Dead)
+        {
+            isMoving = false;
+            return;
+        }
 
+        isMoving = true;
         agent.isStopped = false;
         agent.SetDestination(playerTransform.position);
 
         float distance = Vector3.Distance(transform.position, playerTransform.position);
 
-        // BUFFER: Adding +0.5f ensures the trigger happens before the NavMeshAgent fully halts
+        // Transition to attack if close enough
         if (distance <= (stats.attackRadius + 0.5f) && !isAttacking)
         {
             StartCoroutine(AttackSequence());
@@ -100,7 +129,8 @@ public class RatController : BaseEnemy
         currentState = EnemyState.Attacking;
         agent.isStopped = true;
 
-        // (ratRenderer != null) ratRenderer.material.color = telegraphColor;
+        // Visual telegraph (turning yellow)
+        if (ratRenderer != null) ratRenderer.material.color = telegraphColor;
 
         float timer = 0;
         while (timer < telegraphDuration)
@@ -110,6 +140,7 @@ public class RatController : BaseEnemy
             yield return null;
         }
 
+        // Deal Damage
         if (currentState != EnemyState.Dead)
         {
             if (biteHitbox != null) biteHitbox.SetActive(true);
@@ -117,7 +148,9 @@ public class RatController : BaseEnemy
             if (biteHitbox != null) biteHitbox.SetActive(false);
         }
 
-        //if (ratRenderer != null) ratRenderer.material.color = originalColor;
+        // Reset visual
+        if (ratRenderer != null) ratRenderer.material.color = originalColor;
+
         yield return new WaitForSeconds(stats.attackCooldown);
 
         ResetFromAttack();
@@ -148,13 +181,17 @@ public class RatController : BaseEnemy
         StopAllCoroutines();
         base.Die();
 
-        // base.Die handles the core physics/sink logic
         if (biteHitbox != null) biteHitbox.SetActive(false);
-        //if (ratRenderer != null) ratRenderer.material.color = Color.gray;
+        if (ratRenderer != null) ratRenderer.material.color = Color.gray;
     }
 
     void UpdateAnimator()
     {
-        anim.SetBool("IsMoving", isMoving);
+        if (anim != null)
+        {
+            // Update the animator based on whether the NavMeshAgent is actually moving
+            bool moving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
+            anim.SetBool("IsMoving", moving);
+        }
     }
 }
