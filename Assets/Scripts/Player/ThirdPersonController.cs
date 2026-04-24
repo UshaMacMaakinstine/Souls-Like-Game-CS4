@@ -37,6 +37,10 @@ public class ThirdPersonController : MonoBehaviour
     public float runningHeavyAttackDuration = 1.2f;
     public bool isLightAttack;
     public bool isHeavyAttack;
+    
+    [Header("Boss Interaction")]
+    public float controlMultiplier = 1f; // 1 = normal, -1 = reversed
+    public bool isMovementFrozen = false; // For Stuns/Cutscenes
 
     private CharacterController controller;
     private PlayerInput inputActions; // Your generated class
@@ -162,6 +166,9 @@ public class ThirdPersonController : MonoBehaviour
         UpdateAnimator();
     }
 
+    // Helps Mr. Watson see if you are "moving" during Paws Up
+    public float CurrentVelocityMagnitude => controller.velocity.magnitude;
+
     void GroundCheck()
     {
         isGrounded = controller.isGrounded;
@@ -172,7 +179,8 @@ public class ThirdPersonController : MonoBehaviour
 
     void HandleMovement()
     {
-        Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        if (isMovementFrozen) return;
+        Vector3 inputDirection = new Vector3(moveInput.x * controlMultiplier, 0f, moveInput.y * controlMultiplier).normalized;
         bool isMoving = inputDirection.magnitude >= 0.1f;
 
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
@@ -203,6 +211,7 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnJump(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (isGrounded && !isCrouching && !isRolling && !isAttacking)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -212,6 +221,7 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnCrouch(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (isRolling || isAttacking || isTransitioningCrouch)
             return;
 
@@ -223,12 +233,14 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnRoll(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (isGrounded && !isRolling && !isAttacking && !isTransitioningCrouch)
             StartCoroutine(Roll());
     }
 
     void OnLightAttack(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (!ctx.performed) return;
 
         if (_isAttackingInternal)
@@ -243,12 +255,14 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnHeavyAttack(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             StartCoroutine(DoHeavyAttack());
     }
 
     void OnHeal(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             playerProperties.Heal(10f);
     }

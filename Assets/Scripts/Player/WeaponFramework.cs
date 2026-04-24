@@ -8,7 +8,6 @@ public class WeaponFramework : MonoBehaviour
     public AttackMode attackMode;
     public WeaponStats weaponStats;
     private ThirdPersonController player;
-    
 
     void Start()
     {
@@ -17,48 +16,54 @@ public class WeaponFramework : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Ensure player exists and is currently in an attack state
         if (player != null && player.isAttacking)
         {
-            if (other.CompareTag("Enemy") && gameObject.CompareTag("PlayerWeapon"))
+            float damageToApply = CalculateDamage();
+            if (damageToApply <= 0) return;
+
+            // UNIVERSAL CHECK 1: Is this a specialized Hitbox/Limb? (Watson, etc.)
+            if (other.TryGetComponent<BossHitbox>(out var limb))
             {
-                BaseEnemy enemyComponent = other.GetComponent<BaseEnemy>();
+                limb.bossController.TakeDamage(damageToApply, limb.limbType);
+                StartCoroutine(ChangeColorFeedback(other.gameObject));
+                return; 
+            }
 
-                if (enemyComponent != null)
+            // UNIVERSAL CHECK 2: Is this a standard Enemy?
+            if (other.CompareTag("Enemy"))
+            {
+                BaseEnemy enemy = other.GetComponent<BaseEnemy>();
+                if (enemy != null)
                 {
-                    float damageToApply = 0;
-
-                    switch (attackMode)
-                    {
-                        case AttackMode.lightAttack:
-                            damageToApply = weaponStats.lightAttackDamage;
-                            break;
-                        case AttackMode.heavyAttack:
-                            damageToApply = weaponStats.heavyAttackDamage;
-                            break;
-                        case AttackMode.runningHeavy:
-                            damageToApply = weaponStats.runningHeavyAttackDamage;
-                            break;
-                    }
-
-                    if (damageToApply > 0)
-                    {
-                        enemyComponent.TakeDamage(damageToApply);
-                        StartCoroutine(ChangeColorFeedback(other.gameObject));
-                    }
+                    enemy.TakeDamage(damageToApply);
+                    StartCoroutine(ChangeColorFeedback(other.gameObject));
                 }
             }
         }
     }
 
-    IEnumerator ChangeColorFeedback(GameObject enemy)
+    private float CalculateDamage()
     {
-        if (enemy != null)
+        switch (attackMode)
         {
-            Renderer enemyRenderer = enemy.GetComponent<Renderer>();
-            if (enemyRenderer == null) yield break;
+            case AttackMode.lightAttack: return weaponStats.lightAttackDamage;
+            case AttackMode.heavyAttack: return weaponStats.heavyAttackDamage;
+            case AttackMode.runningHeavy: return weaponStats.runningHeavyAttackDamage;
+            default: return 0;
+        }
+    }
 
+    IEnumerator ChangeColorFeedback(GameObject target)
+    {
+        if (target != null)
+        {
+            Renderer targetRenderer = target.GetComponent<Renderer>();
+            if (targetRenderer == null) targetRenderer = target.GetComponentInChildren<Renderer>();
+            if (targetRenderer == null) yield break;
+
+            Color originalColor = targetRenderer.material.color;
             Color feedbackColor = Color.white;
+
             switch (attackMode)
             {
                 case AttackMode.lightAttack: feedbackColor = Color.red; break;
@@ -66,9 +71,9 @@ public class WeaponFramework : MonoBehaviour
                 case AttackMode.runningHeavy: feedbackColor = Color.blue; break;
             }
     
-            enemyRenderer.material.color = feedbackColor;
+            targetRenderer.material.color = feedbackColor;
             yield return new WaitForSeconds(0.2f);
-            enemyRenderer.material.color = Color.white;
+            targetRenderer.material.color = originalColor;
         }
     }
 }
