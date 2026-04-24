@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using System.Collections;
 
 public enum BossState { Phase1, Transitioning, Teacher, Violin, Karaoke }
 
@@ -23,12 +25,22 @@ public class MrWatsonController : MonoBehaviour
     public float stompDamage = 20f;
     public float stompRadius = 5f;
 
+    public GameObject healthBar;
+    public TMP_Text damageText;
+
+    [Header("Stacking Damage UI")]
+    private float accumulatedDamage = 0f;
+    private Coroutine damageStackCoroutine;
+    public float stackResetTime = 1.5f; // How long to wait before resetting the stack
+
     public void TakeDamage(float damage, LimbType limb)
     {
         if (limb == LimbType.Leg && !isDown)
         {
             currentLegDamage += damage;
             //anim.SetTrigger("Light_Flinch"); // Reactive hit animation
+            bodyHealth -= damage;
+            
 
             if (currentLegDamage >= legHealth)
             {
@@ -41,11 +53,15 @@ public class MrWatsonController : MonoBehaviour
             //anim.SetTrigger("Head_Hit_Flinch");
         }
 
+        UpdateStackedDamage(damage);
+
         // Check for Phase Transition
         if (bodyHealth <= 600f && currentState == BossState.Phase1)
         {
             StartPhase2();
         }
+
+        UpdateUI();
     }
 
     public void FireBullet()
@@ -55,6 +71,37 @@ public class MrWatsonController : MonoBehaviour
             Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
             // Add a small muzzle flash or sound effect here if you have one
         }
+    }
+
+    private void UpdateStackedDamage(float damage)
+    {
+        // 1. Add to the total
+        accumulatedDamage += damage;
+
+        // 2. Show the text (make sure the object is active)
+        damageText.gameObject.SetActive(true);
+        damageText.text = Mathf.RoundToInt(accumulatedDamage).ToString();
+
+        // 3. Reset the "Close UI" timer
+        if (damageStackCoroutine != null)
+        {
+            StopCoroutine(damageStackCoroutine);
+        }
+
+        damageStackCoroutine = StartCoroutine(ResetDamageStack());
+    }
+
+    IEnumerator ResetDamageStack()
+    {
+        // Wait for the player to stop dealing damage
+        yield return new WaitForSeconds(stackResetTime);
+
+        // Fade out or just disable
+        damageText.gameObject.SetActive(false);
+
+        // Reset the counter for the next time they start hitting
+        accumulatedDamage = 0f;
+        damageStackCoroutine = null;
     }
 
     // 2. RECEIVER FOR: Stomp / Melee
@@ -78,7 +125,12 @@ public class MrWatsonController : MonoBehaviour
         anim.SetInteger("Phase", 1); // Updates the Animator's logic
     }
 
-    System.Collections.IEnumerator DownedSequence()
+    private void UpdateUI()
+    {
+        healthBar.GetComponent<StatisticBar>().stat = bodyHealth;
+    }
+
+    IEnumerator DownedSequence()
     {
         isDown = true;
         anim.SetTrigger("FallOver");

@@ -119,7 +119,7 @@ public class MrWatsonAI : MonoBehaviour
         // 3. APPLY THE SIDEWAYS OFFSET
         // If he is pointing to his RIGHT, rotate him -90 degrees.
         // If he is pointing to his LEFT, rotate him 90 degrees.
-        Quaternion offset = Quaternion.Euler(0, -90, 0); 
+        Quaternion offset = Quaternion.Euler(0, 90, 0); 
         transform.rotation = lookRotation * offset;
 
         // 4. Trigger the animation

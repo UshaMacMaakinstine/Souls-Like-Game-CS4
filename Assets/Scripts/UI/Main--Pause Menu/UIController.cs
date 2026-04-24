@@ -168,6 +168,13 @@ public class UIController : MonoBehaviour
         Debug.Log("quit game");
     }
 
+    public void resume()
+    {
+        mainFolder.SetActive(false);
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
     public void SettingsTabChange(int i)
     {
         foreach(GameObject tab in settingsTab)
