@@ -9,8 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: 54ea58a1b13cfb846b2b9b6f58cf10ef
   - enabled: 1
-    path: Assets/Scenes/MainGame.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
+    path: Assets/Scenes/RatBossTester.unity
+    guid: 664efe911f1d81f448b52f850ff45f75
+  - enabled: 1
+    path: Assets/Scenes/Watson Boss.unity
+    guid: 29486907f348c454b83ab34d56f3f5bf
+  - enabled: 1
+    path: Assets/Scenes/Map BUilding.unity
+    guid: 3584f0fd949128f4fb33d574de46a040
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 5c26f8073d9dbe446a724dbfbe61424f, type: 3}
   m_UseUCBPForAssetBundles: 0
