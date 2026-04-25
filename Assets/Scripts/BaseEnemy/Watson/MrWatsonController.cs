@@ -7,6 +7,7 @@ public enum BossState { Phase1, Transitioning, Teacher, Violin, Karaoke }
 public class MrWatsonController : MonoBehaviour
 {
     public Animator anim;
+    private UnityEngine.AI.NavMeshAgent agent;
     public BossState currentState = BossState.Phase1;
     public bool isDown = false;
 
@@ -33,6 +34,12 @@ public class MrWatsonController : MonoBehaviour
     private Coroutine damageStackCoroutine;
     public float stackResetTime = 1.5f; // How long to wait before resetting the stack
 
+    void Start()
+    {
+        // Get the agent component once at the start
+        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+    }
+    
     public void TakeDamage(float damage, LimbType limb)
     {
         if (limb == LimbType.Leg && !isDown)
@@ -45,6 +52,7 @@ public class MrWatsonController : MonoBehaviour
             if (currentLegDamage >= legHealth)
             {
                 StartCoroutine(DownedSequence());
+                currentLegDamage = 0f;
             }
         }
         else if (limb == LimbType.Head && isDown)
@@ -66,10 +74,23 @@ public class MrWatsonController : MonoBehaviour
 
     public void FireBullet()
     {
-        if (bulletPrefab && fingerGunMuzzle)
+        StartCoroutine(FireBurst(3, 0.15f)); // 3 bullets, 0.15s apart
+    }
+
+    private IEnumerator FireBurst(int count, float delay)
+    {
+        for (int i = 0; i < count; i++)
         {
-            Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
-            // Add a small muzzle flash or sound effect here if you have one
+            if (bulletPrefab && fingerGunMuzzle)
+            {
+                // Spawn the bullet
+                GameObject projectile = Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
+                
+                // Optional: Add a tiny bit of random spread so the bullets aren't perfectly pixel-perfect
+                projectile.transform.Rotate(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+            }
+            
+            yield return new WaitForSeconds(delay);
         }
     }
 
@@ -130,17 +151,64 @@ public class MrWatsonController : MonoBehaviour
         healthBar.GetComponent<StatisticBar>().stat = bodyHealth;
     }
 
-    IEnumerator DownedSequence()
+    public IEnumerator DownedSequence()
     {
         isDown = true;
-        anim.SetTrigger("FallOver");
+    
+        // 1. Get both the Agent and the AI script
+        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        MrWatsonAI aiScript = GetComponent<MrWatsonAI>();
+
+        // 2. STOPS the AI from running its Update/Coroutines
+        if (aiScript != null) aiScript.enabled = false; 
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.enabled = false; // Physically removes the upright capsule
+        }
+
+        // 3. Play the animation
         anim.SetBool("isDown", true);
-        
-        yield return new WaitForSeconds(5f); // Stay down for 5 seconds
-        
+        anim.SetTrigger("FallOver");
+
+        float elapsed = 0f;
+
+        while (elapsed < 1.133f)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / 1.133f);
+            float rotation = Mathf.Lerp(0, 90, t);
+            float up = Mathf.Lerp(transform.position.y, (transform.position.y + 10), t);
+            transform.rotation = Quaternion.Euler(rotation, 0f, 0f);
+            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(5f);
+
         anim.SetTrigger("GetUp");
         anim.SetBool("isDown", false);
-        currentLegDamage = 0;
+
+        elapsed = 0f;
+
+        while (elapsed < 2.33f)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / 2.33f);
+            float rotation = Mathf.Lerp(90, 0, t);
+            float up = Mathf.Lerp((transform.position.z + 10), transform.position.z, t);
+            transform.rotation = Quaternion.Euler(rotation, 0f, 0f);
+            transform.position = new Vector3(transform.position.x, transform.position.y, up);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(2f); 
+
+        // 4. Turn everything back on
+        if (agent != null) agent.enabled = true;
+        if (aiScript != null) aiScript.enabled = true;
+        
         isDown = false;
     }
 

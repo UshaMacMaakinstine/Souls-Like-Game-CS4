@@ -70,10 +70,10 @@ public class MrWatsonAI : MonoBehaviour
 
     void DecideNextMove()
     {
-        // Simple 50/50 chance for logic testing
-        if (Random.value > 0.5f)
-            StartCoroutine(MeleeChargeSequence());
-        else
+        // // Simple 50/50 chance for logic testing
+        // if (Random.value > 0.5f)
+        //     StartCoroutine(MeleeChargeSequence());
+        // else
             ExecuteRanged();
     }
 
@@ -82,23 +82,24 @@ public class MrWatsonAI : MonoBehaviour
         isAttacking = true;
         lastAttackTime = Time.time;
 
-        // Lock in target position
         Vector3 targetPos = playerTransform.position;
         agent.isStopped = false;
         agent.speed = chargeSpeed;
         agent.SetDestination(targetPos);
 
-        // Wait until close to target
-        while (agent.pathPending || agent.remainingDistance > 1.5f)
+        // FIX: Added "agent.enabled" check to the while loop
+        while (agent.enabled && (agent.pathPending || agent.remainingDistance > 1.5f))
         {
             yield return null;
         }
 
-        // Stop and Trigger Melee
-        agent.isStopped = true;
-        controller.anim.SetTrigger("MeleeAttack");
+        // Double check agent is still enabled before calling commands
+        if (agent.enabled)
+        {
+            agent.isStopped = true;
+            controller.anim.SetTrigger("MeleeAttack");
+        }
 
-        // Wait a moment for the animation to play before allowing new moves
         yield return new WaitForSeconds(1.5f);
         isAttacking = false;
     }
