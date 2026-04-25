@@ -74,10 +74,23 @@ public class MrWatsonController : MonoBehaviour
 
     public void FireBullet()
     {
-        if (bulletPrefab && fingerGunMuzzle)
+        StartCoroutine(FireBurst(3, 0.15f)); // 3 bullets, 0.15s apart
+    }
+
+    private IEnumerator FireBurst(int count, float delay)
+    {
+        for (int i = 0; i < count; i++)
         {
-            Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
-            // Add a small muzzle flash or sound effect here if you have one
+            if (bulletPrefab && fingerGunMuzzle)
+            {
+                // Spawn the bullet
+                GameObject projectile = Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
+                
+                // Optional: Add a tiny bit of random spread so the bullets aren't perfectly pixel-perfect
+                projectile.transform.Rotate(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+            }
+            
+            yield return new WaitForSeconds(delay);
         }
     }
 
@@ -166,9 +179,9 @@ public class MrWatsonController : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / 1.133f);
             float rotation = Mathf.Lerp(0, 90, t);
-            float up = Mathf.Lerp(transform.position.z, (transform.position.z + 10), t);
+            float up = Mathf.Lerp(transform.position.y, (transform.position.y + 10), t);
             transform.rotation = Quaternion.Euler(rotation, 0f, 0f);
-            transform.position = new Vector3(transform.position.x, transform.position.y, up);
+            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             yield return null;
         }
 
