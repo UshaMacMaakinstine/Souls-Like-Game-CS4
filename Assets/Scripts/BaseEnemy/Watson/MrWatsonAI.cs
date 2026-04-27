@@ -70,10 +70,10 @@ public class MrWatsonAI : MonoBehaviour
 
     void DecideNextMove()
     {
-        // Simple 50/50 chance for logic testing
-        if (Random.value > 0.5f)
-            StartCoroutine(MeleeChargeSequence());
-        else
+        // // Simple 50/50 chance for logic testing
+        // if (Random.value > 0.5f)
+        //     StartCoroutine(MeleeChargeSequence());
+        // else
             ExecuteRanged();
     }
 
