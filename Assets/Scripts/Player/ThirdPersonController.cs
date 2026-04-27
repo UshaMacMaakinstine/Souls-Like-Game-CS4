@@ -32,11 +32,15 @@ public class ThirdPersonController : MonoBehaviour
     public float rollDuration = 0.7f;
 
     [Header("Attack")]
-    public float[] lightAttackDuration = { 0.8f, 0.567f, 0.833f };
+    public float[] lightAttackDuration = { 0.8f, 0.567f, 0.833f};
     public float heavyAttackDuration = 0.9f;
     public float runningHeavyAttackDuration = 1.2f;
     public bool isLightAttack;
     public bool isHeavyAttack;
+    
+    [Header("Boss Interaction")]
+    public float controlMultiplier = 1f; // 1 = normal, -1 = reversed
+    public bool isMovementFrozen = false; // For Stuns/Cutscenes
 
     private CharacterController controller;
     private PlayerInput inputActions; // Your generated class
@@ -48,7 +52,7 @@ public class ThirdPersonController : MonoBehaviour
     private float currentSpeed;
     private float turnSmoothVelocity;
 
-    public GameObject Settings;
+    public GameObject menu;
 
     private bool isGrounded;
     private bool sprintHeld;
@@ -162,6 +166,9 @@ public class ThirdPersonController : MonoBehaviour
         UpdateAnimator();
     }
 
+    // Helps Mr. Watson see if you are "moving" during Paws Up
+    public float CurrentVelocityMagnitude => controller.velocity.magnitude;
+
     void GroundCheck()
     {
         isGrounded = controller.isGrounded;
@@ -172,7 +179,8 @@ public class ThirdPersonController : MonoBehaviour
 
     void HandleMovement()
     {
-        Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        if (isMovementFrozen) return;
+        Vector3 inputDirection = new Vector3(moveInput.x * controlMultiplier, 0f, moveInput.y * controlMultiplier).normalized;
         bool isMoving = inputDirection.magnitude >= 0.1f;
 
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
@@ -203,6 +211,7 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnJump(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (isGrounded && !isCrouching && !isRolling && !isAttacking)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -212,6 +221,7 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnCrouch(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (isRolling || isAttacking || isTransitioningCrouch)
             return;
 
@@ -223,12 +233,14 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnRoll(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (isGrounded && !isRolling && !isAttacking && !isTransitioningCrouch)
             StartCoroutine(Roll());
     }
 
     void OnLightAttack(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (!ctx.performed) return;
 
         if (_isAttackingInternal)
@@ -243,28 +255,30 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnHeavyAttack(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             StartCoroutine(DoHeavyAttack());
     }
 
     void OnHeal(InputAction.CallbackContext ctx)
     {
+        if (isMovementFrozen) return;
         if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
             playerProperties.Heal(10f);
     }
 
     void OnPause(InputAction.CallbackContext ctx)
     {
-        if(Settings.activeInHierarchy)
+        if(menu.activeInHierarchy)
         {
-            Settings.SetActive(false);
+            menu.SetActive(false);
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
-            Settings.SetActive(true);
+            menu.SetActive(true);
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
@@ -358,19 +372,19 @@ public class ThirdPersonController : MonoBehaviour
         isAttacking = true;
 
         animator.SetTrigger("LightAttack1");
-        yield return new WaitForSeconds(0.133f*animator.speed);
+        yield return new WaitForSeconds(0.133f/animator.speed);
         if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-        yield return new WaitForSeconds(lightAttackDuration[0]*animator.speed);
+        yield return new WaitForSeconds(0.8f / animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         _inputBuffered = false;
         animator.SetTrigger("LightAttack2");
-        yield return new WaitForSeconds(lightAttackDuration[1]*animator.speed);
+        yield return new WaitForSeconds(0.567f / animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }
 
         _inputBuffered = false;
         animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(lightAttackDuration[2]*animator.speed);
+        yield return new WaitForSeconds(0.833f / animator.speed);
 
         EndCombo();
     }
@@ -424,9 +438,9 @@ public class ThirdPersonController : MonoBehaviour
             animator.SetTrigger("HeavyAttack");
             yield return new WaitForSeconds(0.26f*animator.speed);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.heavyAttack;
-            yield return new WaitForSeconds((heavyAttackDuration - 1.6f)*animator.speed);
+            yield return new WaitForSeconds((heavyAttackDuration - 1.6f)/animator.speed);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
-            yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f))*animator.speed);
+            yield return new WaitForSeconds((heavyAttackDuration - (heavyAttackDuration - 0.7f))/animator.speed);
         }
         isAttacking = false;
         isHeavyAttack = false;
@@ -439,25 +453,6 @@ public class ThirdPersonController : MonoBehaviour
         isInvincible = false;
     }
 
-    //changes animation speed for attack animations
-    public IEnumerator animationSpeedAdjustment(float time)
-    {
-        // Safety checks to prevent errors
-        if(weaponFramework == null) yield break;
-        if(animator == null) yield break;
-        if (weaponFramework.weaponStats.attackSpeed <= 0) yield break;
-
-        // Reset to normal speed if not attacking
-        if (!isAttacking) 
-        {
-            animator.speed = 1f;
-            yield break;
-        }
-
-        animator.speed = 1f/weaponFramework.weaponStats.attackSpeed;
-        yield return new WaitForSeconds(time);
-    }
-
     void UpdateAnimator()
     {
         float speed = Mathf.Clamp01(moveInput.magnitude);
@@ -468,5 +463,26 @@ public class ThirdPersonController : MonoBehaviour
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsSprinting", shouldSprint);
         animator.SetBool("IsAttacking", isAttacking);
+
+        animationSpeedAdjustment();
+    }
+
+    //changes animation speed for attack animations
+    void animationSpeedAdjustment()
+    {
+        // Safety checks to prevent errors
+        if(weaponFramework == null) return;
+        if(animator == null) return;
+        if (weaponFramework.weaponStats.attackSpeed <= 0) return;
+
+        // Reset to normal speed if not attacking
+        if (!isAttacking) 
+        {
+            animator.speed = 1f;
+            return;
+        }
+
+        animator.speed = weaponFramework.weaponStats.attackSpeed;
+        return;
     }
 }

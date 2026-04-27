@@ -172,7 +172,6 @@ GameObject:
   m_Component:
   - component: {fileID: 42186964}
   - component: {fileID: 42186963}
-  - component: {fileID: 42186962}
   m_Layer: 5
   m_Name: SoudFxSlider
   m_TagString: Untagged
@@ -180,22 +179,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &42186962
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42186961}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slider: {fileID: 42186963}
-  value: 100
-  input: {fileID: 1251613697}
-  AudioChange: 0
 --- !u!114 &42186963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,9 +230,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 42186962}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: sliderChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: sfxSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -521,7 +504,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -550,9 +533,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1399292397}
-        m_TargetAssemblyTypeName: SensitivityChange, Assembly-CSharp
-        m_MethodName: inputChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: sensInputChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1103,6 +1086,77 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &279496689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 279496691}
+  - component: {fileID: 279496690}
+  m_Layer: 0
+  m_Name: UIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &279496690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279496689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a647635d16de74ea2acd9ff0914e0d28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIController
+  sens: 0
+  sensSlider: {fileID: 1399292398}
+  sensInput: {fileID: 71221634}
+  mainAudio: 0
+  mainAudioSlider: {fileID: 571029816}
+  mainAudioInput: {fileID: 774968355}
+  musicAudio: 0
+  musicAudioSlider: {fileID: 964741902}
+  musicAudioInput: {fileID: 1127664881}
+  sfxAudio: 0
+  sfxAudioSlider: {fileID: 42186963}
+  sfxAudioInput: {fileID: 1251613697}
+  voiceAudio: 0
+  voiceAudioSlider: {fileID: 978414940}
+  voiceAudioInput: {fileID: 1097006173}
+  settingsTab:
+  - {fileID: 1166279763}
+  - {fileID: 351822280}
+  - {fileID: 509181945}
+  pages:
+  - {fileID: 1262517084}
+  - {fileID: 987447766}
+  PreviousButton: {fileID: 2108104477}
+  NextButton: {fileID: 1032760593}
+  settingsFolder: {fileID: 21743714}
+  mainFolder: {fileID: 1269700592}
+  GameButton: {fileID: 1496834763}
+--- !u!4 &279496691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279496689}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 414.25, y: 248, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &297090502
 GameObject:
   m_ObjectHideFlags: 0
@@ -1282,7 +1336,6 @@ GameObject:
   - component: {fileID: 377464886}
   - component: {fileID: 377464885}
   - component: {fileID: 377464884}
-  - component: {fileID: 377464883}
   m_Layer: 5
   m_Name: Back
   m_TagString: Untagged
@@ -1310,21 +1363,6 @@ RectTransform:
   m_AnchoredPosition: {x: 101, y: 120.2}
   m_SizeDelta: {x: 70, y: 17.9473}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &377464883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 377464881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7851eb3ebfe2a4469f2e51b2a947107, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OpenSettings
-  settingsFolder: {fileID: 21743714}
-  mainFolder: {fileID: 1269700592}
-  GameButton: {fileID: 1496834763}
 --- !u!114 &377464884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1369,8 +1407,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 377464883}
-        m_TargetAssemblyTypeName: OpenSettings, Assembly-CSharp
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
         m_MethodName: closeSettings
         m_Mode: 1
         m_Arguments:
@@ -1770,7 +1808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &509181946
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1804,7 +1842,6 @@ GameObject:
   m_Component:
   - component: {fileID: 571029817}
   - component: {fileID: 571029816}
-  - component: {fileID: 571029815}
   m_Layer: 5
   m_Name: MainSlider
   m_TagString: Untagged
@@ -1812,22 +1849,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &571029815
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571029814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slider: {fileID: 571029816}
-  value: 100
-  input: {fileID: 774968355}
-  AudioChange: 0
 --- !u!114 &571029816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1879,9 +1900,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 571029815}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: sliderChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: mainAudioSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2162,7 +2183,6 @@ GameObject:
   - component: {fileID: 630887536}
   - component: {fileID: 630887535}
   - component: {fileID: 630887534}
-  - component: {fileID: 630887537}
   m_Layer: 5
   m_Name: Keybinds Button
   m_TagString: Untagged
@@ -2234,14 +2254,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 630887537}
-        m_TargetAssemblyTypeName: OpenSettingCategory, Assembly-CSharp
-        m_MethodName: onClick
-        m_Mode: 1
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: SettingsTabChange
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2284,22 +2304,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630887532}
   m_CullTransparentMesh: 1
---- !u!114 &630887537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 630887532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89ef77889a5915a4cb5b21ebbdfe71a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  specificSettingsFolder: {fileID: 509181945}
-  otherSettingsFolder:
-  - {fileID: 1166279763}
-  - {fileID: 351822280}
 --- !u!1 &657114290
 GameObject:
   m_ObjectHideFlags: 0
@@ -2748,7 +2752,6 @@ GameObject:
   - component: {fileID: 697432701}
   - component: {fileID: 697432700}
   - component: {fileID: 697432699}
-  - component: {fileID: 697432698}
   m_Layer: 5
   m_Name: Play Button
   m_TagString: Untagged
@@ -2776,19 +2779,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 22.814}
   m_SizeDelta: {x: 171.2626, y: 45.6285}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &697432698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 697432696}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b598b74fa2c95d4fb494a464bc55424, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scene: MainGame
 --- !u!114 &697432699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2845,16 +2835,16 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 697432698}
-        m_TargetAssemblyTypeName: ButtonLoadScene, Assembly-CSharp
-        m_MethodName: loadScene
-        m_Mode: 1
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: RatBossTester
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &697432700
@@ -2907,7 +2897,6 @@ GameObject:
   - component: {fileID: 772493518}
   - component: {fileID: 772493517}
   - component: {fileID: 772493516}
-  - component: {fileID: 772493519}
   m_Layer: 5
   m_Name: Audio Button
   m_TagString: Untagged
@@ -2979,14 +2968,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 772493519}
-        m_TargetAssemblyTypeName: OpenSettingCategory, Assembly-CSharp
-        m_MethodName: onClick
-        m_Mode: 1
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: SettingsTabChange
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3029,22 +3018,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 772493514}
   m_CullTransparentMesh: 1
---- !u!114 &772493519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 772493514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89ef77889a5915a4cb5b21ebbdfe71a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  specificSettingsFolder: {fileID: 351822280}
-  otherSettingsFolder:
-  - {fileID: 1166279763}
-  - {fileID: 509181945}
 --- !u!1 &774968353
 GameObject:
   m_ObjectHideFlags: 0
@@ -3135,7 +3108,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -3164,9 +3137,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 571029815}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: inputChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: mainAudioInputChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3608,7 +3581,6 @@ GameObject:
   - component: {fileID: 810647502}
   - component: {fileID: 810647501}
   - component: {fileID: 810647500}
-  - component: {fileID: 810647504}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3703,26 +3675,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &810647504
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 810647499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9bd60128d98ceb4c985d522566f967b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  useDefault: 1
-  onObj:
-  - {fileID: 1269700592}
-  - {fileID: 1166279763}
-  offObj:
-  - {fileID: 351822280}
-  - {fileID: 509181945}
-  - {fileID: 21743714}
 --- !u!1 &817521008
 GameObject:
   m_ObjectHideFlags: 0
@@ -4668,7 +4620,6 @@ GameObject:
   m_Component:
   - component: {fileID: 964741903}
   - component: {fileID: 964741902}
-  - component: {fileID: 964741901}
   m_Layer: 5
   m_Name: MusicSlider
   m_TagString: Untagged
@@ -4676,22 +4627,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &964741901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 964741900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slider: {fileID: 964741902}
-  value: 100
-  input: {fileID: 1127664881}
-  AudioChange: 0
 --- !u!114 &964741902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4743,9 +4678,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 964741901}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: sliderChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: musicAudioSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4787,7 +4722,6 @@ GameObject:
   m_Component:
   - component: {fileID: 978414941}
   - component: {fileID: 978414940}
-  - component: {fileID: 978414939}
   m_Layer: 5
   m_Name: VoiclinesSlider
   m_TagString: Untagged
@@ -4795,22 +4729,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &978414939
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 978414938}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47b29536d220f5d4fb3bf4ab97d3ffbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slider: {fileID: 978414940}
-  value: 100
-  input: {fileID: 1097006173}
-  AudioChange: 0
 --- !u!114 &978414940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4862,9 +4780,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 978414939}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: sliderChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: voiceSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4944,7 +4862,6 @@ GameObject:
   - component: {fileID: 1007597928}
   - component: {fileID: 1007597927}
   - component: {fileID: 1007597926}
-  - component: {fileID: 1007597925}
   m_Layer: 5
   m_Name: Settings Button
   m_TagString: Untagged
@@ -4972,21 +4889,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -49}
   m_SizeDelta: {x: 171.2626, y: 45.6285}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1007597925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1007597923}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7851eb3ebfe2a4469f2e51b2a947107, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  settingsFolder: {fileID: 21743714}
-  mainFolder: {fileID: 1269700592}
-  GameButton: {fileID: 1496834763}
 --- !u!114 &1007597926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5031,8 +4933,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1007597925}
-        m_TargetAssemblyTypeName: OpenSettings, Assembly-CSharp
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
         m_MethodName: openSettings
         m_Mode: 1
         m_Arguments:
@@ -5199,8 +5101,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1564184219}
-        m_TargetAssemblyTypeName: NextPage, Assembly-CSharp
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
         m_MethodName: PageNext
         m_Mode: 1
         m_Arguments:
@@ -5427,7 +5329,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -5456,9 +5358,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 978414939}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: inputChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: voiceInputChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5692,7 +5594,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -5721,9 +5623,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 964741901}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: inputChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: musicAudioInputChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5882,7 +5784,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1166279764
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6148,7 +6050,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -6177,9 +6079,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 42186962}
-        m_TargetAssemblyTypeName: AudioSettings, Assembly-CSharp
-        m_MethodName: inputChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: sfxInputChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6735,7 +6637,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1399292399}
   - component: {fileID: 1399292398}
-  - component: {fileID: 1399292397}
   m_Layer: 5
   m_Name: SensSlider
   m_TagString: Untagged
@@ -6743,22 +6644,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1399292397
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1399292396}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bb622cff1138364caf4eee212e14a85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slider: {fileID: 1399292398}
-  sens: 50
-  input: {fileID: 71221634}
-  sensChange: 0
 --- !u!114 &1399292398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6810,9 +6695,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1399292397}
-        m_TargetAssemblyTypeName: SensitivityChange, Assembly-CSharp
-        m_MethodName: sliderChange
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: sensSliderChange
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7403,7 +7288,6 @@ GameObject:
   - component: {fileID: 1496834765}
   - component: {fileID: 1496834764}
   - component: {fileID: 1496834763}
-  - component: {fileID: 1496834766}
   m_Layer: 5
   m_Name: Game Button
   m_TagString: Untagged
@@ -7475,10 +7359,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1496834766}
-        m_TargetAssemblyTypeName: OpenSettingCategory, Assembly-CSharp
-        m_MethodName: onClick
-        m_Mode: 1
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: SettingsTabChange
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -7525,22 +7409,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1496834761}
   m_CullTransparentMesh: 1
---- !u!114 &1496834766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1496834761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89ef77889a5915a4cb5b21ebbdfe71a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  specificSettingsFolder: {fileID: 1166279763}
-  otherSettingsFolder:
-  - {fileID: 351822280}
-  - {fileID: 509181945}
 --- !u!1 &1505540336
 GameObject:
   m_ObjectHideFlags: 0
@@ -8173,7 +8041,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1564184218}
-  - component: {fileID: 1564184219}
   m_Layer: 5
   m_Name: Page Buttons
   m_TagString: Untagged
@@ -8202,23 +8069,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1564184219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1564184217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21db01788255d49329a898ba33694dba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NextPage
-  pages:
-  - {fileID: 1262517084}
-  - {fileID: 987447766}
-  PreviousButton: {fileID: 2108104477}
-  NextButton: {fileID: 1032760593}
 --- !u!1 &1577182261
 GameObject:
   m_ObjectHideFlags: 0
@@ -8255,37 +8105,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 94, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1595640169
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1595640170}
-  m_Layer: 0
-  m_Name: InputManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1595640170
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1595640169}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 532.59955, y: 239.32567, z: 73.7275}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1619128338
 GameObject:
   m_ObjectHideFlags: 0
@@ -9679,7 +9498,6 @@ GameObject:
   - component: {fileID: 1894020948}
   - component: {fileID: 1894020947}
   - component: {fileID: 1894020946}
-  - component: {fileID: 1894020945}
   m_Layer: 5
   m_Name: Quit Button
   m_TagString: Untagged
@@ -9707,18 +9525,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -130}
   m_SizeDelta: {x: 171.2626, y: 45.6285}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1894020945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1894020943}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7555cec6ea0e6bf47bdc3088d5334660, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1894020946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9763,8 +9569,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1894020945}
-        m_TargetAssemblyTypeName: Quit, Assembly-CSharp
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
         m_MethodName: quitGame
         m_Mode: 1
         m_Arguments:
@@ -10940,8 +10746,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1564184219}
-        m_TargetAssemblyTypeName: NextPage, Assembly-CSharp
+      - m_Target: {fileID: 279496690}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
         m_MethodName: PagePrev
         m_Mode: 1
         m_Arguments:
@@ -11209,5 +11015,5 @@ SceneRoots:
   - {fileID: 1487095322}
   - {fileID: 810647503}
   - {fileID: 1183195649}
-  - {fileID: 1595640170}
   - {fileID: 1302894764}
+  - {fileID: 279496691}
