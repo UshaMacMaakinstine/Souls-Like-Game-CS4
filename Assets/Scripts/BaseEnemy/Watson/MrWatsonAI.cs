@@ -176,7 +176,7 @@ public class MrWatsonAI : MonoBehaviour
         DrawWireDisk(transform.position, meleeRadius);
 
         // 2. Charge Radius (Yellow) - The "Hunt Zone"
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.blue;
         DrawWireDisk(transform.position, chargeRadius);
 
         // 3. Current Target Line (Cyan)

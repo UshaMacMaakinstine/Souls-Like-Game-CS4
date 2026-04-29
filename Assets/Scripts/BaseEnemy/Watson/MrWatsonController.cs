@@ -126,7 +126,7 @@ public class MrWatsonController : MonoBehaviour
     public void ApplyMeleeDamage()
     {
         // Simple sphere check to see if player is in front of Watson during the slam
-        float damageRadius = 15f;
+        float damageRadius = 7f;
         Collider[] hitPlayers = Physics.OverlapSphere(transform.position + transform.forward * 2, damageRadius);
 
         bool hit = false;

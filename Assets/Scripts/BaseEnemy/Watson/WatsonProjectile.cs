@@ -17,7 +17,7 @@ public class WatsonProjectile : MonoBehaviour
         if (player != null)
         {
             // 1. Calculate the target point (5 units above the player)
-            Vector3 targetPoint = new Vector3(player.transform.position.x, player.transform.position.y + 5f, player.transform.position.z);
+            Vector3 targetPoint = new Vector3(player.transform.position.x, player.transform.position.y + 3f, player.transform.position.z);
             
             // 2. Calculate the direction from the projectile's spawn to that point
             moveDirection = (targetPoint - transform.position).normalized;
@@ -43,6 +43,7 @@ public class WatsonProjectile : MonoBehaviour
         if (other.transform.root.CompareTag("Player"))
         {
             Debug.Log("Hit the Player");
+            other.transform.root.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = damage });
         }
 
         Destroy(gameObject);
