@@ -7,13 +7,12 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material
+  m_Name: New Material 1
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _METALLICGLOSSMAP
-  - _NORMALMAP
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -26,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: a60fdf87d00c45944951380bc2cb491e, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -46,11 +45,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 20c3a0e4f1e7e304d8b0873ec2fc00fb, type: 3}
+        m_Texture: {fileID: 2800000, guid: a17be167a54bb4641964d5fd62300b88, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 1b18785dfe45ae743aa39cc84a9f88c0, type: 3}
+        m_Texture: {fileID: 2800000, guid: 968e72aa7e47bbc499d92379b456cbcd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -63,12 +62,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BumpScale: 0.5
+    - _BumpScale: 1
     - _Cutoff: 0.5
-    - _DashSpacing: 20
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _GlossMapScale: 0.269
+    - _GlossMapScale: 0.16
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
@@ -77,16 +75,11 @@ Material:
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Speed: 1
     - _SrcBlend: 1
-    - _Thickness: 0.01
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FillColor: {r: 1, g: 1, b: 1, a: 0.3}
-    - _OutlineBrightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OutlineDarkColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
