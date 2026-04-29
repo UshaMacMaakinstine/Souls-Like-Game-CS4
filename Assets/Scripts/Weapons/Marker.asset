@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2dd455324994113418844240dc9e75f5, type: 3}
-  m_Name: A really fast weapon
+  m_Name: Marker
   m_EditorClassIdentifier: Assembly-CSharp::WeaponStats
-  lightAttackDamage: 25
-  heavyAttackDamage: 67
-  runningHeavyAttackDamage: 76
+  lightAttackDamage: 55
+  heavyAttackDamage: 150
+  runningHeavyAttackDamage: 321
   range: 1
-  attackSpeed: 0.7
+  attackSpeed: 1
