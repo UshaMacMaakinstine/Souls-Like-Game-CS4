@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dd455324994113418844240dc9e75f5, type: 3}
   m_Name: BasicWeapon
   m_EditorClassIdentifier: Assembly-CSharp::WeaponStats
-  lightAttackDamage: 5
-  heavyAttackDamage: 25
-  runningHeavyAttackDamage: 23
+  lightAttackDamage: 45
+  heavyAttackDamage: 150
+  runningHeavyAttackDamage: 210
   range: 1
-  attackSpeed: 1
+  attackSpeed: 1.5

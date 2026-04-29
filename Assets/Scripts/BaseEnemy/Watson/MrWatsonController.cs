@@ -1,256 +1,188 @@
-using TMPro;
 using UnityEngine;
 using System.Collections;
 
-public enum BossState { Phase1, Transitioning, Teacher, Violin, Karaoke }
-
 public class MrWatsonController : MonoBehaviour
 {
-    public Animator anim;
-    private UnityEngine.AI.NavMeshAgent agent;
-    public BossState currentState = BossState.Phase1;
+    [Header("Health Settings")]
+    public float bodyHealth = 1000f;
+    public float legHealth = 7200f;
+    private float currentLegDamage = 0f;
     public bool isDown = false;
 
-    [Header("Stats")]
-    public float bodyHealth = 1000f;
-    public float legHealth = 100f;
-    private float currentLegDamage = 0f;
+    [Header("Performance Gauge (Rage)")]
+    public float performanceGauge = 0f;
+    public float maxPerformance = 100f;
+    public float gaugeDrainRate = 1.2f;
 
-    [Header("Props")]
-    public GameObject violinProp; // Assign in Inspector
-    public GameObject micProp;    // Assign in Inspector
+    [Header("References")]
+    public BossState currentState = BossState.Phase1;
+    public Animator anim;
+    public GameObject violinProp, micProp, pointerStickProp;
+    public StatisticBar bossHealthBar;
+    public GameObject bulletPrefab;
+    public Transform fingerGunMuzzle;
 
-    [Header("Attack References")]
-    public Transform fingerGunMuzzle; // Where bullets come from
-    public GameObject bulletPrefab;    // Your projectile
-    public float stompDamage = 20f;
-    public float stompRadius = 5f;
-
-    public GameObject healthBar;
-    public TMP_Text damageText;
-
-    [Header("Stacking Damage UI")]
-    private float accumulatedDamage = 0f;
-    private Coroutine damageStackCoroutine;
-    public float stackResetTime = 1.5f; // How long to wait before resetting the stack
+    private MrWatsonAI ai;
 
     void Start()
     {
-        // Get the agent component once at the start
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        ai = GetComponent<MrWatsonAI>();
+        if (bossHealthBar != null) bossHealthBar.SetMax(bodyHealth);
+        SetBossMode(BossState.Phase1);
     }
-    
+
+    void Update()
+    {
+        if (isDown || currentState == BossState.Transitioning) return;
+
+        // Rage slowly drains if the player isn't attacking
+        if (performanceGauge > 0) 
+            performanceGauge -= gaugeDrainRate * Time.deltaTime;
+
+        // Transition to Special Modes
+        if (performanceGauge >= maxPerformance && currentState != BossState.Transitioning) 
+            StartCoroutine(SpinTheWheelSequence());
+    }
+
     public void TakeDamage(float damage, LimbType limb)
     {
+        if (currentState == BossState.Transitioning) return;
+
+        if(bodyHealth < 30000)
+        {
+            SetBossMode(BossState.Teacher);
+        }
+
         if (limb == LimbType.Leg && !isDown)
         {
             currentLegDamage += damage;
-            //anim.SetTrigger("Light_Flinch"); // Reactive hit animation
-            bodyHealth -= damage;
-            
-
-            if (currentLegDamage >= legHealth)
-            {
-                StartCoroutine(DownedSequence());
-                currentLegDamage = 0f;
-            }
+            bodyHealth -= damage; 
+            if (currentLegDamage >= legHealth) StartCoroutine(DownedSequence());
         }
         else if (limb == LimbType.Head && isDown)
         {
-            bodyHealth -= damage * 2f; // Bonus damage for headshots
-            //anim.SetTrigger("Head_Hit_Flinch");
+            bodyHealth -= (damage * 2f); // Massive damage window
+            performanceGauge += (damage * 0.4f); // Punish the player with Rage for doing high damage
         }
-
-        UpdateStackedDamage(damage);
-
-        // Check for Phase Transition
-        if (bodyHealth <= 600f && currentState == BossState.Phase1)
+        else
         {
-            StartPhase2();
+            bodyHealth -= damage;
+            performanceGauge += (damage * 0.15f);
         }
 
-        UpdateUI();
+        if (bossHealthBar != null) bossHealthBar.stat = bodyHealth;
+        
+        // Visual indicator: He gets faster as he gets angrier
+        anim.speed = 1f + (performanceGauge / maxPerformance) * 0.4f;
     }
 
     public void FireBullet()
     {
-        StartCoroutine(FireBurst(3, 0.15f)); // 3 bullets, 0.15s apart
-    }
-
-    private IEnumerator FireBurst(int count, float delay)
-    {
-        for (int i = 0; i < count; i++)
+        if (fingerGunMuzzle != null && bulletPrefab != null)
         {
-            if (bulletPrefab && fingerGunMuzzle)
-            {
-                // Spawn the bullet
-                GameObject projectile = Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
-                
-                // Optional: Add a tiny bit of random spread so the bullets aren't perfectly pixel-perfect
-                projectile.transform.Rotate(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
-            }
+            // Instantiate the bullet at the muzzle position/rotation
+            GameObject bullet = Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
             
-            yield return new WaitForSeconds(delay);
+            // Optional: If your bullet has a script to set its damage
+            // bullet.GetComponent<BulletScript>().damage = 10f;
         }
     }
 
-    private void UpdateStackedDamage(float damage)
-    {
-        // 1. Add to the total
-        accumulatedDamage += damage;
-
-        // 2. Show the text (make sure the object is active)
-        damageText.gameObject.SetActive(true);
-        damageText.text = Mathf.RoundToInt(accumulatedDamage).ToString();
-
-        // 3. Reset the "Close UI" timer
-        if (damageStackCoroutine != null)
-        {
-            StopCoroutine(damageStackCoroutine);
-        }
-
-        damageStackCoroutine = StartCoroutine(ResetDamageStack());
-    }
-
-    IEnumerator ResetDamageStack()
-    {
-        // Wait for the player to stop dealing damage
-        yield return new WaitForSeconds(stackResetTime);
-
-        // Fade out or just disable
-        damageText.gameObject.SetActive(false);
-
-        // Reset the counter for the next time they start hitting
-        accumulatedDamage = 0f;
-        damageStackCoroutine = null;
-    }
-
-    // 2. RECEIVER FOR: Stomp / Melee
-    public void ApplyMeleeDamage()
-    {
-        // Simple logic: Check if player is close enough when the foot hits
-        float dist = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
-        
-        if (dist <= stompRadius)
-        {
-            // Replace with your actual Player Health script call
-            // player.TakeDamage(stompDamage);
-            Debug.Log("Watson STOMPED the player!");
-        }
-    }
-
-    void StartPhase2()
-    {
-        currentState = BossState.Transitioning;
-        anim.SetTrigger("EnterPhase2");
-        anim.SetInteger("Phase", 1); // Updates the Animator's logic
-    }
-
-    private void UpdateUI()
-    {
-        healthBar.GetComponent<StatisticBar>().stat = bodyHealth;
-    }
-
-    public IEnumerator DownedSequence()
+    IEnumerator DownedSequence()
     {
         isDown = true;
-    
-        // 1. Get both the Agent and the AI script
-        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        MrWatsonAI aiScript = GetComponent<MrWatsonAI>();
-
-        // 2. STOPS the AI from running its Update/Coroutines
-        if (aiScript != null) aiScript.enabled = false; 
-
-        if (agent != null)
-        {
-            agent.isStopped = true;
-            agent.enabled = false; // Physically removes the upright capsule
-        }
-
-        // 3. Play the animation
+        ai.enabled = false;
         anim.SetBool("isDown", true);
         anim.SetTrigger("FallOver");
 
-        float elapsed = 0f;
-
-        while (elapsed < 1.133f)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / 1.133f);
-            float rotation = Mathf.Lerp(0, 90, t);
-            float up = Mathf.Lerp(transform.position.y, (transform.position.y + 10), t);
-            transform.rotation = Quaternion.Euler(rotation, 0f, 0f);
-            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        // Logic to tip him over 90 degrees
+        float elapsed = 0;
+        Quaternion startRot = transform.rotation;
+        Quaternion endRot = Quaternion.Euler(90, transform.eulerAngles.y, 0);
+        while(elapsed < 1.33f) {
+            elapsed += Time.deltaTime * 1.33f;
+            transform.rotation = Quaternion.Lerp(startRot, endRot, elapsed);
             yield return null;
         }
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(6f); // Time player has to hit the head
 
         anim.SetTrigger("GetUp");
         anim.SetBool("isDown", false);
+        currentLegDamage = 0f;
 
-        elapsed = 0f;
-
-        while (elapsed < 2.33f)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / 2.33f);
-            float rotation = Mathf.Lerp(90, 0, t);
-            float up = Mathf.Lerp((transform.position.z + 10), transform.position.z, t);
-            transform.rotation = Quaternion.Euler(rotation, 0f, 0f);
-            transform.position = new Vector3(transform.position.x, transform.position.y, up);
+        // Return upright
+        elapsed = 0;
+        while(elapsed < 2.33f) {
+            elapsed += Time.deltaTime * 2.33f;
+            transform.rotation = Quaternion.Lerp(endRot, startRot, elapsed);
             yield return null;
         }
 
-        yield return new WaitForSeconds(2f); 
-
-        // 4. Turn everything back on
-        if (agent != null) agent.enabled = true;
-        if (aiScript != null) aiScript.enabled = true;
-        
+        ai.enabled = true;
         isDown = false;
     }
 
-    // Called by Animation Event at the end of PhaseChange_Anim
-    public void FinishPhaseTransition()
+    public void ApplyMeleeDamage()
     {
-        currentState = BossState.Teacher;
+        // Simple sphere check to see if player is in front of Watson during the slam
+        float damageRadius = 15f;
+        Collider[] hitPlayers = Physics.OverlapSphere(transform.position + transform.forward * 2, damageRadius);
+
+        bool hit = false;
+        foreach (Collider col in hitPlayers)
+        {
+            if (col.transform.root.CompareTag("Player") && !hit)
+            {
+                float damage = 0;
+                if(currentState == BossState.Phase1) damage = 250f; 
+                if(currentState == BossState.Teacher) damage = 150f;
+                if(currentState == BossState.Violin) damage = 400f;
+                col.transform.root.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = damage });
+                hit = true;
+                Debug.Log("Watson slammed the player!");
+            }
+        }
     }
-    
-    public void TriggerWheelCutscene()
+
+    IEnumerator SpinTheWheelSequence()
     {
         currentState = BossState.Transitioning;
-        anim.SetTrigger("SpinWheel");
+        ai.enabled = false;
+        performanceGauge = 0f;
+
+        anim.SetTrigger("SpinWheel"); 
+        yield return new WaitForSeconds(4f); // Duration of the cutscene
+
+        // 50/50 chance for Violin or Karaoke
+        BossState nextMode = (Random.value > 0.5f) ? BossState.Violin : BossState.Karaoke;
+        SetBossMode(nextMode);
+        
+        ai.enabled = true;
     }
 
-    // Call this via Animation Event at the end of the SpinWheel animation
-    // or directly from PerformanceManager after a delay
-    public void SwitchToMode(BossState newMode)
+    public void SetBossMode(BossState newMode)
     {
         currentState = newMode;
+
+        if (pointerStickProp) pointerStickProp.SetActive(newMode == BossState.Teacher);
+        if (violinProp) violinProp.SetActive(newMode == BossState.Violin);
+        if (micProp) micProp.SetActive(newMode == BossState.Karaoke);
         
-        // Deactivate all props first
-        if(violinProp) violinProp.SetActive(false);
-        if(micProp) micProp.SetActive(false);
+        anim.SetInteger("Mode", (int)newMode);
+        
+        // If he's no longer in Phase 1, ensure the animator knows
+        if (newMode != BossState.Phase1) anim.SetInteger("Phase", 1);
+        
+        Debug.Log("Boss state set to: " + newMode);
+    }
 
-        // Reset Animator Ints
-        anim.SetInteger("Mode", 0);
+    // --- ANIMATION EVENTS ---
 
-        // Activate specific mode
-        switch (newMode)
-        {
-            case BossState.Violin:
-                anim.SetInteger("Mode", 1);
-                if(violinProp) violinProp.SetActive(true);
-                break;
-            case BossState.Karaoke:
-                anim.SetInteger("Mode", 2);
-                if(micProp) micProp.SetActive(true);
-                break;
-            case BossState.Teacher:
-                anim.SetInteger("Phase", 1); // Ensure we stay in Phase 2 logic
-                break;
-        }
+    // This is what the 'Spin the Wheel' Animation Event calls
+    // It has NO arguments so the error CS1501 will disappear
+    public void SwitchToMode()
+    {
+        Debug.Log("Wheel Animation finished - Mode transition complete.");
     }
 }

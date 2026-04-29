@@ -2,15 +2,27 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
+public enum BossState 
+{ 
+    Phase1, 
+    Phase2,
+    Transitioning, 
+    Teacher, 
+    Violin, 
+    Karaoke 
+}
+
 public class MrWatsonAI : MonoBehaviour
 {
     private MrWatsonController controller;
     private NavMeshAgent agent;
     public Transform playerTransform;
 
-    [Header("Combat Settings")]
+    [Header("Combat Radius")]
+    public float meleeRadius = 7f;
+    public float chargeRadius = 22f;
     public float attackCooldown = 3f;
-    public float chargeSpeed = 30f;
+
     private float lastAttackTime;
     private bool isAttacking = false;
 
@@ -18,120 +30,178 @@ public class MrWatsonAI : MonoBehaviour
     {
         controller = GetComponent<MrWatsonController>();
         agent = GetComponent<NavMeshAgent>();
-        agent.isStopped = true; // Start stationary
+        agent.isStopped = true;
     }
 
     void Update()
     {
+        animationSpeedAdjustment();
         if (controller.isDown || controller.currentState == BossState.Transitioning) return;
 
-        UpdateMovementAnimations();
+        // CALCULATE TURN SPEED
+        // This compares his current rotation to where he wants to look
+        float angle = Vector3.SignedAngle(transform.forward, agent.desiredVelocity, Vector3.up);
+        float normalizedTurnSpeed = Mathf.Clamp(angle / 45f, -1f, 1f); // -1 is hard left, 1 is hard right
 
-        // ONLY rotate smoothly if we aren't currently mid-attack
-        if (agent.isStopped && !isAttacking)
+        // SYNC ANIMATOR
+        // agent.velocity.magnitude gives the actual movement speed
+        controller.anim.SetFloat("Speed", agent.velocity.magnitude);
+        controller.anim.SetFloat("TurnSpeed", normalizedTurnSpeed);
+
+        if (!isAttacking)
         {
             FacePlayerSmoothly();
-        }
-
-        if (Time.time > lastAttackTime + attackCooldown && !isAttacking)
-        {
-            DecideNextMove();
+            float dist = Vector3.Distance(transform.position, playerTransform.position);
+            
+            if (Time.time > lastAttackTime + attackCooldown)
+                DecideAttack(dist);
         }
     }
 
-    void UpdateMovementAnimations()
+    void DecideAttack(float dist)
     {
-        // Forward Speed (Y-Axis in 2D Blend Tree)
-        float speed = agent.velocity.magnitude;
-        controller.anim.SetFloat("Speed", speed);
+        // Gimmick: Paws Up (Phase 2+)
+        if (controller.currentState != BossState.Phase1 && Random.value < 0.15f)
+        {
+            StartCoroutine(PawsUpRoutine());
+            return;
+        }
 
-        // Turn Calculation (X-Axis in 2D Blend Tree)
-        Vector3 targetDir = (playerTransform.position - transform.position).normalized;
-        float angle = Vector3.SignedAngle(transform.forward, targetDir, Vector3.up);
+        if (dist <= meleeRadius) StartCoroutine(MeleeSequence());
+        else if (dist <= chargeRadius) StartCoroutine(ChargeSequence());
+        else StartCoroutine(RangedSequence());
+    }
+
+    IEnumerator MeleeSequence()
+    {
+        isAttacking = true;
+        // Pointer stick if Phase 2, Stomp if Phase 1
+        string animKey = (controller.currentState == BossState.Phase1) ? "MeleeAttack" : "PointerAttack";
+        controller.anim.SetTrigger(animKey);
+        yield return new WaitForSeconds(2f);
+        EndAttack();
+    }
+
+    IEnumerator ChargeSequence()
+    {
+        isAttacking = true;
+        controller.anim.SetTrigger("ChargeStart");
+        yield return new WaitForSeconds(0.6f);
+
+        agent.isStopped = false;
+        agent.speed = 25f;
         
-        // Clamps turn between -1 (Left) and 1 (Right)
-        float turnValue = Mathf.Clamp(angle / 45f, -1f, 1f);
+        float timer = 0;
+        while(timer < 1.5f && Vector3.Distance(transform.position, playerTransform.position) > 3.5f)
+        {
+            agent.SetDestination(playerTransform.position);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        agent.isStopped = true;
+        agent.speed = 3.5f;
+        controller.anim.SetTrigger("MeleeAttack"); // Smash after charge
+        yield return new WaitForSeconds(1.5f);
+        EndAttack();
+    }
+
+    IEnumerator RangedSequence()
+    {
+        isAttacking = true;
+        // Rotate sideways for the Finger Gun animation
+        Vector3 dir = (playerTransform.position - transform.position).normalized;
+        dir.y = 0;
+        transform.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0, 90, 0);
+
+        controller.anim.SetTrigger("AtTeTeTe");
+        yield return new WaitForSeconds(2.5f);
+        EndAttack();
+    }
+
+    IEnumerator PawsUpRoutine()
+    {
+        isAttacking = true;
+        controller.anim.SetTrigger("PawsUp");
+        yield return new WaitForSeconds(1f); // Warning period
+
+        float timer = 2f;
+        ThirdPersonController player = playerTransform.GetComponent<ThirdPersonController>();
         
-        // Smoothly lerp the turn parameter so the animation transitions nicely
-        float currentTurn = controller.anim.GetFloat("TurnSpeed");
-        controller.anim.SetFloat("TurnSpeed", Mathf.Lerp(currentTurn, turnValue, Time.deltaTime * 5f));
+        while(timer > 0)
+        {
+            // If player moves or attacks during Paws Up
+            if (player.isAttacking || player.GetComponent<CharacterController>().velocity.magnitude > 0.1f)
+            {
+                player.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = 25f });
+                break;
+            }
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+        EndAttack();
     }
 
     void FacePlayerSmoothly()
     {
-        Vector3 direction = (playerTransform.position - transform.position).normalized;
-        direction.y = 0;
-        if (direction != Vector3.zero)
+        Vector3 dir = (playerTransform.position - transform.position).normalized;
+        dir.y = 0;
+        if (dir != Vector3.zero)
         {
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 3f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 4f);
         }
     }
 
-    void DecideNextMove()
+    void EndAttack() { isAttacking = false; lastAttackTime = Time.time; }
+
+    void animationSpeedAdjustment()
     {
-        // // Simple 50/50 chance for logic testing
-        // if (Random.value > 0.5f)
-        //     StartCoroutine(MeleeChargeSequence());
-        // else
-            ExecuteRanged();
-    }
 
-    IEnumerator MeleeChargeSequence()
-    {
-        isAttacking = true;
-        lastAttackTime = Time.time;
-
-        Vector3 targetPos = playerTransform.position;
-        agent.isStopped = false;
-        agent.speed = chargeSpeed;
-        agent.SetDestination(targetPos);
-
-        // FIX: Added "agent.enabled" check to the while loop
-        while (agent.enabled && (agent.pathPending || agent.remainingDistance > 1.5f))
+        // Reset to normal speed if not attacking
+        if (!isAttacking) 
         {
-            yield return null;
+            controller.anim.speed = 1f;
+            return;
         }
 
-        // Double check agent is still enabled before calling commands
-        if (agent.enabled)
+        controller.anim.speed = 0.5f;
+        return;
+    }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        // 1. Melee Radius (Red) - The "Danger Zone"
+        Gizmos.color = Color.red;
+        DrawWireDisk(transform.position, meleeRadius);
+
+        // 2. Charge Radius (Yellow) - The "Hunt Zone"
+        Gizmos.color = Color.yellow;
+        DrawWireDisk(transform.position, chargeRadius);
+
+        // 3. Current Target Line (Cyan)
+        if (playerTransform != null)
         {
-            agent.isStopped = true;
-            controller.anim.SetTrigger("MeleeAttack");
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(transform.position + Vector3.up, playerTransform.position + Vector3.up);
+            
+            float dist = Vector3.Distance(transform.position, playerTransform.position);
+            UnityEditor.Handles.Label(transform.position + Vector3.up * 3, "Dist to Player: " + dist.ToString("F1"));
         }
-
-        yield return new WaitForSeconds(1.5f);
-        isAttacking = false;
     }
 
-    void ExecuteRanged()
+    // Helper to draw a flat circle on the ground
+    private void DrawWireDisk(Vector3 center, float radius)
     {
-        isAttacking = true;
-        lastAttackTime = Time.time;
-        agent.isStopped = true;
-
-        // 1. Calculate direction to player
-        Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
-        directionToPlayer.y = 0; // Keep him upright
-
-        // 2. Create the rotation to face the player
-        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-
-        // 3. APPLY THE SIDEWAYS OFFSET
-        // If he is pointing to his RIGHT, rotate him -90 degrees.
-        // If he is pointing to his LEFT, rotate him 90 degrees.
-        Quaternion offset = Quaternion.Euler(0, 90, 0); 
-        transform.rotation = lookRotation * offset;
-
-        // 4. Trigger the animation
-        controller.anim.SetTrigger("AtTeTeTe");
-
-        StartCoroutine(ResetAttackAfterDelay(2.5f));
+        float angleStep = 10f;
+        Vector3 prevPoint = center + new Vector3(radius, 0, 0);
+        for (float i = angleStep; i <= 360f; i += angleStep)
+        {
+            float rad = i * Mathf.Deg2Rad;
+            Vector3 nextPoint = center + new Vector3(Mathf.Cos(rad) * radius, 0, Mathf.Sin(rad) * radius);
+            Gizmos.DrawLine(prevPoint, nextPoint);
+            prevPoint = nextPoint;
+        }
     }
-
-    IEnumerator ResetAttackAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        isAttacking = false;
-    }
+#endif
 }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class WatsonProjectile : MonoBehaviour
@@ -7,24 +6,35 @@ public class WatsonProjectile : MonoBehaviour
     public float lifetime = 5f;
     public float damage = 10f;
 
-    private GameObject player;
-
-    private Vector3 pos;
+    private Vector3 moveDirection;
+    private bool initialized = false;
 
     void Start()
     {
-        Destroy(gameObject, lifetime); // Clean up
-        player = GameObject.FindGameObjectWithTag("Player");
-        pos = player.transform.position;
+        Destroy(gameObject, lifetime);
+        
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            // 1. Calculate the target point (5 units above the player)
+            Vector3 targetPoint = new Vector3(player.transform.position.x, player.transform.position.y + 5f, player.transform.position.z);
+            
+            // 2. Calculate the direction from the projectile's spawn to that point
+            moveDirection = (targetPoint - transform.position).normalized;
+            
+            // 3. Optional: Make the projectile "look" where it's going
+            transform.forward = moveDirection;
+            
+            initialized = true;
+        }
     }
 
     void Update()
     {
-        // Move forward relative to how it was spawned
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(pos.x, (pos.y + 5f), pos.z), speed * Time.deltaTime);
-        if(transform.position == new Vector3(pos.x, (pos.y + 5f), pos.z))
+        if (initialized)
         {
-            Destroy(gameObject);
+            // 4. Move in that saved direction forever
+            transform.position += moveDirection * speed * Time.deltaTime;
         }
     }
 
@@ -32,9 +42,9 @@ public class WatsonProjectile : MonoBehaviour
     {
         if (other.transform.root.CompareTag("Player"))
         {
-            // other.GetComponent<PlayerHealth>().TakeDamage(damage);
-            Destroy(gameObject);
             Debug.Log("Hit the Player");
         }
+
+        Destroy(gameObject);
     }
 }
