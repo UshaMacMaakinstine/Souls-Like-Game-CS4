@@ -5,11 +5,12 @@ using UnityEngine.UI;
 public class PlayerProperties : MonoBehaviour
 {
     public float currentHealth = 100f;
+    public bool controlsReversed = false; // NEW
+    public StatisticBar healthBar; // Ensure this is assigned in Inspector
     public WeaponFramework currentWeapon;
     public ThirdPersonController player;
     public BoxCollider[] hurtboxes;
     public TMP_Text healthText;
-    public GameObject healthBar;
 
     [Header("Death UI")]
     public GameObject deathScreenCanvas;
@@ -30,42 +31,18 @@ public class PlayerProperties : MonoBehaviour
         UpdateUI();
     }
 
-    public void WheelOfFortune(float multiplier)
-    {
-        //random effect of healing, +atk, +iframes, or the reverse
-        switch(Random.Range(0, 1))
-        {
-            //HP Change
-            case 0: // Heal
-                Heal(10f * multiplier);
-                break;
-            case 1: // Hurt
-                Heal(-10f * multiplier);
-                break;
-        }
-    }
-
     public void TakeDamage(DamageData data)
     {
-        if (currentHealth <= 0) return;
+        ThirdPersonController player = GetComponent<ThirdPersonController>();
+        if (currentHealth <= 0 || (player != null && player.isInvincible)) return;
 
-        // Merge: Check for invincibility first
-        if (player != null && !player.isInvincible)
-        {
-            currentHealth -= data.damageAmount;
+        currentHealth -= data.damageAmount;
+        UpdateUI();
 
-            // Optional: You can use data.knockbackForce here later
-
-            UpdateUI();
-
-            if (currentHealth <= 0)
-            {
-                currentHealth = 0;
-                UpdateUI();
-                Die();
-            }
-        }
+        if (currentHealth <= 0) Die();
     }
+
+    public void SetReverseControls(bool state) => controlsReversed = state;
 
     private void UpdateUI()
     {

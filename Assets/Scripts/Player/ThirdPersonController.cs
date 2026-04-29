@@ -180,7 +180,14 @@ public class ThirdPersonController : MonoBehaviour
     void HandleMovement()
     {
         if (isMovementFrozen) return;
-        Vector3 inputDirection = new Vector3(moveInput.x * controlMultiplier, 0f, moveInput.y * controlMultiplier).normalized;
+        Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+
+        // REVERSE CONTROLS GIMMICK
+        if (playerProperties != null && playerProperties.controlsReversed)
+        {
+            inputDirection *= -1f;
+        }
+
         bool isMoving = inputDirection.magnitude >= 0.1f;
 
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
@@ -372,7 +379,7 @@ public class ThirdPersonController : MonoBehaviour
         isAttacking = true;
 
         animator.SetTrigger("LightAttack1");
-        yield return new WaitForSeconds(0.133f/animator.speed);
+        yield return new WaitForSeconds(0.133f / animator.speed);
         if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
         yield return new WaitForSeconds(0.8f / animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }

@@ -4953,8 +4953,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b979b182d9a9edf4aa811a14af025c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatisticBar
-  stat: 1000
-  max: 1000
+  stat: 60000
+  max: 60000
   size: {x: 200, y: 10}
   borderWidth: 2
   barBG: {fileID: 851788651}
@@ -6551,11 +6551,15 @@ PrefabInstance:
     - target: {fileID: 1320382204650428827, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: healthBar
       value: 
-      objectReference: {fileID: 1879212609}
+      objectReference: {fileID: 1879212611}
     - target: {fileID: 1320382204650428827, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: healthText
       value: 
       objectReference: {fileID: 2051602359}
+    - target: {fileID: 1320382204650428827, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: currentHealth
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 3805208174460247809, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -6627,6 +6631,10 @@ PrefabInstance:
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: Settings
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: isInvincible
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: cameraTransform
@@ -11800,7 +11808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatisticBar
   stat: 100
-  max: 100
+  max: 1000
   size: {x: 200, y: 10}
   borderWidth: 2
   barBG: {fileID: 926595137}
@@ -13474,7 +13482,6 @@ GameObject:
   - component: {fileID: 6080294520784904072}
   - component: {fileID: 6080294520784904071}
   - component: {fileID: 6080294520784904070}
-  - component: {fileID: 6080294520784904069}
   - component: {fileID: 6080294520784904068}
   m_Layer: 0
   m_Name: Watson
@@ -14316,22 +14323,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6080294520784904069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705508091280416579}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c11427e5d135446a38249c486dd98555, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PerformanceManager
-  currentGauge: 0
-  decayRate: 1
-  boss: {fileID: 6080294520784904071}
-  bossRenderer: {fileID: 1284350505491228764}
 --- !u!114 &6080294520784904070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14345,8 +14336,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonAI
   playerTransform: {fileID: 1348140346}
+  meleeRadius: 15
+  chargeRadius: 120
   attackCooldown: 3
-  chargeSpeed: 30
 --- !u!114 &6080294520784904071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14359,20 +14351,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8b1bc96e3d2a4323b40d344ac293e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonController
-  anim: {fileID: 6080294520784904067}
-  currentState: 0
+  bodyHealth: 60000
+  legHealth: 7200
   isDown: 0
-  bodyHealth: 1000
-  legHealth: 100
+  performanceGauge: 0
+  maxPerformance: 100
+  gaugeDrainRate: 1.2
+  currentState: 0
+  anim: {fileID: 6080294520784904067}
   violinProp: {fileID: 3031114550029659800, guid: a71e4f0da689241e38c17885cf385198, type: 3}
   micProp: {fileID: 1424073147}
-  fingerGunMuzzle: {fileID: 119796276}
+  pointerStickProp: {fileID: 0}
+  bossHealthBar: {fileID: 760349811}
   bulletPrefab: {fileID: 5427343539321673863, guid: f813e2a1755534505a7071835b3fee5d, type: 3}
-  stompDamage: 20
-  stompRadius: 5
-  healthBar: {fileID: 760349809}
-  damageText: {fileID: 1126235587}
-  stackResetTime: 1.5
+  fingerGunMuzzle: {fileID: 119796276}
 --- !u!195 &6080294520784904072
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -14384,9 +14376,9 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 1.5
   m_Speed: 4
-  m_Acceleration: 8
+  m_Acceleration: 50
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 360
   m_StoppingDistance: 10
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
