@@ -5,6 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonController : MonoBehaviour
 {
+    private TargetLock targetLock;
     private WeaponFramework weaponFramework;
     private PlayerProperties playerProperties;
 
@@ -69,6 +70,7 @@ public class ThirdPersonController : MonoBehaviour
 
     void Awake()
     {
+        targetLock = GetComponent<TargetLock>();
         controller = GetComponent<CharacterController>();
         playerProperties = GetComponent<PlayerProperties>();
 
