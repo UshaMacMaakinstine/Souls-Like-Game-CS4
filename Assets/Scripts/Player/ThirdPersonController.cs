@@ -136,7 +136,6 @@ public class ThirdPersonController : MonoBehaviour
             playerMap.FindAction("Heal").performed += OnHeal;
 
             playerMap.FindAction("Pause").performed += OnPause;
-            playerMap.FindAction("LockOn").performed += GetComponent<TargetLock>().OnToggleLock;
         }
     }
 
@@ -185,34 +184,24 @@ public class ThirdPersonController : MonoBehaviour
         if (isMovementFrozen) return;
         Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
 
+        // REVERSE CONTROLS GIMMICK
         if (playerProperties != null && playerProperties.controlsReversed)
+        {
             inputDirection *= -1f;
+        }
 
         bool isMoving = inputDirection.magnitude >= 0.1f;
 
-        // --- NEW LOCK ON ROTATION ---
-        if (targetLock != null && targetLock.isLocked)
-        {
-            // Always face the boss
-            Vector3 lookDir = targetLock.GetTarget().position - transform.position;
-            lookDir.y = 0;
-            Quaternion targetRot = Quaternion.LookRotation(lookDir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
+        bool shouldSprint = sprintHeld && !isCrouching && isMoving;
 
-            if (isMoving)
-            {
-                // Calculate movement relative to the CAMERA, but stay facing boss
-                Vector3 cameraForward = cameraTransform.forward;
-                Vector3 cameraRight = cameraTransform.right;
-                cameraForward.y = 0;
-                cameraRight.y = 0;
+        if (isCrouching)
+            currentSpeed = crouchSpeed;
+        else if (shouldSprint)
+            currentSpeed = sprintSpeed;
+        else
+            currentSpeed = walkSpeed;
 
-                Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
-                controller.Move(moveDirection * currentSpeed * Time.deltaTime);
-            }
-        }
-        // --- ORIGINAL ROTATION (FREELOOK) ---
-        else if (isMoving)
+        if (isMoving)
         {
             float targetAngle = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, rotationSmoothTime);

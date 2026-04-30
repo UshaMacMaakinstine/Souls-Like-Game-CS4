@@ -1470,11 +1470,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 175244338}
   m_CullTransparentMesh: 1
---- !u!1 &194938104 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5929533409009145804, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
-  m_PrefabInstance: {fileID: 992863728}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &215356692
 GameObject:
   m_ObjectHideFlags: 0
@@ -6816,10 +6811,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5929533409009145804, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1348140352}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
 --- !u!4 &992863729 stripped
 Transform:
@@ -7930,25 +7922,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3805208174460247809, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
   m_PrefabInstance: {fileID: 992863728}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1348140352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 194938104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d1f5c744b6104c0c8277e5d7aa3e116, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TargetLock
-  freeLookCamera: {fileID: 385077263}
-  targetGroup: {fileID: 1918659392}
-  lockRadius: 140
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  isLocked: 0
 --- !u!1 &1397731166
 GameObject:
   m_ObjectHideFlags: 0
@@ -13386,7 +13359,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2069619754}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.37226996, y: 0, z: 0, w: 0.9281245}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
