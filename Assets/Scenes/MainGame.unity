@@ -3446,8 +3446,8 @@ MonoBehaviour:
     m_LegacyVelocityFilterStrength: -1
   m_XAxis:
     Value: 0
-    m_SpeedMode: 1
-    m_MaxSpeed: 0.1
+    m_SpeedMode: 0
+    m_MaxSpeed: 1
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse X
@@ -16613,7 +16613,7 @@ MonoBehaviour:
   maxEmissionBase: 100
   maxSizeMultiplier: 0.15
   particleLifetime: 6
-  attackHitbox: {fileID: 0}
+  attackHitbox: {fileID: 1564868059}
   anim: {fileID: 8810536534988641903}
 --- !u!4 &8847865107596811926
 Transform:

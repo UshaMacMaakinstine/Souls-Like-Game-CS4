@@ -1965,7 +1965,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -2357,8 +2357,8 @@ MonoBehaviour:
   m_LegacyBlendHint: 0
   m_YAxis:
     Value: 0
-    m_SpeedMode: 0
-    m_MaxSpeed: 4
+    m_SpeedMode: 1
+    m_MaxSpeed: 0.004
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse Y
@@ -2382,7 +2382,7 @@ MonoBehaviour:
   m_XAxis:
     Value: 0
     m_SpeedMode: 1
-    m_MaxSpeed: 0.1
+    m_MaxSpeed: 0.2
     m_AccelTime: 0.1
     m_DecelTime: 0.1
     m_InputAxisName: Mouse X
@@ -2410,10 +2410,10 @@ MonoBehaviour:
   m_BindingMode: 4
   m_SplineCurvature: 0.2
   m_Orbits:
-  - m_Height: 13
+  - m_Height: 18
     m_Radius: 10
   - m_Height: 8
-    m_Radius: 10
+    m_Radius: 13
   - m_Height: 1
     m_Radius: 10
   m_LegacyHeadingBias: 3.4028235e+38
@@ -2637,6 +2637,7 @@ MonoBehaviour:
   sens: 0
   sensSlider: {fileID: 1738412469}
   sensInput: {fileID: 1899624772}
+  freeLook: {fileID: 385077263}
   mainAudio: 0
   mainAudioSlider: {fileID: 525279379}
   mainAudioInput: {fileID: 747944210}
@@ -4791,7 +4792,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -4957,8 +4958,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b979b182d9a9edf4aa811a14af025c49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatisticBar
-  stat: 60000
-  max: 60000
+  stat: 10000
+  max: 10000
   size: {x: 200, y: 10}
   borderWidth: 2
   barBG: {fileID: 851788651}
@@ -6767,7 +6768,7 @@ PrefabInstance:
     - target: {fileID: 5969683493869525451, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: weaponStats
       value: 
-      objectReference: {fileID: 11400000, guid: 75e572f1502ca3448863e34fbe9fbcbc, type: 2}
+      objectReference: {fileID: 11400000, guid: 43597bd5752e12549b2012769e662f6f, type: 2}
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: menu
       value: 
@@ -6775,6 +6776,18 @@ PrefabInstance:
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: Settings
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: walkSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: crouchSpeed
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: sprintSpeed
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 7461752874074838739, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: isInvincible
@@ -7120,7 +7133,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 93.2, y: -202.9}
+  m_AnchoredPosition: {x: 83.2, y: -214.6}
   m_SizeDelta: {x: 19.7079, y: 12.0492}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1126235587
@@ -7763,7 +7776,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1292638902}
   m_Layer: 8
-  m_Name: LockOnPoint'
+  m_Name: LockOnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10993,7 +11006,7 @@ MonoBehaviour:
   m_FillRect: {fileID: 1547123382}
   m_HandleRect: {fileID: 882943128}
   m_Direction: 0
-  m_MinValue: 0
+  m_MinValue: 1
   m_MaxValue: 100
   m_WholeNumbers: 0
   m_Value: 50
@@ -11140,7 +11153,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -11896,7 +11909,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -12147,7 +12160,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -12722,8 +12735,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -12745,7 +12756,6 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -13359,7 +13369,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2069619754}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.37226996, y: 0, z: 0, w: 0.9281245}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13670,7 +13680,7 @@ Transform:
   m_GameObject: {fileID: 705508091280416579}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 4.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13831,8 +13841,6 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -13854,7 +13862,6 @@ SkinnedMeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -14594,7 +14601,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonAI
   playerTransform: {fileID: 1348140346}
-  meleeRadius: 15
+  meleeRadius: 30
   chargeRadius: 120
   attackCooldown: 3
 --- !u!114 &6080294520784904071
@@ -14609,12 +14616,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8b1bc96e3d2a4323b40d344ac293e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonController
-  bodyHealth: 60000
-  legHealth: 7200
+  bodyHealth: 10000
+  legHealth: 1000
+  phase2Health: 5000
+  damageRadius: 11
+  foot: {fileID: 0}
   isDown: 0
   performanceGauge: 0
   maxPerformance: 100
-  gaugeDrainRate: 1.2
+  gaugeDrainRate: 0.2
   currentState: 0
   anim: {fileID: 6080294520784904067}
   violinProp: {fileID: 3031114550029659800, guid: a71e4f0da689241e38c17885cf385198, type: 3}
@@ -14623,6 +14633,8 @@ MonoBehaviour:
   bossHealthBar: {fileID: 760349811}
   bulletPrefab: {fileID: 5427343539321673863, guid: f813e2a1755534505a7071835b3fee5d, type: 3}
   fingerGunMuzzle: {fileID: 119796276}
+  stackResetTime: 1.5
+  damageText: {fileID: 1126235587}
 --- !u!195 &6080294520784904072
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -14637,7 +14649,7 @@ NavMeshAgent:
   m_Acceleration: 50
   avoidancePriority: 50
   m_AngularSpeed: 360
-  m_StoppingDistance: 10
+  m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
