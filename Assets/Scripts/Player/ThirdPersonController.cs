@@ -419,7 +419,7 @@ public class ThirdPersonController : MonoBehaviour
             float elapsed = 0f;
             Vector3 attackDirection = transform.forward;
 
-            while (elapsed < 0.75f)
+            while (elapsed < 0.75f * animator.speed)
             {
                 elapsed += Time.deltaTime;
                 controller.Move(attackDirection * sprintSpeed * Time.deltaTime);
@@ -429,7 +429,7 @@ public class ThirdPersonController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.runningHeavy;
 
-            while (elapsed < (runningHeavyAttackDuration - 1.6f))
+            while (elapsed < (runningHeavyAttackDuration - 1.6f) / animator.speed)
             {
                 elapsed += Time.deltaTime;
                 controller.Move(attackDirection * walkSpeed * Time.deltaTime);
@@ -438,7 +438,7 @@ public class ThirdPersonController : MonoBehaviour
 
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
 
-            yield return new WaitForSeconds(runningHeavyAttackDuration - elapsed);
+            yield return new WaitForSeconds((runningHeavyAttackDuration - elapsed) / animator.speed) ;
             isHeavyAttack = true;
         }
         else

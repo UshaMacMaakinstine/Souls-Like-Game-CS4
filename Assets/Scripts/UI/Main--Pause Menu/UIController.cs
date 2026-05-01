@@ -4,6 +4,8 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.IO;
+using Cinemachine;
+
 
 
 #if UNITY_EDITOR
@@ -16,6 +18,7 @@ public class UIController : MonoBehaviour
     public int sens;
     public Slider sensSlider;
     public TMP_InputField sensInput;
+    [SerializeField] public CinemachineFreeLook freeLook;
 
     [Header("Main Audio")]
     public int mainAudio;
@@ -80,7 +83,7 @@ public class UIController : MonoBehaviour
     }
 
         // --- Sensitivity ---
-    public void sensInputChange() 
+    public void sensInputChange()
     {
         if (int.TryParse(sensInput.text, out int result)) {
             sens = result;
@@ -91,6 +94,14 @@ public class UIController : MonoBehaviour
     {
         sens = (int)sensSlider.value;
         if (sensInput.text != sens.ToString()) sensInput.text = sens.ToString();
+
+        freeLook.m_XAxis.m_MaxSpeed = MapValue(sens, 0f, 1f, 0f, 0.8f);
+        freeLook.m_YAxis.m_MaxSpeed = MapValue(sens, 0f, 1f, 0f, 0.016f);
+    }
+
+    private float MapValue(float val, float srcMin, float srcMax, float dstMin, float dstMax)
+    {
+        return ((val - srcMin) / (srcMax - srcMin) * (dstMax - dstMin) + dstMin) / 100f;
     }
 
     // --- Main Audio ---
