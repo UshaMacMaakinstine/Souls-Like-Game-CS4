@@ -1,11 +1,16 @@
 using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public class MrWatsonController : MonoBehaviour
 {
     [Header("Health Settings")]
-    public float bodyHealth = 1000f;
-    public float legHealth = 7200f;
+    public float bodyHealth;
+    public float legHealth;
+    public float phase2Health;
+    public float damageRadius;
+
+    public GameObject foot;
     private float currentLegDamage = 0f;
     public bool isDown = false;
 
@@ -21,6 +26,12 @@ public class MrWatsonController : MonoBehaviour
     public StatisticBar bossHealthBar;
     public GameObject bulletPrefab;
     public Transform fingerGunMuzzle;
+
+    [Header("Stacking Damage UI")]
+    private float accumulatedDamage = 0f;
+    private Coroutine damageStackCoroutine;
+    public float stackResetTime = 1.5f; // How long to wait before resetting the stack
+    public TMP_Text damageText;
 
     private MrWatsonAI ai;
 
@@ -48,32 +59,73 @@ public class MrWatsonController : MonoBehaviour
     {
         if (currentState == BossState.Transitioning) return;
 
-        if(bodyHealth < 30000)
-        {
-            SetBossMode(BossState.Teacher);
-        }
-
         if (limb == LimbType.Leg && !isDown)
         {
             currentLegDamage += damage;
             bodyHealth -= damage; 
+            UpdateStackedDamage(damage);
             if (currentLegDamage >= legHealth) StartCoroutine(DownedSequence());
         }
         else if (limb == LimbType.Head && isDown)
         {
             bodyHealth -= (damage * 2f); // Massive damage window
-            performanceGauge += (damage * 0.4f); // Punish the player with Rage for doing high damage
+            UpdateStackedDamage(damage * 2f);
+            performanceGauge += damage * 0.4f; // Punish the player with Rage for doing high damage
         }
         else
         {
             bodyHealth -= damage;
-            performanceGauge += (damage * 0.15f);
+            performanceGauge += damage * 0.15f;
         }
 
         if (bossHealthBar != null) bossHealthBar.stat = bodyHealth;
         
         // Visual indicator: He gets faster as he gets angrier
         anim.speed = 1f + (performanceGauge / maxPerformance) * 0.4f;
+
+        if(bodyHealth < phase2Health)
+        {
+            StartCoroutine(phaseChange());
+        }
+    }
+
+    IEnumerator phaseChange()
+    {
+        currentState = BossState.Transitioning;
+        anim.SetTrigger("Phase2");
+        yield return new WaitForSeconds(1.167f + 2.383f);
+        SetBossMode(BossState.Teacher);
+    }
+
+    private void UpdateStackedDamage(float damage)
+    {
+        // 1. Add to the total
+        accumulatedDamage += damage;
+        
+        // 2. Show the text (make sure the object is active)
+        damageText.gameObject.SetActive(true);
+        damageText.text = Mathf.RoundToInt(accumulatedDamage).ToString();
+
+        // 3. Reset the "Close UI" timer
+        if (damageStackCoroutine != null)
+        {
+            StopCoroutine(damageStackCoroutine);
+        }
+        
+        damageStackCoroutine = StartCoroutine(ResetDamageStack());
+    }
+
+    IEnumerator ResetDamageStack()
+    {
+        // Wait for the player to stop dealing damage
+        yield return new WaitForSeconds(stackResetTime);
+
+        // Fade out or just disable
+        damageText.gameObject.SetActive(false);
+        
+        // Reset the counter for the next time they start hitting
+        accumulatedDamage = 0f;
+        damageStackCoroutine = null;
     }
 
     public void FireBullet()
@@ -93,31 +145,11 @@ public class MrWatsonController : MonoBehaviour
         isDown = true;
         ai.enabled = false;
         anim.SetBool("isDown", true);
-        anim.SetTrigger("FallOver");
 
-        // Logic to tip him over 90 degrees
-        float elapsed = 0;
-        Quaternion startRot = transform.rotation;
-        Quaternion endRot = Quaternion.Euler(90, transform.eulerAngles.y, 0);
-        while(elapsed < 1.33f) {
-            elapsed += Time.deltaTime * 1.33f;
-            transform.rotation = Quaternion.Lerp(startRot, endRot, elapsed);
-            yield return null;
-        }
+        yield return new WaitForSeconds(12f); // Window for headshots
 
-        yield return new WaitForSeconds(6f); // Time player has to hit the head
-
-        anim.SetTrigger("GetUp");
         anim.SetBool("isDown", false);
         currentLegDamage = 0f;
-
-        // Return upright
-        elapsed = 0;
-        while(elapsed < 2.33f) {
-            elapsed += Time.deltaTime * 2.33f;
-            transform.rotation = Quaternion.Lerp(endRot, startRot, elapsed);
-            yield return null;
-        }
 
         ai.enabled = true;
         isDown = false;
@@ -126,8 +158,7 @@ public class MrWatsonController : MonoBehaviour
     public void ApplyMeleeDamage()
     {
         // Simple sphere check to see if player is in front of Watson during the slam
-        float damageRadius = 7f;
-        Collider[] hitPlayers = Physics.OverlapSphere(transform.position + transform.forward * 2, damageRadius);
+        Collider[] hitPlayers = Physics.OverlapSphere(transform.position, damageRadius);
 
         bool hit = false;
         foreach (Collider col in hitPlayers)
@@ -151,7 +182,7 @@ public class MrWatsonController : MonoBehaviour
         ai.enabled = false;
         performanceGauge = 0f;
 
-        anim.SetTrigger("SpinWheel"); 
+        anim.SetTrigger("SpinWheel");
         yield return new WaitForSeconds(4f); // Duration of the cutscene
 
         // 50/50 chance for Violin or Karaoke
@@ -185,4 +216,27 @@ public class MrWatsonController : MonoBehaviour
     {
         Debug.Log("Wheel Animation finished - Mode transition complete.");
     }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        // 1. Melee Radius (Red) - The "Danger Zone"
+        Gizmos.color = Color.purple;
+        DrawWireDisk(transform.position, damageRadius);
+    }
+
+    // Helper to draw a flat circle on the ground
+    private void DrawWireDisk(Vector3 center, float radius)
+    {
+        float angleStep = 10f;
+        Vector3 prevPoint = center + new Vector3(radius, 0, 0);
+        for (float i = angleStep; i <= 360f; i += angleStep)
+        {
+            float rad = i * Mathf.Deg2Rad;
+            Vector3 nextPoint = center + new Vector3(Mathf.Cos(rad) * radius, 0, Mathf.Sin(rad) * radius);
+            Gizmos.DrawLine(prevPoint, nextPoint);
+            prevPoint = nextPoint;
+        }
+    }
+#endif
 }

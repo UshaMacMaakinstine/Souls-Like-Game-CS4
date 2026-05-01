@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 public enum BossState 
 { 
@@ -48,14 +49,14 @@ public class MrWatsonAI : MonoBehaviour
         controller.anim.SetFloat("Speed", agent.velocity.magnitude);
         controller.anim.SetFloat("TurnSpeed", normalizedTurnSpeed);
 
-        if (!isAttacking)
-        {
-            FacePlayerSmoothly();
-            float dist = Vector3.Distance(transform.position, playerTransform.position);
+        // if (!isAttacking)
+        // {
+        //     FacePlayerSmoothly();
+        //     float dist = Vector3.Distance(transform.position, playerTransform.position);
             
-            if (Time.time > lastAttackTime + attackCooldown)
-                DecideAttack(dist);
-        }
+        //     if (Time.time > lastAttackTime + attackCooldown)
+        //         DecideAttack(dist);
+        // }
     }
 
     void DecideAttack(float dist)
@@ -75,10 +76,48 @@ public class MrWatsonAI : MonoBehaviour
     IEnumerator MeleeSequence()
     {
         isAttacking = true;
-        // Pointer stick if Phase 2, Stomp if Phase 1
-        string animKey = (controller.currentState == BossState.Phase1) ? "MeleeAttack" : "PointerAttack";
+        
+        // 1. Get the target position (where the player is right now)
+        Vector3 jumpTarget = playerTransform.position;
+        Vector3 startPos = transform.position;
+
+        // 2. Trigger the animation
+        string animKey = (controller.currentState == BossState.Phase1) ? "NearAttack" : "PointerAttack";
         controller.anim.SetTrigger(animKey);
-        yield return new WaitForSeconds(2f);
+
+        // If it's the jump attack, handle the manual movement
+        if (animKey == "NearAttack")
+        {
+            agent.enabled = false; // Disable NavMesh so we can move vertically
+
+            float jumpDuration = 3.167f; 
+            float jumpHeight = 12f; // Adjust based on how high the animation looks
+            float timer = 0;
+
+            while (timer < jumpDuration)
+            {
+                timer += Time.deltaTime;
+                float t = timer / jumpDuration; // 0 to 1
+
+                // Parabola math for the arc
+                float height = 4 * jumpHeight * t * (1 - t);
+
+                // Move horizontally and vertically
+                Vector3 currentPos = Vector3.Lerp(startPos, jumpTarget, t);
+                transform.position = new Vector3(currentPos.x, startPos.y + height, currentPos.z);
+
+                yield return null;
+            }
+
+            transform.position = jumpTarget; // Ensure clean landing
+            agent.enabled = true; // Turn NavMesh back on
+        }
+        else
+        {
+            // If it's just the PointerAttack, just wait for the animation
+            yield return new WaitForSeconds(2f);
+        }
+
         EndAttack();
     }
 
@@ -90,18 +129,30 @@ public class MrWatsonAI : MonoBehaviour
 
         agent.isStopped = false;
         agent.speed = 25f;
+
+        // 1. CALCULATE THE "LEFT" POSITION
+        // Direction from Watson to Player
+        Vector3 dirToPlayer = (playerTransform.position - transform.position).normalized;
         
+        // The vector pointing 90 degrees to the left of that direction
+        Vector3 leftDirection = Quaternion.Euler(0, 90, 0) * dirToPlayer;
+        
+        // Target is: Player Position + (Left Direction * 20 feet)
+        Vector3 chargeTarget = playerTransform.position + (leftDirection * 6f);
+
         float timer = 0;
-        while(timer < 1.5f && Vector3.Distance(transform.position, playerTransform.position) > 3.5f)
+        // Charge toward the calculated offset point
+        while(timer < 1.5f && Vector3.Distance(transform.position, chargeTarget) > 2f)
         {
-            agent.SetDestination(playerTransform.position);
+            agent.SetDestination(chargeTarget);
             timer += Time.deltaTime;
             yield return null;
         }
 
+        // 2. SMASH AFTER CHARGE
         agent.isStopped = true;
         agent.speed = 3.5f;
-        controller.anim.SetTrigger("MeleeAttack"); // Smash after charge
+        controller.anim.SetTrigger("MeleeAttack"); 
         yield return new WaitForSeconds(1.5f);
         EndAttack();
     }
