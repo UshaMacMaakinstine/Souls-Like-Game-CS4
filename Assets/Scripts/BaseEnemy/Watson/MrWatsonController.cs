@@ -221,7 +221,7 @@ public class MrWatsonController : MonoBehaviour
     private void OnDrawGizmos()
     {
         // 1. Melee Radius (Red) - The "Danger Zone"
-        Gizmos.color = Color.purple;
+        Gizmos.color = Color.magenta;
         DrawWireDisk(transform.position, damageRadius);
     }
 
