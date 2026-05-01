@@ -124,6 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 888871181f16c406bb9859489dd9fc10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WatsonProjectile
-  speed: 50
-  lifetime: 5
-  damage: 10
+  speed: 600
+  lifetime: 10
+  damage: 100

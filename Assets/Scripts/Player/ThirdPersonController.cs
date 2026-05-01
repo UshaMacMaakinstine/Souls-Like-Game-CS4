@@ -5,6 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonController : MonoBehaviour
 {
+    private TargetLock targetLock;
     private WeaponFramework weaponFramework;
     private PlayerProperties playerProperties;
 
@@ -69,6 +70,7 @@ public class ThirdPersonController : MonoBehaviour
 
     void Awake()
     {
+        targetLock = GetComponent<TargetLock>();
         controller = GetComponent<CharacterController>();
         playerProperties = GetComponent<PlayerProperties>();
 
@@ -180,7 +182,14 @@ public class ThirdPersonController : MonoBehaviour
     void HandleMovement()
     {
         if (isMovementFrozen) return;
-        Vector3 inputDirection = new Vector3(moveInput.x * controlMultiplier, 0f, moveInput.y * controlMultiplier).normalized;
+        Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+
+        // REVERSE CONTROLS GIMMICK
+        if (playerProperties != null && playerProperties.controlsReversed)
+        {
+            inputDirection *= -1f;
+        }
+
         bool isMoving = inputDirection.magnitude >= 0.1f;
 
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
@@ -372,7 +381,7 @@ public class ThirdPersonController : MonoBehaviour
         isAttacking = true;
 
         animator.SetTrigger("LightAttack1");
-        yield return new WaitForSeconds(0.133f/animator.speed);
+        yield return new WaitForSeconds(0.133f / animator.speed);
         if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
         yield return new WaitForSeconds(0.8f / animator.speed);
         if (!_inputBuffered) { EndCombo(); yield break; }
@@ -410,7 +419,7 @@ public class ThirdPersonController : MonoBehaviour
             float elapsed = 0f;
             Vector3 attackDirection = transform.forward;
 
-            while (elapsed < 0.75f)
+            while (elapsed < 0.75f * animator.speed)
             {
                 elapsed += Time.deltaTime;
                 controller.Move(attackDirection * sprintSpeed * Time.deltaTime);
@@ -420,7 +429,7 @@ public class ThirdPersonController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.runningHeavy;
 
-            while (elapsed < (runningHeavyAttackDuration - 1.6f))
+            while (elapsed < (runningHeavyAttackDuration - 1.6f) / animator.speed)
             {
                 elapsed += Time.deltaTime;
                 controller.Move(attackDirection * walkSpeed * Time.deltaTime);
@@ -429,7 +438,7 @@ public class ThirdPersonController : MonoBehaviour
 
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
 
-            yield return new WaitForSeconds(runningHeavyAttackDuration - elapsed);
+            yield return new WaitForSeconds((runningHeavyAttackDuration - elapsed) / animator.speed) ;
             isHeavyAttack = true;
         }
         else
