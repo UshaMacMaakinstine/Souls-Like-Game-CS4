@@ -191,6 +191,7 @@ public class UIController : MonoBehaviour
 
     public void PagePrev()
     {
+        Debug.Log("Click");
         pages[pageNumber].SetActive(false);
         pages[pageNumber - 1].SetActive(true);
         pageNumber--;
