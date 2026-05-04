@@ -64,6 +64,12 @@ public class ThirdPersonController : MonoBehaviour
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
 
+    private int WeaponType = 1;
+    /*
+    1 = sword
+    2 = spear
+    */
+
     public bool isInvincible;
     // Added this helper so your Hitbox script can find it!
     public bool isDodging => isInvincible;
@@ -472,6 +478,7 @@ public class ThirdPersonController : MonoBehaviour
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsSprinting", shouldSprint);
         animator.SetBool("IsAttacking", isAttacking);
+        animator.SetInteger("WeaponType", WeaponType);
 
         animationSpeedAdjustment();
     }
