@@ -49,14 +49,14 @@ public class MrWatsonAI : MonoBehaviour
         controller.anim.SetFloat("Speed", agent.velocity.magnitude);
         controller.anim.SetFloat("TurnSpeed", normalizedTurnSpeed);
 
-        // if (!isAttacking)
-        // {
-        //     FacePlayerSmoothly();
-        //     float dist = Vector3.Distance(transform.position, playerTransform.position);
-            
-        //     if (Time.time > lastAttackTime + attackCooldown)
-        //         DecideAttack(dist);
-        // }
+        if (!isAttacking)
+        {
+            FacePlayerSmoothly();
+            float dist = Vector3.Distance(transform.position, playerTransform.position);
+
+            if (Time.time > lastAttackTime + attackCooldown)
+                DecideAttack(dist);
+        }
     }
 
     void DecideAttack(float dist)
