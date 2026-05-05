@@ -205,7 +205,7 @@ public class MrWatsonController : MonoBehaviour
         // If he's no longer in Phase 1, ensure the animator knows
         if (newMode != BossState.Phase1) anim.SetInteger("Phase", 1);
         
-        Debug.Log("Boss state set to: " + newMode);
+        Debug.Log("Boss state set to: " + (int)newMode);
     }
 
     // --- ANIMATION EVENTS ---
