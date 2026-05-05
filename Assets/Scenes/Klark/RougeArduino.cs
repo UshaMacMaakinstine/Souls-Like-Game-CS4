@@ -1,4 +1,4 @@
-/*using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
@@ -234,7 +234,7 @@ public class RougeArduino : BaseEnemy
         float dist = Vector3.Distance(transform.position, playerTransform.position);
         if (dist > fanEffectRadius) return;
 
-        // Direction away from the fan (push) — you can invert to drag closer if desired
+        // Direction away from the fan (push) ï¿½ you can invert to drag closer if desired
         Vector3 dir = (playerTransform.position - transform.position).normalized;
         Rigidbody rb = playerTransform.GetComponent<Rigidbody>();
         if (rb != null)
@@ -278,4 +278,4 @@ public class RougeArduino : BaseEnemy
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, dashHitRadius);
     }
-}*/
+}
