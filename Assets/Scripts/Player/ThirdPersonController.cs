@@ -54,6 +54,7 @@ public class ThirdPersonController : MonoBehaviour
     private float turnSmoothVelocity;
 
     public GameObject menu;
+    public GameObject SettingsFolder;
 
     private bool isGrounded;
     private bool sprintHeld;
@@ -63,6 +64,12 @@ public class ThirdPersonController : MonoBehaviour
     public bool isAttacking;
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
+
+    private int WeaponType = 1;
+    /*
+    1 = sword
+    2 = spear
+    */
 
     public bool isInvincible;
     // Added this helper so your Hitbox script can find it!
@@ -278,9 +285,10 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnPause(InputAction.CallbackContext ctx)
     {
-        if(menu.activeInHierarchy)
+        if(menu.activeInHierarchy || SettingsFolder.activeInHierarchy)
         {
             menu.SetActive(false);
+            SettingsFolder.SetActive(false);
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -472,6 +480,7 @@ public class ThirdPersonController : MonoBehaviour
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsSprinting", shouldSprint);
         animator.SetBool("IsAttacking", isAttacking);
+        animator.SetInteger("WeaponType", WeaponType);
 
         animationSpeedAdjustment();
     }
