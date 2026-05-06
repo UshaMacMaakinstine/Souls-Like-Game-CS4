@@ -65,7 +65,7 @@ public class ThirdPersonController : MonoBehaviour
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
 
-    private int WeaponType = 1;
+    private int WeaponType = 2;
     /*
     1 = sword
     2 = spear
@@ -408,11 +408,16 @@ public class ThirdPersonController : MonoBehaviour
                 break;
 
             case 2:
-                animator.SetTrigger("LightAttack1");
-                yield return new WaitForSeconds(0.067f / animator.speed);
-                if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-                yield return new WaitForSeconds(0.4f / animator.speed);
-                if (!_inputBuffered) { EndCombo(); yield break; }
+                do{
+                    _inputBuffered = false;
+                    animator.SetTrigger("LightAttack1");
+                    yield return new WaitForSeconds(0.067f / animator.speed);
+                    if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+                    yield return new WaitForSeconds(0.4f / animator.speed);
+                    if (!_inputBuffered) { EndCombo(); yield break; }
+                    animator.ResetTrigger("LightAttack1");
+                }
+                while (_inputBuffered);
                 break;
 
             default:
