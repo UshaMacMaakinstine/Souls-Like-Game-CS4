@@ -21,7 +21,7 @@ public class WeaponFramework : MonoBehaviour
             float damageToApply = CalculateDamage();
             if (damageToApply <= 0) return;
 
-            // UNIVERSAL CHECK 1: Is this a specialized Hitbox/Limb? (Watson, etc.)
+            // BOSS CHECK
             if (other.TryGetComponent<BossHitbox>(out var limb))
             {
                 limb.bossController.TakeDamage(damageToApply, limb.limbType);
@@ -29,7 +29,7 @@ public class WeaponFramework : MonoBehaviour
                 return; 
             }
 
-            // UNIVERSAL CHECK 2: Is this a standard Enemy?
+            // STANDARD ENEMY CHECK
             if (other.CompareTag("Enemy"))
             {
                 BaseEnemy enemy = other.GetComponent<BaseEnemy>();

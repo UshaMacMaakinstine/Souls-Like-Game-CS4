@@ -1,4 +1,4 @@
-/*using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
@@ -40,7 +40,10 @@ public class RougeArduino : BaseEnemy
 
     protected override void InitializeEnemy()
     {
-        agent = GetComponent<NavMeshAgent>();
+        // Prefer TryGetComponent to avoid unexpected GetComponent cost / nulls
+        if (!TryGetComponent(out agent))
+            agent = GetComponent<NavMeshAgent>();
+
         if (agent != null)
         {
             agent.speed = stats != null ? stats.moveSpeed : 3.5f;
@@ -54,7 +57,7 @@ public class RougeArduino : BaseEnemy
         }
 
         if (bodyRenderer != null) originalColor = bodyRenderer.material.color;
-        if (chainsawHitbox != null) chainsawHitbox.SetActive(false);
+        if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
         if (fanWeapon != null) fanWeapon.SetActive(false);
     }
 
@@ -99,7 +102,9 @@ public class RougeArduino : BaseEnemy
                 agent.SetDestination(playerTransform.position);
 
                 float dist = Vector3.Distance(transform.position, playerTransform.position);
-                if (dist <= stats != null ? stats.attackRadius : 2.0f)
+                // Evaluate attack radius first then compare
+                float attackRadius = (stats != null) ? stats.attackRadius : 2.0f;
+                if (dist <= attackRadius)
                 {
                     // start continuous chainsaw attack
                     StartCoroutine(ChainsawRoutine());
@@ -114,7 +119,7 @@ public class RougeArduino : BaseEnemy
         if (isAwakened) return;
         isAwakened = true;
         if (fanWeapon != null) fanWeapon.SetActive(true);
-        if (chainsawHitbox != null) chainsawHitbox.SetActive(false); // will enable in routine
+        if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false); // will enable in routine
         if (agent != null) agent.speed = moveSpeedPhase2;
         if (bodyRenderer != null) bodyRenderer.material.color = Color.red;
     }
@@ -126,12 +131,13 @@ public class RougeArduino : BaseEnemy
         canDash = false;
         isDashing = true;
         agent.isStopped = true;
-        Vector3 start = transform.position;
+
         Vector3 target = playerTransform.position;
         target.y = transform.position.y;
 
-        float t = 0f;
-        float duration = dashDuration;
+        float elapsed = 0f;
+        float duration = Mathf.Max(0.001f, dashDuration);
+
         // face player quickly
         if (playerTransform != null)
         {
@@ -140,11 +146,11 @@ public class RougeArduino : BaseEnemy
             if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir.normalized);
         }
 
-        while (t < duration)
+        // Use MoveTowards for stable, frame-rate independent dash movement
+        while (elapsed < duration)
         {
-            t += Time.deltaTime;
-            float frac = t / duration;
-            transform.position = Vector3.Lerp(start, target, frac) + transform.forward * dashSpeed * Time.deltaTime;
+            elapsed += Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, target, Mathf.Max(0f, dashSpeed) * Time.deltaTime);
             yield return null;
         }
 
@@ -175,7 +181,7 @@ public class RougeArduino : BaseEnemy
         if (agent != null) agent.isStopped = false;
 
         // small cooldown
-        yield return new WaitForSeconds(dashCooldown);
+        yield return new WaitForSeconds(Mathf.Max(0f, dashCooldown));
         canDash = true;
     }
 
@@ -199,10 +205,10 @@ public class RougeArduino : BaseEnemy
         }
 
         // Start chainsaw active window: repeatedly apply damage via hitbox enabling
-        if (chainsawHitbox != null)
+        if (chainsawHitbox != null && chainsawHitbox.gameObject != null)
         {
             chainsawHitbox.damage = chainsawDamage;
-            chainsawHitbox.SetActive(true);
+            chainsawHitbox.gameObject.SetActive(true);
         }
 
         float lastHit = 0f;
@@ -211,8 +217,7 @@ public class RougeArduino : BaseEnemy
             // apply fan force to player (push away)
             ApplyFanEffect();
 
-            // hit interval handling is inside EnemyHitbox.OnTriggerStay (it disables itself after hit),
-            // but we keep hitbox active and rely on repeated OnTriggerStay calls.
+            // keep time for hit interval if needed by future logic
             lastHit += Time.deltaTime;
             if (lastHit >= chainsawHitInterval)
             {
@@ -221,7 +226,7 @@ public class RougeArduino : BaseEnemy
             yield return null;
         }
 
-        if (chainsawHitbox != null) chainsawHitbox.SetActive(false);
+        if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
         if (bodyRenderer != null) bodyRenderer.material.color = originalColor;
         isAttacking = false;
         if (agent != null) agent.isStopped = false;
@@ -234,7 +239,7 @@ public class RougeArduino : BaseEnemy
         float dist = Vector3.Distance(transform.position, playerTransform.position);
         if (dist > fanEffectRadius) return;
 
-        // Direction away from the fan (push) — you can invert to drag closer if desired
+        // Direction away from the fan (push) ï¿½ you can invert to drag closer if desired
         Vector3 dir = (playerTransform.position - transform.position).normalized;
         Rigidbody rb = playerTransform.GetComponent<Rigidbody>();
         if (rb != null)
@@ -263,9 +268,32 @@ public class RougeArduino : BaseEnemy
     {
         StopAllCoroutines();
         base.Die();
-        if (chainsawHitbox != null) chainsawHitbox.SetActive(false);
+        if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
         if (fanWeapon != null) fanWeapon.SetActive(false);
         if (bodyRenderer != null) bodyRenderer.material.color = Color.gray;
+    }
+
+    private void OnDisable()
+    {
+        // Ensure coroutines and visual states are cleaned up on disable/destroy
+        StopAllCoroutines();
+        if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
+        if (fanWeapon != null) fanWeapon.SetActive(false);
+        if (bodyRenderer != null) bodyRenderer.material.color = originalColor;
+    }
+
+    private void OnValidate()
+    {
+        // Clamp public values to reasonable ranges to avoid runtime surprises set in inspector
+        detectRange = Mathf.Max(0f, detectRange);
+        dashSpeed = Mathf.Max(0f, dashSpeed);
+        dashDuration = Mathf.Max(0.01f, dashDuration);
+        dashHitRadius = Mathf.Max(0f, dashHitRadius);
+        dashCooldown = Mathf.Max(0f, dashCooldown);
+        moveSpeedPhase2 = Mathf.Max(0f, moveSpeedPhase2);
+        chainsawHitInterval = Mathf.Max(0.01f, chainsawHitInterval);
+        fanEffectRadius = Mathf.Max(0f, fanEffectRadius);
+        fanForce = Mathf.Max(0f, fanForce);
     }
 
     // Optional: debug gizmos to visualize ranges
@@ -278,4 +306,9 @@ public class RougeArduino : BaseEnemy
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, dashHitRadius);
     }
-}*/
+<<<<<<< HEAD
+}
+=======
+}
+*/
+>>>>>>> 9994ce647c3ef707a5013270a5d2bd2a0bebdd86

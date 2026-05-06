@@ -5,6 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonController : MonoBehaviour
 {
+    private TargetLock targetLock;
     private WeaponFramework weaponFramework;
     private PlayerProperties playerProperties;
 
@@ -53,6 +54,7 @@ public class ThirdPersonController : MonoBehaviour
     private float turnSmoothVelocity;
 
     public GameObject menu;
+    public GameObject SettingsFolder;
 
     private bool isGrounded;
     private bool sprintHeld;
@@ -63,12 +65,19 @@ public class ThirdPersonController : MonoBehaviour
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
 
+    private int WeaponType = 1;
+    /*
+    1 = sword
+    2 = spear
+    */
+
     public bool isInvincible;
     // Added this helper so your Hitbox script can find it!
     public bool isDodging => isInvincible;
 
     void Awake()
     {
+        targetLock = GetComponent<TargetLock>();
         controller = GetComponent<CharacterController>();
         playerProperties = GetComponent<PlayerProperties>();
 
@@ -180,7 +189,14 @@ public class ThirdPersonController : MonoBehaviour
     void HandleMovement()
     {
         if (isMovementFrozen) return;
-        Vector3 inputDirection = new Vector3(moveInput.x * controlMultiplier, 0f, moveInput.y * controlMultiplier).normalized;
+        Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+
+        // REVERSE CONTROLS GIMMICK
+        if (playerProperties != null && playerProperties.controlsReversed)
+        {
+            inputDirection *= -1f;
+        }
+
         bool isMoving = inputDirection.magnitude >= 0.1f;
 
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
@@ -269,9 +285,10 @@ public class ThirdPersonController : MonoBehaviour
 
     void OnPause(InputAction.CallbackContext ctx)
     {
-        if(menu.activeInHierarchy)
+        if(menu.activeInHierarchy || SettingsFolder.activeInHierarchy)
         {
             menu.SetActive(false);
+            SettingsFolder.SetActive(false);
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -371,20 +388,37 @@ public class ThirdPersonController : MonoBehaviour
         _isAttackingInternal = true;
         isAttacking = true;
 
-        animator.SetTrigger("LightAttack1");
-        yield return new WaitForSeconds(0.133f/animator.speed);
-        if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-        yield return new WaitForSeconds(0.8f / animator.speed);
-        if (!_inputBuffered) { EndCombo(); yield break; }
+        switch (WeaponType)
+        {
+            case 1:
+                animator.SetTrigger("LightAttack1");
+                yield return new WaitForSeconds(0.133f / animator.speed);
+                if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+                yield return new WaitForSeconds(0.8f / animator.speed);
+                if (!_inputBuffered) { EndCombo(); yield break; }
 
-        _inputBuffered = false;
-        animator.SetTrigger("LightAttack2");
-        yield return new WaitForSeconds(0.567f / animator.speed);
-        if (!_inputBuffered) { EndCombo(); yield break; }
+                _inputBuffered = false;
+                animator.SetTrigger("LightAttack2");
+                yield return new WaitForSeconds(0.567f / animator.speed);
+                if (!_inputBuffered) { EndCombo(); yield break; }
 
-        _inputBuffered = false;
-        animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(0.833f / animator.speed);
+                _inputBuffered = false;
+                animator.SetTrigger("LightAttack3");
+                yield return new WaitForSeconds(0.833f / animator.speed);
+                break;
+
+            case 2:
+                animator.SetTrigger("LightAttack1");
+                yield return new WaitForSeconds(0.067f / animator.speed);
+                if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+                yield return new WaitForSeconds(0.4f / animator.speed);
+                if (!_inputBuffered) { EndCombo(); yield break; }
+                break;
+
+            default:
+                Debug.LogWarning("Unknown weapon type: " + WeaponType);
+                break;
+        }
 
         EndCombo();
     }
@@ -410,7 +444,7 @@ public class ThirdPersonController : MonoBehaviour
             float elapsed = 0f;
             Vector3 attackDirection = transform.forward;
 
-            while (elapsed < 0.75f)
+            while (elapsed < 0.75f * animator.speed)
             {
                 elapsed += Time.deltaTime;
                 controller.Move(attackDirection * sprintSpeed * Time.deltaTime);
@@ -420,7 +454,7 @@ public class ThirdPersonController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.runningHeavy;
 
-            while (elapsed < (runningHeavyAttackDuration - 1.6f))
+            while (elapsed < (runningHeavyAttackDuration - 1.6f) / animator.speed)
             {
                 elapsed += Time.deltaTime;
                 controller.Move(attackDirection * walkSpeed * Time.deltaTime);
@@ -429,7 +463,7 @@ public class ThirdPersonController : MonoBehaviour
 
             if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
 
-            yield return new WaitForSeconds(runningHeavyAttackDuration - elapsed);
+            yield return new WaitForSeconds((runningHeavyAttackDuration - elapsed) / animator.speed) ;
             isHeavyAttack = true;
         }
         else
@@ -463,6 +497,7 @@ public class ThirdPersonController : MonoBehaviour
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsSprinting", shouldSprint);
         animator.SetBool("IsAttacking", isAttacking);
+        animator.SetInteger("WeaponType", WeaponType);
 
         animationSpeedAdjustment();
     }

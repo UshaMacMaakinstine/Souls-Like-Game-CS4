@@ -132,6 +132,7 @@ public class RatController : BaseEnemy
         // Visual telegraph (turning yellow)
         if (ratRenderer != null) ratRenderer.material.color = telegraphColor;
 
+        anim.SetTrigger("IsAttacking");
         float timer = 0;
         while (timer < telegraphDuration)
         {
