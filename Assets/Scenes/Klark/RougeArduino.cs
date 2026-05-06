@@ -36,11 +36,11 @@ public class RougeArduino : BaseEnemy
     private bool canDash = true;
     private bool isDashing = false;
     private bool isAttacking = false;
-    private Color originalColor;
+    private Color originalColor = Color.white;
 
     protected override void InitializeEnemy()
     {
-        // Prefer TryGetComponent to avoid unexpected GetComponent cost / nulls
+        // TryGetComponent is safer/faster when available
         if (!TryGetComponent(out agent))
             agent = GetComponent<NavMeshAgent>();
 
@@ -56,8 +56,11 @@ public class RougeArduino : BaseEnemy
             if (p != null) playerTransform = p.transform;
         }
 
-        if (bodyRenderer != null) originalColor = bodyRenderer.material.color;
-        if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
+        if (bodyRenderer != null)
+            originalColor = bodyRenderer.material != null ? bodyRenderer.material.color : Color.white;
+
+        if (chainsawHitbox != null && chainsawHitbox.gameObject != null)
+            chainsawHitbox.gameObject.SetActive(false);
         if (fanWeapon != null) fanWeapon.SetActive(false);
     }
 
@@ -121,7 +124,7 @@ public class RougeArduino : BaseEnemy
         if (fanWeapon != null) fanWeapon.SetActive(true);
         if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false); // will enable in routine
         if (agent != null) agent.speed = moveSpeedPhase2;
-        if (bodyRenderer != null) bodyRenderer.material.color = Color.red;
+        if (bodyRenderer != null && bodyRenderer.material != null) bodyRenderer.material.color = Color.red;
     }
 
     private IEnumerator DashAtPlayer()
@@ -194,7 +197,7 @@ public class RougeArduino : BaseEnemy
         if (agent != null) agent.isStopped = true;
 
         // Telegraphed color
-        if (bodyRenderer != null) bodyRenderer.material.color = Color.yellow;
+        if (bodyRenderer != null && bodyRenderer.material != null) bodyRenderer.material.color = Color.yellow;
         // spin fan visually if available
         float tele = 0.25f;
         float timer = 0f;
@@ -227,7 +230,7 @@ public class RougeArduino : BaseEnemy
         }
 
         if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
-        if (bodyRenderer != null) bodyRenderer.material.color = originalColor;
+        if (bodyRenderer != null && bodyRenderer.material != null) bodyRenderer.material.color = originalColor;
         isAttacking = false;
         if (agent != null) agent.isStopped = false;
     }
@@ -239,7 +242,7 @@ public class RougeArduino : BaseEnemy
         float dist = Vector3.Distance(transform.position, playerTransform.position);
         if (dist > fanEffectRadius) return;
 
-        // Direction away from the fan (push) � you can invert to drag closer if desired
+        // Direction away from the fan (push) — you can invert to drag closer if desired
         Vector3 dir = (playerTransform.position - transform.position).normalized;
         Rigidbody rb = playerTransform.GetComponent<Rigidbody>();
         if (rb != null)
@@ -270,7 +273,7 @@ public class RougeArduino : BaseEnemy
         base.Die();
         if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
         if (fanWeapon != null) fanWeapon.SetActive(false);
-        if (bodyRenderer != null) bodyRenderer.material.color = Color.gray;
+        if (bodyRenderer != null && bodyRenderer.material != null) bodyRenderer.material.color = Color.gray;
     }
 
     private void OnDisable()
@@ -279,7 +282,7 @@ public class RougeArduino : BaseEnemy
         StopAllCoroutines();
         if (chainsawHitbox != null && chainsawHitbox.gameObject != null) chainsawHitbox.gameObject.SetActive(false);
         if (fanWeapon != null) fanWeapon.SetActive(false);
-        if (bodyRenderer != null) bodyRenderer.material.color = originalColor;
+        if (bodyRenderer != null && bodyRenderer.material != null) bodyRenderer.material.color = originalColor;
     }
 
     private void OnValidate()
@@ -306,9 +309,4 @@ public class RougeArduino : BaseEnemy
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, dashHitRadius);
     }
-<<<<<<< HEAD
 }
-=======
-}
-*/
->>>>>>> 9994ce647c3ef707a5013270a5d2bd2a0bebdd86
