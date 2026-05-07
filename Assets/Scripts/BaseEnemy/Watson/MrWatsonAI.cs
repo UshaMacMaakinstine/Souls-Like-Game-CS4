@@ -24,6 +24,8 @@ public class MrWatsonAI : MonoBehaviour
     public float chargeRadius = 22f;
     public float attackCooldown = 3f;
 
+    public GameObject pointerStick;
+
     private float lastAttackTime;
     private bool isAttacking = false;
 
@@ -83,11 +85,11 @@ public class MrWatsonAI : MonoBehaviour
 
         // 2. Trigger the animation
         string animKey = (controller.currentState == BossState.Phase1) ? "NearAttack" : "PointerAttack";
-        controller.anim.SetTrigger(animKey);
 
         // If it's the jump attack, handle the manual movement
         if (animKey == "NearAttack")
         {
+            controller.anim.SetTrigger(animKey);
             agent.enabled = false; // Disable NavMesh so we can move vertically
 
             float jumpDuration = 3.167f; 
@@ -114,8 +116,14 @@ public class MrWatsonAI : MonoBehaviour
         }
         else
         {
+            float elapsed = 0f;
+            while(elapsed < 5f)
+            {
+                elapsed+=Time.deltaTime;
+                pointerStick.transform.position = Vector3.MoveTowards(pointerStick.transform.position, playerTransform.position, Time.deltaTime);
+                yield return null;
+            }
             // If it's just the PointerAttack, just wait for the animation
-            yield return new WaitForSeconds(2f);
         }
 
         EndAttack();
@@ -174,7 +182,7 @@ public class MrWatsonAI : MonoBehaviour
     {
         isAttacking = true;
         controller.anim.SetTrigger("PawsUp");
-        yield return new WaitForSeconds(1f); // Warning period
+        // yield return new WaitForSeconds(1f); // Warning period
 
         float timer = 2f;
         ThirdPersonController player = playerTransform.GetComponent<ThirdPersonController>();

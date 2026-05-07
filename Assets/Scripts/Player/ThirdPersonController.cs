@@ -65,7 +65,7 @@ public class ThirdPersonController : MonoBehaviour
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
 
-    private int WeaponType = 1;
+    private int WeaponType = 2;
     /*
     1 = sword
     2 = spear
@@ -388,20 +388,42 @@ public class ThirdPersonController : MonoBehaviour
         _isAttackingInternal = true;
         isAttacking = true;
 
-        animator.SetTrigger("LightAttack1");
-        yield return new WaitForSeconds(0.133f / animator.speed);
-        if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-        yield return new WaitForSeconds(0.8f / animator.speed);
-        if (!_inputBuffered) { EndCombo(); yield break; }
+        switch (WeaponType)
+        {
+            case 1:
+                animator.SetTrigger("LightAttack1");
+                yield return new WaitForSeconds(0.133f / animator.speed);
+                if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+                yield return new WaitForSeconds(0.8f / animator.speed);
+                if (!_inputBuffered) { EndCombo(); yield break; }
 
-        _inputBuffered = false;
-        animator.SetTrigger("LightAttack2");
-        yield return new WaitForSeconds(0.567f / animator.speed);
-        if (!_inputBuffered) { EndCombo(); yield break; }
+                _inputBuffered = false;
+                animator.SetTrigger("LightAttack2");
+                yield return new WaitForSeconds(0.567f / animator.speed);
+                if (!_inputBuffered) { EndCombo(); yield break; }
 
-        _inputBuffered = false;
-        animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(0.833f / animator.speed);
+                _inputBuffered = false;
+                animator.SetTrigger("LightAttack3");
+                yield return new WaitForSeconds(0.833f / animator.speed);
+                break;
+
+            case 2:
+                do{
+                    _inputBuffered = false;
+                    animator.SetTrigger("LightAttack1");
+                    yield return new WaitForSeconds(0.067f / animator.speed);
+                    if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+                    yield return new WaitForSeconds(0.4f / animator.speed);
+                    if (!_inputBuffered) { EndCombo(); yield break; }
+                    animator.ResetTrigger("LightAttack1");
+                }
+                while (_inputBuffered);
+                break;
+
+            default:
+                Debug.LogWarning("Unknown weapon type: " + WeaponType);
+                break;
+        }
 
         EndCombo();
     }
