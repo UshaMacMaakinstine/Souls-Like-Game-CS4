@@ -7,8 +7,8 @@ public class Shockwave : MonoBehaviour
 
     void Update()
     {
-        transform.localScale += new Vector3(1, 0, 1) * expandSpeed * Time.deltaTime;
-        if (transform.localScale.x > 50f) Destroy(gameObject);
+        transform.localScale += new Vector3(10, 10, 0) * expandSpeed * Time.deltaTime;
+        if (transform.localScale.x > 25000f) Destroy(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)

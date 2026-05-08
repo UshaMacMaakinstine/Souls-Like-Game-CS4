@@ -15,14 +15,14 @@ public class MrWatsonController : MonoBehaviour
     public bool isDown = false;
 
     [Header("Performance Gauge (Rage)")]
-    public float performanceGauge = 0f;
-    public float maxPerformance = 100f;
-    public float gaugeDrainRate = 1.2f;
+    public float performanceGauge;
+    public float maxPerformance;
+    public float gaugeDrainRate;
 
     [Header("References")]
     public BossState currentState = BossState.Phase1;
     public Animator anim;
-    public GameObject violinProp, micProp, pointerStickProp;
+    public GameObject micProp, pointerStickProp;
     public StatisticBar bossHealthBar;
     public GameObject bulletPrefab;
     public Transform fingerGunMuzzle;
@@ -34,6 +34,9 @@ public class MrWatsonController : MonoBehaviour
     public TMP_Text damageText;
 
     private MrWatsonAI ai;
+
+    private bool tooMuchDmg;
+    private float damageTakenToHead;
 
     void Start()
     {
@@ -47,12 +50,20 @@ public class MrWatsonController : MonoBehaviour
         if (isDown || currentState == BossState.Transitioning) return;
 
         // Rage slowly drains if the player isn't attacking
-        if (performanceGauge > 0) 
+        if (performanceGauge > 0 && currentState == BossState.Karaoke)
             performanceGauge -= gaugeDrainRate * Time.deltaTime;
 
+        if(performanceGauge <= 0 && currentState != BossState.Phase1 && currentState != BossState.Transitioning && !isDown && !ai.isAttacking)
+            SetBossMode(BossState.Teacher);
+
         // Transition to Special Modes
-        if (performanceGauge >= maxPerformance && currentState != BossState.Transitioning) 
-            StartCoroutine(SpinTheWheelSequence());
+        if (performanceGauge >= maxPerformance && currentState != BossState.Transitioning && !isDown && !ai.isAttacking)
+            SetBossMode(BossState.Karaoke);
+
+        if(bodyHealth < phase2Health && currentState == BossState.Phase1 && !isDown && !ai.isAttacking)
+        {
+            StartCoroutine(phaseChange());
+        }
     }
 
     public void TakeDamage(float damage, LimbType limb)
@@ -62,39 +73,33 @@ public class MrWatsonController : MonoBehaviour
         if (limb == LimbType.Leg && !isDown)
         {
             currentLegDamage += damage;
-            bodyHealth -= damage; 
+            bodyHealth -= damage * 0.4f;
             UpdateStackedDamage(damage);
+            performanceGauge += damage * 0.05f;
             if (currentLegDamage >= legHealth) StartCoroutine(DownedSequence());
         }
-        else if (limb == LimbType.Head && isDown)
+        else if (limb == LimbType.Head && isDown && !tooMuchDmg)
         {
             bodyHealth -= (damage * 2f); // Massive damage window
+            damageTakenToHead += damage * 2f;
             UpdateStackedDamage(damage * 2f);
-            performanceGauge += damage * 0.4f; // Punish the player with Rage for doing high damage
-        }
-        else
-        {
-            bodyHealth -= damage;
-            performanceGauge += damage * 0.15f;
+            performanceGauge += damage * 0.08f; // Punish the player with Rage for doing high damage
+            if (damageTakenToHead > 1000f) tooMuchDmg = true;
         }
 
         if (bossHealthBar != null) bossHealthBar.stat = bodyHealth;
         
         // Visual indicator: He gets faster as he gets angrier
         anim.speed = 1f + (performanceGauge / maxPerformance) * 0.4f;
-
-        if(bodyHealth < phase2Health)
-        {
-            StartCoroutine(phaseChange());
-        }
     }
 
     IEnumerator phaseChange()
     {
         currentState = BossState.Transitioning;
         anim.SetTrigger("Phase2");
-        yield return new WaitForSeconds(1.167f + 2.383f);
+        yield return new WaitForSeconds(1.167f);
         SetBossMode(BossState.Teacher);
+        yield return new WaitForSeconds(2.238f);
     }
 
     private void UpdateStackedDamage(float damage)
@@ -134,7 +139,7 @@ public class MrWatsonController : MonoBehaviour
         {
             // Instantiate the bullet at the muzzle position/rotation
             GameObject bullet = Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
-            
+            bullet.GetComponent<WatsonProjectile>().Launch();
             // Optional: If your bullet has a script to set its damage
             // bullet.GetComponent<BulletScript>().damage = 10f;
         }
@@ -146,10 +151,23 @@ public class MrWatsonController : MonoBehaviour
         ai.enabled = false;
         anim.SetBool("isDown", true);
 
-        yield return new WaitForSeconds(12f); // Window for headshots
+        float elapsed = 0f;
+        while(elapsed < 8f)
+        {
+            if(tooMuchDmg)
+            {
+                Debug.Log("Took Too Much Damage");
+                break;
+            }
+
+            elapsed+=Time.deltaTime;
+            yield return null;
+        }
 
         anim.SetBool("isDown", false);
         currentLegDamage = 0f;
+        damageTakenToHead = 0f;
+        tooMuchDmg = false;
 
         ai.enabled = true;
         isDown = false;
@@ -157,39 +175,23 @@ public class MrWatsonController : MonoBehaviour
 
     public void ApplyMeleeDamage()
     {
-        // Simple sphere check to see if player is in front of Watson during the slam
-        Collider[] hitPlayers = Physics.OverlapSphere(transform.position, damageRadius);
-
-        bool hit = false;
-        foreach (Collider col in hitPlayers)
+        if(currentState == BossState.Phase1)
         {
-            if (col.transform.root.CompareTag("Player") && !hit)
+            // Simple sphere check to see if player is in front of Watson during the slam
+            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, damageRadius);
+
+            bool hit = false;
+            foreach (Collider col in hitPlayers)
             {
-                float damage = 0;
-                if(currentState == BossState.Phase1) damage = 250f; 
-                if(currentState == BossState.Teacher) damage = 150f;
-                if(currentState == BossState.Violin) damage = 400f;
-                col.transform.root.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = damage });
-                hit = true;
-                Debug.Log("Watson slammed the player!");
+                if (col.transform.root.CompareTag("Player") && !hit)
+                {
+                    float damage = 250f;
+                    col.transform.root.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = damage });
+                    hit = true;
+                    Debug.Log("Watson slammed the player!");
+                }
             }
         }
-    }
-
-    IEnumerator SpinTheWheelSequence()
-    {
-        currentState = BossState.Transitioning;
-        ai.enabled = false;
-        performanceGauge = 0f;
-
-        anim.SetTrigger("SpinWheel");
-        yield return new WaitForSeconds(4f); // Duration of the cutscene
-
-        // 50/50 chance for Violin or Karaoke
-        BossState nextMode = (Random.value > 0.5f) ? BossState.Violin : BossState.Karaoke;
-        SetBossMode(nextMode);
-        
-        ai.enabled = true;
     }
 
     public void SetBossMode(BossState newMode)
@@ -197,7 +199,6 @@ public class MrWatsonController : MonoBehaviour
         currentState = newMode;
 
         if (pointerStickProp) pointerStickProp.SetActive(newMode == BossState.Teacher);
-        if (violinProp) violinProp.SetActive(newMode == BossState.Violin);
         if (micProp) micProp.SetActive(newMode == BossState.Karaoke);
         
         anim.SetInteger("Mode", (int)newMode);
@@ -209,13 +210,6 @@ public class MrWatsonController : MonoBehaviour
     }
 
     // --- ANIMATION EVENTS ---
-
-    // This is what the 'Spin the Wheel' Animation Event calls
-    // It has NO arguments so the error CS1501 will disappear
-    public void SwitchToMode()
-    {
-        Debug.Log("Wheel Animation finished - Mode transition complete.");
-    }
 
     #if UNITY_EDITOR
     private void OnDrawGizmos()

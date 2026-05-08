@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using JetBrains.Annotations;
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonController : MonoBehaviour
@@ -64,6 +65,10 @@ public class ThirdPersonController : MonoBehaviour
     public bool isAttacking;
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
+
+    private Vector3 impact = Vector3.zero;
+
+    public bool isMoving;
 
     private int WeaponType = 1;
     /*
@@ -171,6 +176,14 @@ public class ThirdPersonController : MonoBehaviour
             HandleMovement();
         }
 
+        if (impact.magnitude > 0.2f) 
+        {
+            controller.Move(impact * Time.deltaTime);
+        }
+
+        // Consume the energy over time (Lerp toward zero)
+        impact = Vector3.Lerp(impact, Vector3.zero, Time.deltaTime * 5f);
+
         ApplyGravity();
         UpdateAnimator();
     }
@@ -197,7 +210,7 @@ public class ThirdPersonController : MonoBehaviour
             inputDirection *= -1f;
         }
 
-        bool isMoving = inputDirection.magnitude >= 0.1f;
+        isMoving = inputDirection.magnitude >= 0.1f;
 
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
 
@@ -217,6 +230,16 @@ public class ThirdPersonController : MonoBehaviour
             Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             controller.Move(moveDirection.normalized * currentSpeed * Time.deltaTime);
         }
+    }
+
+    public void ApplyKnockback(Vector3 sourcePosition, float force)
+    {
+        // Calculate direction (Away from the sweep)
+        Vector3 direction = (transform.position - sourcePosition).normalized;
+        direction.y = 0; // Keep the knockback horizontal
+
+        // Add to the current impact (allows for multiple hits to stack)
+        impact += direction * force;
     }
 
     void ApplyGravity()
