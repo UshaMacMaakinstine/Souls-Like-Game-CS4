@@ -2,39 +2,89 @@ using UnityEngine;
 
 public class WatsonProjectile : MonoBehaviour
 {
-    public float speed = 50f;
-    public float lifetime = 5f;
+    [Header("Movement Settings")]
+    public float launchSpeed = 80f;
+    public float returnSpeed = 120f;
     public float damage = 10f;
+    public float lifetime = 5f;
 
     private Vector3 moveDirection;
-    private bool initialized = false;
+    private bool isLaunched = false;
+    private bool isReturning = false;
+    private Transform bossReturnAnchor;
+    private Rigidbody rb;
 
-    void Start()
+    void Awake()
     {
-        Destroy(gameObject, lifetime);
-        
+        rb = GetComponent<Rigidbody>();
+    }
+
+    // New Helper Method to find the player at the moment of launch
+    private void SetDirectionToPlayer()
+    {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            // 1. Calculate the target point (5 units above the player)
-            Vector3 targetPoint = new Vector3(player.transform.position.x, player.transform.position.y + 3f, player.transform.position.z);
-            
-            // 2. Calculate the direction from the projectile's spawn to that point
+            // Aim for the player's chest/center (3 units up)
+            Vector3 targetPoint = player.transform.position + Vector3.up * 3f;
             moveDirection = (targetPoint - transform.position).normalized;
-            
-            // 3. Optional: Make the projectile "look" where it's going
             transform.forward = moveDirection;
-            
-            initialized = true;
         }
+    }
+
+    // --- MODE 1: Standard Launch (For Pointers & Spheres) ---
+    public void Launch()
+    {
+        SetDirectionToPlayer(); // Recalculate target right now!
+        isLaunched = true;
+        
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.linearVelocity = moveDirection * launchSpeed;
+        }
+    }
+
+    // --- MODE 2: Violent Return (For the Mic) ---
+    public void LaunchWithReturn(Transform returnPoint)
+    {
+        SetDirectionToPlayer(); // Recalculate target right now!
+        bossReturnAnchor = returnPoint;
+        isLaunched = true;
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.AddForce(moveDirection * launchSpeed, ForceMode.VelocityChange);
+        }
+
+        Invoke("StartReturn", 0.7f);
+    }
+
+    void StartReturn()
+    {
+        isReturning = true;
+        isLaunched = false;
+        if (rb != null) rb.isKinematic = true;
     }
 
     void Update()
     {
-        if (initialized)
+        if (isLaunched && rb == null)
         {
-            // 4. Move in that saved direction forever
-            transform.position += moveDirection * speed * Time.deltaTime;
+            transform.position += moveDirection * launchSpeed * Time.deltaTime;
+        }
+
+        if (isReturning && bossReturnAnchor != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, bossReturnAnchor.position, returnSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.right * 2000 * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, bossReturnAnchor.position) < 2f)
+            {
+                bossReturnAnchor.gameObject.SetActive(true); 
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -42,10 +92,8 @@ public class WatsonProjectile : MonoBehaviour
     {
         if (other.transform.root.CompareTag("Player"))
         {
-            Debug.Log("Hit the Player");
             other.transform.root.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = damage });
+            if (!bossReturnAnchor) Destroy(gameObject);
         }
-
-        Destroy(gameObject);
     }
 }
