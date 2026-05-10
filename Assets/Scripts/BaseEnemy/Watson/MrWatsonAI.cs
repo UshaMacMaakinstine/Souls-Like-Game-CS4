@@ -425,15 +425,21 @@ public class MrWatsonAI : MonoBehaviour
         {
             controller.anim.SetTrigger("Sing");
             float elapsed = 0f;
-            while(elapsed < 15f)
-            {
-                if(Random.value < 0.15f)
-                {
-                    Instantiate(shockwave, transform.position, Quaternion.identity);
-                }
+            float totalDuration = 15f;
 
-                elapsed += Time.deltaTime;
-                yield return null;
+            while (elapsed < totalDuration)
+            {
+                // 1. Spawn the shockwave
+                Instantiate(shockwave, transform.position, Quaternion.Euler(90, 0, 0));
+
+                // 2. Pick a random wait time between 0.5 and 1.5 seconds
+                float randomWait = Random.Range(0.5f, 1.5f);
+
+                // 3. Track the time passed
+                elapsed += randomWait;
+
+                // 4. Wait for that specific amount of time before the next loop
+                yield return new WaitForSeconds(randomWait);
             }
         }
         EndAttack();
@@ -456,15 +462,21 @@ public class MrWatsonAI : MonoBehaviour
         {
             controller.anim.SetTrigger("Sing");
             float elapsed = 0f;
-            while(elapsed < 15f)
-            {
-                if(Random.value < 0.15f)
-                {
-                    Instantiate(shockwave, transform.position, Quaternion.identity);
-                }
+            float totalDuration = 15f;
 
-                elapsed += Time.deltaTime;
-                yield return null;
+            while (elapsed < totalDuration)
+            {
+                // 1. Spawn the shockwave
+                Instantiate(shockwave, transform.position, Quaternion.Euler(90, 0, 0));
+
+                // 2. Pick a random wait time between 0.5 and 1.5 seconds
+                float randomWait = Random.Range(0.5f, 3.5f);
+
+                // 3. Track the time passed
+                elapsed += randomWait;
+
+                // 4. Wait for that specific amount of time before the next loop
+                yield return new WaitForSeconds(randomWait);
             }
         }
         

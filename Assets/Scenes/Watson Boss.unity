@@ -14840,13 +14840,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8b1bc96e3d2a4323b40d344ac293e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonController
-  bodyHealth: 5050
+  bodyHealth: 4900
   legHealth: 1000
   phase2Health: 5000
   damageRadius: 11
   foot: {fileID: 143686969}
   isDown: 0
-  performanceGauge: 0
+  performanceGauge: 100
   maxPerformance: 100
   gaugeDrainRate: 0.2
   currentState: 0
