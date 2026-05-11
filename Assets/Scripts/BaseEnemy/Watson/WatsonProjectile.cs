@@ -26,7 +26,7 @@ public class WatsonProjectile : MonoBehaviour
         if (player != null)
         {
             // Aim for the player's chest/center (3 units up)
-            Vector3 targetPoint = player.transform.position + Vector3.up * 3f;
+            Vector3 targetPoint = player.transform.position + Vector3.up * 4.5f;
             moveDirection = (targetPoint - transform.position).normalized;
             transform.forward = moveDirection;
         }
@@ -37,12 +37,14 @@ public class WatsonProjectile : MonoBehaviour
     {
         SetDirectionToPlayer(); // Recalculate target right now!
         isLaunched = true;
-        
+
         if (rb != null)
         {
             rb.isKinematic = false;
             rb.linearVelocity = moveDirection * launchSpeed;
         }
+
+        Destroy(gameObject, lifetime);
     }
 
     // --- MODE 2: Violent Return (For the Mic) ---

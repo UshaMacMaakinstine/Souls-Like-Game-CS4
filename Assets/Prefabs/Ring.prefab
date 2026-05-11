@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1750946975102046030}
   - component: {fileID: 3281220769878938460}
   - component: {fileID: 3909397080818314502}
+  - component: {fileID: -7033177220962677755}
   m_Layer: 0
   m_Name: Ring
   m_TagString: Untagged
@@ -102,5 +103,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8dc3b0ce2b75458c91189f51a92463e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shockwave
-  expandSpeed: 1000
-  damage: 20
+  expandSpeed: 750
+  damage: 50
+  thickness: 0.15
+  maxScale: 25000
+--- !u!64 &-7033177220962677755
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652961211955919835}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2534964839176971238, guid: 300c0f0cab14a48d3abc0f916801e63b, type: 3}

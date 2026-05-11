@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 123588179241860886}
   - component: {fileID: 2168873213720842059}
   - component: {fileID: -6983741727076443734}
+  - component: {fileID: 828137857703157256}
   m_Layer: 0
   m_Name: iris_microphone
   m_TagString: Untagged
@@ -106,3 +107,24 @@ MonoBehaviour:
   returnSpeed: 400
   damage: 10
   lifetime: 5
+--- !u!65 &828137857703157256
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3147821954587886679}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.00048151502, y: 0.00047018452, z: 0.0025779945}
+  m_Center: {x: 0.0000020643784, y: -0.00000033501428, z: -0.000008806588}

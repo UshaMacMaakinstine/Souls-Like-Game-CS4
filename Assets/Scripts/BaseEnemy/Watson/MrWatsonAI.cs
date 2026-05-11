@@ -287,6 +287,8 @@ public class MrWatsonAI : MonoBehaviour
 
     IEnumerator PointerFling()
     {
+        isAttacking = true;
+        controller.PlayVoice(controller.PointerFling);
         controller.pointerStickProp.SetActive(false);
         controller.anim.SetTrigger("Summon");
 
@@ -337,6 +339,10 @@ public class MrWatsonAI : MonoBehaviour
 
         // Wait for the last projectile to finish before ending the attack state
         yield return new WaitForSeconds(1f);
+
+        controller.pointerStickProp.SetActive(true);
+
+        isAttacking = false;
     }
     IEnumerator KaraokeMeleeSequence()
     {
@@ -389,6 +395,7 @@ public class MrWatsonAI : MonoBehaviour
 
         if(number < 0.33f)
         {
+            FacePlayerSmoothly(gameObject);
             controller.anim.SetTrigger("Throw");
 
             // Wait for the specific frame in the animation where he "releases" the mic
@@ -423,6 +430,8 @@ public class MrWatsonAI : MonoBehaviour
         }
         else
         {
+            int random = (int)Random.Range(0, 7);
+            controller.PlayVoice(controller.singingLines[random]);
             controller.anim.SetTrigger("Sing");
             float elapsed = 0f;
             float totalDuration = 15f;
@@ -486,8 +495,9 @@ public class MrWatsonAI : MonoBehaviour
     IEnumerator PawsUpRoutine()
     {
         isAttacking = true;
+        controller.PlayVoice(controller.PawsUp);
         controller.anim.SetTrigger("PawsUp");
-        yield return new WaitForSeconds(1f); // Warning period
+        yield return new WaitForSeconds(2f); // Warning period
 
         float timer = 2f;
         ThirdPersonController player = playerTransform.GetComponent<ThirdPersonController>();

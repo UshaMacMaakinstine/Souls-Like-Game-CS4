@@ -33,6 +33,20 @@ public class MrWatsonController : MonoBehaviour
     public float stackResetTime = 1.5f; // How long to wait before resetting the stack
     public TMP_Text damageText;
 
+    public AudioSource audioSource;
+
+    [Header("Voice Lines")]
+    public AudioClip introLine;
+    public AudioClip phaseTwoLine;
+    public AudioClip KarokeLine;
+    public AudioClip DamageLine;
+    public AudioClip PointerFling;
+    public AudioClip TeacherLine;
+    public AudioClip Attete;
+    public AudioClip PawsUp;
+    public AudioClip playerDiedLine;
+    public AudioClip[] singingLines;
+
     private MrWatsonAI ai;
 
     private bool tooMuchDmg;
@@ -40,6 +54,8 @@ public class MrWatsonController : MonoBehaviour
 
     void Start()
     {
+        PlayVoice(introLine);
+        
         ai = GetComponent<MrWatsonAI>();
         if (bossHealthBar != null) bossHealthBar.SetMax(bodyHealth);
         SetBossMode(BossState.Phase1);
@@ -53,17 +69,36 @@ public class MrWatsonController : MonoBehaviour
         if (performanceGauge > 0 && currentState == BossState.Karaoke)
             performanceGauge -= gaugeDrainRate * Time.deltaTime;
 
-        if(performanceGauge <= 0 && currentState != BossState.Phase1 && currentState != BossState.Transitioning && !isDown && !ai.isAttacking)
+        if (performanceGauge <= 0 && currentState == BossState.Karaoke && !isDown && !ai.isAttacking)
+        {
+            PlayVoice(TeacherLine);
+            performanceGauge = 0;
             SetBossMode(BossState.Teacher);
+        }
 
         // Transition to Special Modes
         if (performanceGauge >= maxPerformance && currentState != BossState.Transitioning && !isDown && !ai.isAttacking)
+        {
+            PlayVoice(KarokeLine);
             SetBossMode(BossState.Karaoke);
+        }
 
         if(bodyHealth < phase2Health && currentState == BossState.Phase1 && !isDown && !ai.isAttacking)
         {
             StartCoroutine(phaseChange());
         }
+    }
+
+    public void PlayVoice(AudioClip clip)
+    {
+        if (clip == null) return;
+
+        // Stop the previous line if the boss is already talking
+        if (audioSource.isPlaying)
+            audioSource.Stop();
+
+        audioSource.clip = clip;
+        audioSource.Play();
     }
 
     public void TakeDamage(float damage, LimbType limb)
@@ -72,10 +107,12 @@ public class MrWatsonController : MonoBehaviour
 
         if (limb == LimbType.Leg && !isDown)
         {
+            PlayVoice(DamageLine);
             currentLegDamage += damage;
             bodyHealth -= damage * 0.4f;
             UpdateStackedDamage(damage);
-            performanceGauge += damage * 0.05f;
+            if(currentState != BossState.Phase1)
+                performanceGauge += damage * 0.05f;
             if (currentLegDamage >= legHealth) StartCoroutine(DownedSequence());
         }
         else if (limb == LimbType.Head && isDown && !tooMuchDmg)
@@ -83,7 +120,8 @@ public class MrWatsonController : MonoBehaviour
             bodyHealth -= (damage * 2f); // Massive damage window
             damageTakenToHead += damage * 2f;
             UpdateStackedDamage(damage * 2f);
-            performanceGauge += damage * 0.08f; // Punish the player with Rage for doing high damage
+            if (currentState != BossState.Phase1)
+                performanceGauge += damage * 0.08f; // Punish the player with Rage for doing high damage
             if (damageTakenToHead > 1000f) tooMuchDmg = true;
         }
 
@@ -95,6 +133,7 @@ public class MrWatsonController : MonoBehaviour
 
     IEnumerator phaseChange()
     {
+        PlayVoice(phaseTwoLine);
         currentState = BossState.Transitioning;
         anim.SetTrigger("Phase2");
         yield return new WaitForSeconds(1.167f);
@@ -135,6 +174,7 @@ public class MrWatsonController : MonoBehaviour
 
     public void FireBullet()
     {
+        PlayVoice(Attete);
         if (fingerGunMuzzle != null && bulletPrefab != null)
         {
             // Instantiate the bullet at the muzzle position/rotation
