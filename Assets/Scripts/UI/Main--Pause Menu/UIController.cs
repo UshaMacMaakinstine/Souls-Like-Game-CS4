@@ -54,6 +54,8 @@ public class UIController : MonoBehaviour
     public GameObject mainFolder;
     public Button GameButton;
 
+    public bool mainMenu;
+
     string path;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -94,9 +96,11 @@ public class UIController : MonoBehaviour
     {
         sens = (int)sensSlider.value;
         if (sensInput.text != sens.ToString()) sensInput.text = sens.ToString();
-
-        freeLook.m_XAxis.m_MaxSpeed = MapValue(sens, 0f, 1f, 0f, 0.8f);
-        freeLook.m_YAxis.m_MaxSpeed = MapValue(sens, 0f, 1f, 0f, 0.016f);
+        if(!mainMenu)
+        {
+            freeLook.m_XAxis.m_MaxSpeed = MapValue(sens, 0f, 1f, 0f, 0.8f);
+            freeLook.m_YAxis.m_MaxSpeed = MapValue(sens, 0f, 1f, 0f, 0.016f);
+        }
     }
 
     private float MapValue(float val, float srcMin, float srcMax, float dstMin, float dstMax)
