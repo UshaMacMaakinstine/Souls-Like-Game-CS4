@@ -182,6 +182,7 @@ public class UIController : MonoBehaviour
     public void resume()
     {
         mainFolder.SetActive(false);
+        settingsFolder.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -202,6 +203,7 @@ public class UIController : MonoBehaviour
 
     public void PagePrev()
     {
+        Debug.Log("Click");
         pages[pageNumber].SetActive(false);
         pages[pageNumber - 1].SetActive(true);
         pageNumber--;

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using JetBrains.Annotations;
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonController : MonoBehaviour
@@ -12,6 +13,7 @@ public class ThirdPersonController : MonoBehaviour
     [Header("References")]
     public Transform cameraTransform;
     public Animator animator;
+    public GameObject potion;
 
     [Header("Movement")]
     public float walkSpeed = 2.5f;
@@ -54,6 +56,7 @@ public class ThirdPersonController : MonoBehaviour
     private float turnSmoothVelocity;
 
     public GameObject menu;
+    public GameObject SettingsFolder;
 
     private bool isGrounded;
     private bool sprintHeld;
@@ -63,6 +66,18 @@ public class ThirdPersonController : MonoBehaviour
     public bool isAttacking;
     private bool _isAttackingInternal = false;
     private bool _inputBuffered = false;
+
+    private Vector3 impact = Vector3.zero;
+
+    public bool isMoving;
+
+    public bool isGettingHit;
+
+    private int WeaponType = 1;
+    /*
+    1 = sword
+    2 = spear
+    */
 
     public bool isInvincible;
     // Added this helper so your Hitbox script can find it!
@@ -159,10 +174,18 @@ public class ThirdPersonController : MonoBehaviour
     {
         GroundCheck();
 
-        if (!isRolling && !isTransitioningCrouch && !isAttacking)
+        if (!isRolling && !isTransitioningCrouch && !isAttacking && !isGettingHit)
         {
             HandleMovement();
         }
+
+        if (impact.magnitude > 0.2f) 
+        {
+            controller.Move(impact * Time.deltaTime);
+        }
+
+        // Consume the energy over time (Lerp toward zero)
+        impact = Vector3.Lerp(impact, Vector3.zero, Time.deltaTime * 5f);
 
         ApplyGravity();
         UpdateAnimator();
@@ -190,7 +213,7 @@ public class ThirdPersonController : MonoBehaviour
             inputDirection *= -1f;
         }
 
-        bool isMoving = inputDirection.magnitude >= 0.1f;
+        isMoving = inputDirection.magnitude >= 0.1f;
 
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
 
@@ -212,6 +235,16 @@ public class ThirdPersonController : MonoBehaviour
         }
     }
 
+    public void ApplyKnockback(Vector3 sourcePosition, float force)
+    {
+        // Calculate direction (Away from the sweep)
+        Vector3 direction = (transform.position - sourcePosition).normalized;
+        direction.y = 0; // Keep the knockback horizontal
+
+        // Add to the current impact (allows for multiple hits to stack)
+        impact += direction * force;
+    }
+
     void ApplyGravity()
     {
         velocity.y += gravity * Time.deltaTime;
@@ -221,7 +254,7 @@ public class ThirdPersonController : MonoBehaviour
     void OnJump(InputAction.CallbackContext ctx)
     {
         if (isMovementFrozen) return;
-        if (isGrounded && !isCrouching && !isRolling && !isAttacking)
+        if (isGrounded && !isCrouching && !isRolling && !isAttacking && !isGettingHit)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             animator.SetTrigger("JumpTrigger");
@@ -231,7 +264,7 @@ public class ThirdPersonController : MonoBehaviour
     void OnCrouch(InputAction.CallbackContext ctx)
     {
         if (isMovementFrozen) return;
-        if (isRolling || isAttacking || isTransitioningCrouch)
+        if (isRolling || isAttacking || isTransitioningCrouch || isGettingHit)
             return;
 
         if (!isCrouching)
@@ -243,7 +276,7 @@ public class ThirdPersonController : MonoBehaviour
     void OnRoll(InputAction.CallbackContext ctx)
     {
         if (isMovementFrozen) return;
-        if (isGrounded && !isRolling && !isAttacking && !isTransitioningCrouch)
+        if (isGrounded && !isRolling && !isAttacking && !isTransitioningCrouch && !isGettingHit)
             StartCoroutine(Roll());
     }
 
@@ -256,7 +289,7 @@ public class ThirdPersonController : MonoBehaviour
         {
             _inputBuffered = true;
         }
-        else if (!isRolling && !isCrouching)
+        else if (!isRolling && !isCrouching && !isGettingHit)
         {
             StartCoroutine(DoLightAttack());
         }
@@ -265,22 +298,23 @@ public class ThirdPersonController : MonoBehaviour
     void OnHeavyAttack(InputAction.CallbackContext ctx)
     {
         if (isMovementFrozen) return;
-        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
+        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching && !isGettingHit)
             StartCoroutine(DoHeavyAttack());
     }
 
     void OnHeal(InputAction.CallbackContext ctx)
     {
         if (isMovementFrozen) return;
-        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching)
-            playerProperties.Heal(10f);
+        if (!isAttacking && !isRolling && !isTransitioningCrouch && !isCrouching && !isGettingHit)
+            StartCoroutine(Heal());
     }
 
     void OnPause(InputAction.CallbackContext ctx)
     {
-        if(menu.activeInHierarchy)
+        if(menu.activeInHierarchy || SettingsFolder.activeInHierarchy)
         {
             menu.SetActive(false);
+            SettingsFolder.SetActive(false);
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -291,6 +325,19 @@ public class ThirdPersonController : MonoBehaviour
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
+        }
+    }
+
+    IEnumerator Heal()
+    {
+        if (playerProperties.Heal(100f))
+        {
+            isAttacking = true;
+            animator.SetTrigger("Heal");
+            potion.SetActive(true);
+            yield return new WaitForSeconds(4f);
+            potion.SetActive(false);
+            isAttacking = false;
         }
     }
 
@@ -348,28 +395,28 @@ public class ThirdPersonController : MonoBehaviour
     {
         isInvincible = true;
         isRolling = true;
-        controller.center = new Vector3(0f, (standingHeight / 2f) + 1f, 0f);
+        //controller.center = new Vector3(0f, (standingHeight / 2f) + 1f, 0f);
         animator.SetTrigger("RollTrigger");
 
         float elapsed = 0f;
         Vector3 rollDirection = transform.forward;
 
-        while (elapsed < (rollDuration * 0.60f))
+        while (elapsed < rollDuration)
         {
             elapsed += Time.deltaTime;
             controller.Move(rollDirection * rollSpeed * Time.deltaTime);
             yield return null;
         }
 
-        while (elapsed < rollDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / rollDuration);
-            float centerY = Mathf.Lerp((standingHeight / 2f) + 1f, (standingHeight / 2f), t);
-            controller.center = new Vector3(0f, centerY, 0f);
-            controller.Move(rollDirection * rollSpeed * Time.deltaTime);
-            yield return null;
-        }
+        //while (elapsed < rollDuration)
+        //{
+        //    elapsed += Time.deltaTime;
+        //    float t = Mathf.Clamp01(elapsed / rollDuration);
+        //    float centerY = Mathf.Lerp((standingHeight / 2f) + 1f, (standingHeight / 2f), t);
+        //    controller.center = new Vector3(0f, centerY, 0f);
+        //    controller.Move(rollDirection * rollSpeed * Time.deltaTime);
+        //    yield return null;
+        //}
 
         isRolling = false;
         isInvincible = false;
@@ -380,20 +427,42 @@ public class ThirdPersonController : MonoBehaviour
         _isAttackingInternal = true;
         isAttacking = true;
 
-        animator.SetTrigger("LightAttack1");
-        yield return new WaitForSeconds(0.133f / animator.speed);
-        if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
-        yield return new WaitForSeconds(0.8f / animator.speed);
-        if (!_inputBuffered) { EndCombo(); yield break; }
+        switch (WeaponType)
+        {
+            case 1:
+                animator.SetTrigger("LightAttack1");
+                yield return new WaitForSeconds(0.133f / animator.speed);
+                if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+                yield return new WaitForSeconds(0.8f / animator.speed);
+                if (!_inputBuffered) { EndCombo(); yield break; }
 
-        _inputBuffered = false;
-        animator.SetTrigger("LightAttack2");
-        yield return new WaitForSeconds(0.567f / animator.speed);
-        if (!_inputBuffered) { EndCombo(); yield break; }
+                _inputBuffered = false;
+                animator.SetTrigger("LightAttack2");
+                yield return new WaitForSeconds(0.567f / animator.speed);
+                if (!_inputBuffered) { EndCombo(); yield break; }
 
-        _inputBuffered = false;
-        animator.SetTrigger("LightAttack3");
-        yield return new WaitForSeconds(0.833f / animator.speed);
+                _inputBuffered = false;
+                animator.SetTrigger("LightAttack3");
+                yield return new WaitForSeconds(0.833f / animator.speed);
+                break;
+
+            case 2:
+                do{
+                    _inputBuffered = false;
+                    animator.SetTrigger("LightAttack1");
+                    yield return new WaitForSeconds(0.067f / animator.speed);
+                    if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.lightAttack;
+                    yield return new WaitForSeconds(0.4f / animator.speed);
+                    if (!_inputBuffered) { EndCombo(); yield break; }
+                    animator.ResetTrigger("LightAttack1");
+                }
+                while (_inputBuffered);
+                break;
+
+            default:
+                Debug.LogWarning("Unknown weapon type: " + WeaponType);
+                break;
+        }
 
         EndCombo();
     }
@@ -472,6 +541,7 @@ public class ThirdPersonController : MonoBehaviour
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsSprinting", shouldSprint);
         animator.SetBool("IsAttacking", isAttacking);
+        animator.SetInteger("WeaponType", WeaponType);
 
         animationSpeedAdjustment();
     }
@@ -493,5 +563,45 @@ public class ThirdPersonController : MonoBehaviour
 
         animator.speed = weaponFramework.weaponStats.attackSpeed;
         return;
+    }
+
+    // Add this to your ThirdPersonController script
+    public void ClearActionsForDamage()
+    {
+        StopAllCoroutines(); // Kills active attacks, rolls, or heals
+
+        // Set our lockout
+        isGettingHit = true;
+
+        // Reset all priority-blocking booleans
+        isAttacking = false;
+        _isAttackingInternal = false;
+        _inputBuffered = false;
+        isRolling = false;
+        isInvincible = false;
+        isTransitioningCrouch = false;
+
+        // Hide potion if they were healing
+        if (potion != null) potion.SetActive(false);
+
+        // Reset weapon hitboxes
+        if (weaponFramework != null) weaponFramework.attackMode = WeaponFramework.AttackMode.None;
+
+        // Reset animator speed (in case they were hit during a slow/fast attack)
+        animator.speed = 1f;
+
+        // Fire the trigger
+        animator.SetTrigger("Hit");
+        isInvincible = true;
+        StartCoroutine(HitLockoutTimer());
+    }
+
+    IEnumerator HitLockoutTimer()
+    {
+        // Adjust 0.75f to match the actual length of your "Hit" animation clip
+        yield return new WaitForSeconds(1.167f);
+        isGettingHit = false;
+        yield return new WaitForSeconds(0.5f);
+        isInvincible = false;
     }
 }
