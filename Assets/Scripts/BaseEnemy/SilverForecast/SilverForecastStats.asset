@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SilverForecastStats
   m_EditorClassIdentifier: 
   enemyName: Base Enemy
-  maxHealth: 100
-  staggerThreshold: 25
+  maxHealth: 1000
+  staggerThreshold: 10000
   moveSpeed: 5
   rotationSpeed: 10
   aggroRadius: 1500
