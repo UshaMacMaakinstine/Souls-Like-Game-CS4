@@ -4782,6 +4782,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 344271510}
+  - component: {fileID: 344271511}
   m_Layer: 0
   m_Name: Classroom (1)
   m_TagString: Untagged
@@ -4806,9 +4807,30 @@ Transform:
   - {fileID: 1652881660}
   - {fileID: 2043064021}
   - {fileID: 1008932011}
+  - {fileID: 1154895354}
   - {fileID: 1097082092}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &344271511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344271509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &364497854
 GameObject:
   m_ObjectHideFlags: 0
@@ -12199,7 +12221,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1008932011}
   - component: {fileID: 1008932012}
-  m_Layer: 0
+  - component: {fileID: 1008932013}
+  m_Layer: 9
   m_Name: Invisblewall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12236,12 +12259,29 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 55.21459, y: 53.648857, z: 154.99448}
   m_Center: {x: -22.538694, y: 26.324429, z: 9.510193}
+--- !u!114 &1008932013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008932010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_Size: {x: 50.604755, y: 13.338101, z: 150.69931}
+  m_Center: {x: -19.446959, y: 5.8710227, z: 9.996429}
+  m_Area: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &1015310281
 GameObject:
   m_ObjectHideFlags: 3
@@ -12853,7 +12893,7 @@ GameObject:
   - component: {fileID: 1034805521}
   - component: {fileID: 1034805520}
   - component: {fileID: 1034805519}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Ground (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12874,7 +12914,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
   m_AgentTypeID: 0
-  m_CollectObjects: 2
+  m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
@@ -12975,8 +13015,8 @@ Transform:
   m_GameObject: {fileID: 1034805518}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 59.0172, y: 0, z: 71.5255}
-  m_LocalScale: {x: 30.589321, y: 5, z: 21.39704}
+  m_LocalPosition: {x: 21.6901, y: 0, z: 71.5255}
+  m_LocalScale: {x: 38.057365, y: 5, z: 21.39704}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13688,7 +13728,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1097082092}
   - component: {fileID: 1097082093}
-  m_Layer: 0
+  - component: {fileID: 1097082094}
+  m_Layer: 9
   m_Name: Invisblewall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13731,6 +13772,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 30.127743, y: 53.648857, z: 8.745967}
   m_Center: {x: -35.080425, y: 26.323517, z: -32.775196}
+--- !u!114 &1097082094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097082091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_Size: {x: 9.230087, y: 18.262005, z: 17.240168}
+  m_Center: {x: -22.96312, y: 8.6310005, z: -29.845325}
+  m_Area: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &1097607507
 GameObject:
   m_ObjectHideFlags: 0
@@ -14641,6 +14699,77 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3554928107729308801, guid: 6ea99338a2d2aec4e8efde946b67067f, type: 3}
   m_PrefabInstance: {fileID: 1153990245}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1154895353
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1154895354}
+  - component: {fileID: 1154895355}
+  - component: {fileID: 1154895356}
+  m_Layer: 9
+  m_Name: Invisblewall (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1154895354
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154895353}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -236.31, y: 0.42, z: -35.11}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 344271510}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1154895355
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154895353}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 61.437885, y: 53.648857, z: 39.080612}
+  m_Center: {x: -19.427046, y: 26.324429, z: 67.467125}
+--- !u!114 &1154895356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154895353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_Size: {x: 15.038216, y: 19.281904, z: 41.458847}
+  m_Center: {x: 5.519108, y: 9.140952, z: 65.08386}
+  m_Area: 1
+  m_AffectedAgents: ffffffff
 --- !u!1001 &1164888023
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21940,6 +22069,7 @@ MonoBehaviour:
   settingsFolder: {fileID: 1225178791}
   mainFolder: {fileID: 942484748}
   GameButton: {fileID: 990306351}
+  mainMenu: 0
 --- !u!4 &1822688305
 Transform:
   m_ObjectHideFlags: 0
