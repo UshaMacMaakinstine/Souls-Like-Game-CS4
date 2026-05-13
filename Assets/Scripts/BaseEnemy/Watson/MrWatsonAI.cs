@@ -164,7 +164,6 @@ public class MrWatsonAI : MonoBehaviour
             {
                 if (col.transform.root.CompareTag("Player") && !hit)
                 {
-                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
                     hit = true;
                     Debug.Log("Watson slammed the player!");
                 }
