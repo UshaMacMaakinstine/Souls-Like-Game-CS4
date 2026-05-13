@@ -7,13 +7,13 @@ public class WatsonProjectile : MonoBehaviour
     public float returnSpeed = 120f;
     public float damage = 10f;
     public float lifetime = 5f;
+    public float force = 0f;
 
     private Vector3 moveDirection;
     private bool isLaunched = false;
     private bool isReturning = false;
     private Transform bossReturnAnchor;
     private Rigidbody rb;
-    private float force;
 
     void Awake()
     {
@@ -34,9 +34,8 @@ public class WatsonProjectile : MonoBehaviour
     }
 
     // --- MODE 1: Standard Launch (For Pointers & Spheres) ---
-    public void Launch(float impact)
+    public void Launch()
     {
-        impact = force;
         SetDirectionToPlayer(); // Recalculate target right now!
         isLaunched = true;
 

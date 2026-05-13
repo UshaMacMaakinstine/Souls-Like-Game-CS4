@@ -19,7 +19,7 @@ public class SilverForecastBoss : BaseEnemy
     public float attackRange = 2.5f;
 
     private NavMeshAgent agent;
-    private Animator anim;
+    public Animator anim;
     private bool isTransitioning = false;
     private bool isAttacking = false;
     private Transform playerTransform;
@@ -73,7 +73,6 @@ public class SilverForecastBoss : BaseEnemy
 
     void AttackSequence()
     {
-        FacePlayerSmoothly(gameObject);
         if(currentPhase == BossPhase.Heavy)
             StartCoroutine(DecideLightAttack());
     }
@@ -84,7 +83,7 @@ public class SilverForecastBoss : BaseEnemy
         currentState = EnemyState.Attacking;
         agent.isStopped = true;
 
-        yield return StartCoroutine(PressureJavilen());
+        StartCoroutine(GaleForceRepel());
 
         // float rand = Random.value;
         // if (rand > 0.7f)
@@ -103,8 +102,9 @@ public class SilverForecastBoss : BaseEnemy
     {
         for (int i = 0; i < stabCount; i++)
         {
+            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y + 90, transform.rotation.z);
             if (anim != null) anim.SetTrigger("AttackAgain");
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(1.15f);
         }
     }
 
@@ -113,14 +113,16 @@ public class SilverForecastBoss : BaseEnemy
         anim.SetTrigger("Fling");
         GameObject throwable = Instantiate(javelin, new Vector3(transform.position.x, transform.position.y + 10, transform.position.z), Quaternion.Euler(transform.rotation.x, transform.rotation.y, transform.rotation.z));
 
+        FacePlayerSmoothly(throwable);
+
         Renderer objRenderer = throwable.GetComponent<Renderer>();
         // Get the current color
         Color color = objRenderer.material.color;
-        float startAlpha = color.a;
+        float startAlpha = 0f;
 
-        for (float t = 0f; t < 2.3f; t += Time.deltaTime)
+        for (float t = 0f; t < 3f; t += Time.deltaTime)
         {
-            float normalizedTime = t / 2.3f;
+            float normalizedTime = t / 3f;
             // Smoothly interpolate the alpha
             color.a = Mathf.Lerp(startAlpha, 1f, normalizedTime);
             objRenderer.material.color = color;
@@ -131,19 +133,21 @@ public class SilverForecastBoss : BaseEnemy
         color.a = 1f;
         objRenderer.material.color = color;
 
-        throwable.GetComponent<WatsonProjectile>().Launch(50f);
+        FacePlayerSmoothly(throwable);
+
+        throwable.GetComponent<WatsonProjectile>().Launch();
     }
 
     public IEnumerator AtmosphericErasure()
     {
         if (anim != null) anim.SetTrigger("SummonFog");
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2.46f);
 
         Vector3 dashPos = playerTransform.position + (playerTransform.forward * -1.5f);
         transform.position = dashPos;
 
         if (anim != null) anim.SetTrigger("DashStab");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
     }
 
     public IEnumerator GaleForceRepel()
@@ -151,10 +155,10 @@ public class SilverForecastBoss : BaseEnemy
         anim.SetTrigger("Dance");
         shockwaveIndecator.SetActive(true);
         yield return new WaitForSeconds(3f);
-        if(Vector3.Distance(playerTransform.position, transform.position) < 10f)
+        if(Vector3.Distance(playerTransform.position, transform.position) < 5f)
         {
             playerTransform.gameObject.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = 25f });
-            playerTransform.gameObject.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 50f);
+            playerTransform.gameObject.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 100f);
         }
     }
 
@@ -174,7 +178,7 @@ public class SilverForecastBoss : BaseEnemy
         {
             if(p != null)
             {
-                p.Launch(10f);
+                p.Launch();
                 
                 // Adjust this value to change how fast they fire one after another
                 // 0.05f is a rapid fire, 0.2f is more rhythmic
@@ -185,13 +189,31 @@ public class SilverForecastBoss : BaseEnemy
 
     public IEnumerator VortexSpin()
     {
-        for(float t = 0f; t < 10f; t+=Time.deltaTime)
+        anim.SetBool("spin", true);
+        yield return new WaitForSeconds(1f);
+        for(float t = 0f; t < 50f; t+=Time.deltaTime)
         {
-            float normalizedTime = t / 10f;
-            float rotation = Mathf.Lerp(transform.rotation.y, transform.rotation.y + 1000f, normalizedTime);
+            float rotation = Mathf.Lerp(transform.rotation.y, transform.rotation.y + 1000f, t);
             transform.rotation = Quaternion.Euler(transform.rotation.x, rotation, transform.rotation.z);
             yield return null;
         }
+        anim.SetBool("spin", false);
+        yield return new WaitForSeconds(1f);
+    }
+
+    public IEnumerator MirageStep()
+    {
+        Vector3 dashPos = playerTransform.position + (playerTransform.forward * -1.5f);
+        transform.position = dashPos;
+
+        dashPos = playerTransform.position + (playerTransform.forward * 1.5f);
+        transform.position = dashPos;
+
+        dashPos = playerTransform.position + (new Vector3(0, 0, 1) * 1.5f);
+        transform.position = dashPos;
+
+        anim.SetTrigger("DashStab");
+        yield return new WaitForSeconds(3f);
     }
 
     public override void TakeDamage(float amount)

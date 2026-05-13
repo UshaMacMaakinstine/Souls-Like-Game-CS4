@@ -151,6 +151,7 @@ public class ThirdPersonController : MonoBehaviour
             playerMap.FindAction("Heal").performed += OnHeal;
 
             playerMap.FindAction("Pause").performed += OnPause;
+            playerMap.FindAction("LockOn").performed += OnLockOnAction;
         }
     }
 
@@ -165,6 +166,7 @@ public class ThirdPersonController : MonoBehaviour
             inputActions.Player.HeavyAttack.performed -= OnHeavyAttack;
             inputActions.Player.Heal.performed -= OnHeal;
             inputActions.Player.Pause.performed -= OnPause;
+            inputActions.Player.LockOn.performed -= OnLockOnAction;
 
             inputActions.Player.Disable();
         }
@@ -207,24 +209,44 @@ public class ThirdPersonController : MonoBehaviour
         if (isMovementFrozen) return;
         Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
 
-        // REVERSE CONTROLS GIMMICK
         if (playerProperties != null && playerProperties.controlsReversed)
-        {
             inputDirection *= -1f;
-        }
 
         isMoving = inputDirection.magnitude >= 0.1f;
 
+        // Determine Speed
         bool shouldSprint = sprintHeld && !isCrouching && isMoving;
+        if (isCrouching) currentSpeed = crouchSpeed;
+        else if (shouldSprint) currentSpeed = sprintSpeed;
+        else currentSpeed = walkSpeed;
 
-        if (isCrouching)
-            currentSpeed = crouchSpeed;
-        else if (shouldSprint)
-            currentSpeed = sprintSpeed;
-        else
-            currentSpeed = walkSpeed;
+        // Check if we are locked on (assuming your TargetLock script has a way to get the target)
+        Transform currentTarget = targetLock.currentTarget; // Make sure targetLock has this variable!
 
-        if (isMoving)
+        if (currentTarget != null)
+        {
+            // 1. ROTATION: Force player to face the enemy
+            Vector3 dirToTarget = currentTarget.position - transform.position;
+            dirToTarget.y = 0; // Keep vertical rotation locked
+            Quaternion targetRotation = Quaternion.LookRotation(dirToTarget);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+
+            // 2. MOVEMENT: Strafe relative to the camera
+            if (isMoving)
+            {
+                // Move relative to where the camera is looking so "D" is always a circle around the enemy
+                Vector3 forward = cameraTransform.forward;
+                Vector3 right = cameraTransform.right;
+                forward.y = 0;
+                right.y = 0;
+                forward.Normalize();
+                right.Normalize();
+
+                Vector3 moveDirection = forward * inputDirection.z + right * inputDirection.x;
+                controller.Move(moveDirection * currentSpeed * Time.deltaTime);
+            }
+        }
+        else if (isMoving) // Standard non-locked movement
         {
             float targetAngle = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, rotationSmoothTime);
@@ -249,6 +271,14 @@ public class ThirdPersonController : MonoBehaviour
     {
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    void OnLockOnAction(InputAction.CallbackContext ctx)
+    {
+        if(ctx.performed)
+        {
+            targetLock.OnLockOnPressed();
+        }
     }
 
     void OnJump(InputAction.CallbackContext ctx)

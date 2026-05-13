@@ -138,6 +138,18 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
+            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
+
+            bool hit = false;
+            foreach (Collider col in hitPlayers)
+            {
+                if (col.transform.root.CompareTag("Player") && !hit)
+                {
+                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
+                    hit = true;
+                    Debug.Log("Watson slammed the player!");
+                }
+            }
             yield return new WaitForSeconds(3f);
             sweeping = false;
         }
@@ -145,6 +157,18 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Kick");
+            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
+
+            bool hit = false;
+            foreach (Collider col in hitPlayers)
+            {
+                if (col.transform.root.CompareTag("Player") && !hit)
+                {
+                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
+                    hit = true;
+                    Debug.Log("Watson slammed the player!");
+                }
+            }
             yield return new WaitForSeconds(1f);
             sweeping = false;
         }
@@ -223,6 +247,18 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
+            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
+
+            bool hit = false;
+            foreach (Collider col in hitPlayers)
+            {
+                if (col.transform.root.CompareTag("Player") && !hit)
+                {
+                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
+                    hit = true;
+                    Debug.Log("Watson slammed the player!");
+                }
+            }
             yield return new WaitForSeconds(3f);
             sweeping = false;
         }
@@ -231,6 +267,18 @@ public class MrWatsonAI : MonoBehaviour
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
             yield return new WaitForSeconds(3f);
+            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
+
+            bool hit = false;
+            foreach (Collider col in hitPlayers)
+            {
+                if (col.transform.root.CompareTag("Player") && !hit)
+                {
+                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
+                    hit = true;
+                    Debug.Log("Watson slammed the player!");
+                }
+            }
             sweeping = false;
             controller.anim.SetTrigger("MeleeAttack");
             yield return new WaitForSeconds(1.5f);
@@ -329,7 +377,7 @@ public class MrWatsonAI : MonoBehaviour
         {
             if(p != null) 
             {
-                p.Launch(10f);
+                p.Launch();
                 
                 // Adjust this value to change how fast they fire one after another
                 // 0.05f is a rapid fire, 0.2f is more rhythmic
@@ -352,6 +400,18 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
+            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
+
+            bool hit = false;
+            foreach (Collider col in hitPlayers)
+            {
+                if (col.transform.root.CompareTag("Player") && !hit)
+                {
+                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
+                    hit = true;
+                    Debug.Log("Watson slammed the player!");
+                }
+            }
             yield return new WaitForSeconds(3f);
             sweeping = false;
         }

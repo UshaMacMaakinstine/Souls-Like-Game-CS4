@@ -128,3 +128,4 @@ MonoBehaviour:
   returnSpeed: 120
   damage: 100
   lifetime: 10
+  force: 10
