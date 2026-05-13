@@ -13,6 +13,7 @@ public class WatsonProjectile : MonoBehaviour
     private bool isReturning = false;
     private Transform bossReturnAnchor;
     private Rigidbody rb;
+    private float force;
 
     void Awake()
     {
@@ -33,8 +34,9 @@ public class WatsonProjectile : MonoBehaviour
     }
 
     // --- MODE 1: Standard Launch (For Pointers & Spheres) ---
-    public void Launch()
+    public void Launch(float impact)
     {
+        impact = force;
         SetDirectionToPlayer(); // Recalculate target right now!
         isLaunched = true;
 
@@ -94,6 +96,7 @@ public class WatsonProjectile : MonoBehaviour
     {
         if (other.transform.root.CompareTag("Player"))
         {
+            other.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, force);
             other.transform.root.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = damage });
             if (!bossReturnAnchor) Destroy(gameObject);
         }

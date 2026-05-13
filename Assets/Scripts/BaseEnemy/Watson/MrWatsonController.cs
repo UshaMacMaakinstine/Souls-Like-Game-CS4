@@ -179,7 +179,7 @@ public class MrWatsonController : MonoBehaviour
         {
             // Instantiate the bullet at the muzzle position/rotation
             GameObject bullet = Instantiate(bulletPrefab, fingerGunMuzzle.position, fingerGunMuzzle.rotation);
-            bullet.GetComponent<WatsonProjectile>().Launch();
+            bullet.GetComponent<WatsonProjectile>().Launch(10f);
             // Optional: If your bullet has a script to set its damage
             // bullet.GetComponent<BulletScript>().damage = 10f;
         }

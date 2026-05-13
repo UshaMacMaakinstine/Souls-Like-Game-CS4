@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using Unity.VisualScripting;
+using Unity.Jobs;
+using System.Collections.Generic;
 
 public class SilverForecastBoss : BaseEnemy
 {
@@ -20,6 +23,9 @@ public class SilverForecastBoss : BaseEnemy
     private bool isTransitioning = false;
     private bool isAttacking = false;
     private Transform playerTransform;
+    public GameObject javelin;
+    public GameObject shockwaveIndecator;
+    public GameObject icicle;
 
     protected override void InitializeEnemy()
     {
@@ -53,10 +59,23 @@ public class SilverForecastBoss : BaseEnemy
 
     public override void MoveToPlayer()
     {
-        if (playerTransform != null && agent != null && agent.enabled)
+        agent.isStopped = false;
+        agent.SetDestination(playerTransform.position);
+
+        float distance = Vector3.Distance(transform.position, playerTransform.position);
+
+        // Transition to attack if close enough
+        if (distance <= (stats.attackRadius + 0.5f) && !isAttacking)
         {
-            agent.SetDestination(playerTransform.position);
+            AttackSequence();
         }
+    }
+
+    void AttackSequence()
+    {
+        FacePlayerSmoothly(gameObject);
+        if(currentPhase == BossPhase.Heavy)
+            StartCoroutine(DecideLightAttack());
     }
 
     IEnumerator DecideLightAttack()
@@ -65,11 +84,13 @@ public class SilverForecastBoss : BaseEnemy
         currentState = EnemyState.Attacking;
         agent.isStopped = true;
 
-        float rand = Random.value;
-        if (rand > 0.7f)
-            yield return StartCoroutine(AtmosphericErasure());
-        else
-            yield return StartCoroutine(RapidStabAttack(5));
+        yield return StartCoroutine(PressureJavilen());
+
+        // float rand = Random.value;
+        // if (rand > 0.7f)
+        //     yield return StartCoroutine(AtmosphericErasure());
+        // else
+        //     yield return StartCoroutine(RapidStabAttack(5));
 
         yield return new WaitForSeconds(1f);
 
@@ -87,6 +108,32 @@ public class SilverForecastBoss : BaseEnemy
         }
     }
 
+    public IEnumerator PressureJavilen()
+    {
+        anim.SetTrigger("Fling");
+        GameObject throwable = Instantiate(javelin, new Vector3(transform.position.x, transform.position.y + 10, transform.position.z), Quaternion.Euler(transform.rotation.x, transform.rotation.y, transform.rotation.z));
+
+        Renderer objRenderer = throwable.GetComponent<Renderer>();
+        // Get the current color
+        Color color = objRenderer.material.color;
+        float startAlpha = color.a;
+
+        for (float t = 0f; t < 2.3f; t += Time.deltaTime)
+        {
+            float normalizedTime = t / 2.3f;
+            // Smoothly interpolate the alpha
+            color.a = Mathf.Lerp(startAlpha, 1f, normalizedTime);
+            objRenderer.material.color = color;
+            yield return null;
+        }
+
+        // Ensure we hit the exact target at the end
+        color.a = 1f;
+        objRenderer.material.color = color;
+
+        throwable.GetComponent<WatsonProjectile>().Launch(50f);
+    }
+
     public IEnumerator AtmosphericErasure()
     {
         if (anim != null) anim.SetTrigger("SummonFog");
@@ -97,6 +144,54 @@ public class SilverForecastBoss : BaseEnemy
 
         if (anim != null) anim.SetTrigger("DashStab");
         yield return new WaitForSeconds(0.5f);
+    }
+
+    public IEnumerator GaleForceRepel()
+    {
+        anim.SetTrigger("Dance");
+        shockwaveIndecator.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        if(Vector3.Distance(playerTransform.position, transform.position) < 10f)
+        {
+            playerTransform.gameObject.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = 25f });
+            playerTransform.gameObject.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 50f);
+        }
+    }
+
+    public IEnumerator HailstormValley()
+    {
+        anim.SetTrigger("Ice");
+        List<WatsonProjectile> spawnedPointers = new List<WatsonProjectile>();
+        for (int amount = 0; amount > 4; amount++)
+        {
+            GameObject go = Instantiate(icicle, new Vector3(playerTransform.position.x + Random.Range(-10f, 10f), playerTransform.position.y + 10f, playerTransform.position.z + Random.Range(-10f, 10f)), Quaternion.identity);
+            spawnedPointers.Add(go.GetComponent<WatsonProjectile>());
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        foreach(WatsonProjectile p in spawnedPointers)
+        {
+            if(p != null)
+            {
+                p.Launch(10f);
+                
+                // Adjust this value to change how fast they fire one after another
+                // 0.05f is a rapid fire, 0.2f is more rhythmic
+                yield return new WaitForSeconds(0.1f); 
+            }
+        }
+    }
+
+    public IEnumerator VortexSpin()
+    {
+        for(float t = 0f; t < 10f; t+=Time.deltaTime)
+        {
+            float normalizedTime = t / 10f;
+            float rotation = Mathf.Lerp(transform.rotation.y, transform.rotation.y + 1000f, normalizedTime);
+            transform.rotation = Quaternion.Euler(transform.rotation.x, rotation, transform.rotation.z);
+            yield return null;
+        }
     }
 
     public override void TakeDamage(float amount)
@@ -122,6 +217,16 @@ public class SilverForecastBoss : BaseEnemy
         SetupPhase(BossPhase.Light);
         agent.isStopped = false;
         isTransitioning = false;
+    }
+
+    void FacePlayerSmoothly(GameObject thing)
+    {
+        Vector3 dir = (playerTransform.position - transform.position).normalized;
+        dir.y = 0;
+        if (dir != Vector3.zero)
+        {
+            thing.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 4f);
+        }
     }
 
     void SetupPhase(BossPhase phase)

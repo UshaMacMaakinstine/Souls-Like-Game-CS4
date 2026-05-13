@@ -139,4 +139,29 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual void CheckForPlayer() { }
     public virtual void MoveToPlayer() { }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        // 1. Melee Radius (Red) - The "Danger Zone"
+        Gizmos.color = Color.magenta;
+        DrawWireDisk(transform.position, stats.aggroRadius);
+        Gizmos.color = Color.yellow;
+        DrawWireDisk(transform.position, stats.attackRadius);
+    }
+
+    // Helper to draw a flat circle on the ground
+    private void DrawWireDisk(Vector3 center, float radius)
+    {
+        float angleStep = 10f;
+        Vector3 prevPoint = center + new Vector3(radius, 0, 0);
+        for (float i = angleStep; i <= 360f; i += angleStep)
+        {
+            float rad = i * Mathf.Deg2Rad;
+            Vector3 nextPoint = center + new Vector3(Mathf.Cos(rad) * radius, 0, Mathf.Sin(rad) * radius);
+            Gizmos.DrawLine(prevPoint, nextPoint);
+            prevPoint = nextPoint;
+        }
+    }
+#endif
 }

@@ -329,7 +329,7 @@ public class MrWatsonAI : MonoBehaviour
         {
             if(p != null) 
             {
-                p.Launch();
+                p.Launch(10f);
                 
                 // Adjust this value to change how fast they fire one after another
                 // 0.05f is a rapid fire, 0.2f is more rhythmic
