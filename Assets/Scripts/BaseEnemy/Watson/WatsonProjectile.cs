@@ -7,6 +7,7 @@ public class WatsonProjectile : MonoBehaviour
     public float returnSpeed = 120f;
     public float damage = 10f;
     public float lifetime = 5f;
+    public float force = 0f;
 
     private Vector3 moveDirection;
     private bool isLaunched = false;
@@ -94,6 +95,7 @@ public class WatsonProjectile : MonoBehaviour
     {
         if (other.transform.root.CompareTag("Player"))
         {
+            other.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, force);
             other.transform.root.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = damage });
             if (!bossReturnAnchor) Destroy(gameObject);
         }

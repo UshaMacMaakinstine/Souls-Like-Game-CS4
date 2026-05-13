@@ -159,6 +159,11 @@ public class MrWatsonController : MonoBehaviour
         damageStackCoroutine = StartCoroutine(ResetDamageStack());
     }
 
+    public void KickKnockBack()
+    {
+        ai.playerTransform.gameObject.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 300f);
+    }
+
     IEnumerator ResetDamageStack()
     {
         // Wait for the player to stop dealing damage
