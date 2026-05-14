@@ -25,7 +25,7 @@ public class WeaponFramework : MonoBehaviour
             if (other.TryGetComponent<BossHitbox>(out var limb))
             {
                 limb.bossController.TakeDamage(damageToApply, limb.limbType);
-                StartCoroutine(ChangeColorFeedback(other.gameObject));
+                //StartCoroutine(ChangeColorFeedback(other.gameObject));
                 return; 
             }
 
@@ -36,7 +36,7 @@ public class WeaponFramework : MonoBehaviour
                 if (enemy != null)
                 {
                     enemy.TakeDamage(damageToApply);
-                    StartCoroutine(ChangeColorFeedback(other.gameObject));
+                    //StartCoroutine(ChangeColorFeedback(other.gameObject));
                 }
             }
         }

@@ -130,7 +130,7 @@ public class RatController : BaseEnemy
         agent.isStopped = true;
 
         // Visual telegraph (turning yellow)
-        if (ratRenderer != null) ratRenderer.material.color = telegraphColor;
+        //if (ratRenderer != null) ratRenderer.material.color = telegraphColor;
 
         anim.SetTrigger("IsAttacking");
         float timer = 0;
@@ -150,7 +150,7 @@ public class RatController : BaseEnemy
         }
 
         // Reset visual
-        if (ratRenderer != null) ratRenderer.material.color = originalColor;
+        //if (ratRenderer != null) ratRenderer.material.color = originalColor;
 
         yield return new WaitForSeconds(stats.attackCooldown);
 

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Rat_Tutorial_Stats
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   enemyName: Base Enemy
-  maxHealth: 100
+  maxHealth: 2000
   staggerThreshold: 25
   moveSpeed: 5
   rotationSpeed: 10
   aggroRadius: 250000
-  attackRadius: 5
-  contactDamage: 10
+  attackRadius: 12.43
+  contactDamage: 80
   attackCooldown: 0.4
   phaseTwoThreshold: 0.5
