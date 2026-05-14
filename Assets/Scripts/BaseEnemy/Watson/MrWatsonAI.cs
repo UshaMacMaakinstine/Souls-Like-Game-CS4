@@ -16,7 +16,7 @@ public enum BossState
 public class MrWatsonAI : MonoBehaviour
 {
     private MrWatsonController controller;
-    private NavMeshAgent agent;
+    public NavMeshAgent agent;
     public Transform playerTransform;
 
     [Header("Combat Radius")]
@@ -36,6 +36,8 @@ public class MrWatsonAI : MonoBehaviour
     [SerializeField] private GameObject micPrefab;
     public GameObject shockwave;
 
+    public bool move = false;
+
     void Start()
     {
         controller = GetComponent<MrWatsonController>();
@@ -45,26 +47,29 @@ public class MrWatsonAI : MonoBehaviour
 
     void Update()
     {
-        animationSpeedAdjustment();
-        if (controller.isDown || controller.currentState == BossState.Transitioning) return;
-
-        // CALCULATE TURN SPEED
-        // This compares his current rotation to where he wants to look
-        float angle = Vector3.SignedAngle(transform.forward, agent.desiredVelocity, Vector3.up);
-        float normalizedTurnSpeed = Mathf.Clamp(angle / 45f, -1f, 1f); // -1 is hard left, 1 is hard right
-
-        // SYNC ANIMATOR
-        // agent.velocity.magnitude gives the actual movement speed
-        controller.anim.SetFloat("Speed", agent.velocity.magnitude);
-        controller.anim.SetFloat("TurnSpeed", normalizedTurnSpeed);
-
-        if (!isAttacking)
+        if(move)
         {
-            FacePlayerSmoothly(gameObject);
-            float dist = Vector3.Distance(transform.position, playerTransform.position);
+            animationSpeedAdjustment();
+            if (controller.isDown || controller.currentState == BossState.Transitioning) return;
 
-            if (Time.time > lastAttackTime + attackCooldown)
-                DecideAttack(dist);
+            // CALCULATE TURN SPEED
+            // This compares his current rotation to where he wants to look
+            float angle = Vector3.SignedAngle(transform.forward, agent.desiredVelocity, Vector3.up);
+            float normalizedTurnSpeed = Mathf.Clamp(angle / 45f, -1f, 1f); // -1 is hard left, 1 is hard right
+
+            // SYNC ANIMATOR
+            // agent.velocity.magnitude gives the actual movement speed
+            controller.anim.SetFloat("Speed", agent.velocity.magnitude);
+            controller.anim.SetFloat("TurnSpeed", normalizedTurnSpeed);
+
+            if (!isAttacking)
+            {
+                FacePlayerSmoothly(gameObject);
+                float dist = Vector3.Distance(transform.position, playerTransform.position);
+
+                if (Time.time > lastAttackTime + attackCooldown)
+                    DecideAttack(dist);
+            }
         }
     }
 
@@ -138,18 +143,6 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
-            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
-
-            bool hit = false;
-            foreach (Collider col in hitPlayers)
-            {
-                if (col.transform.root.CompareTag("Player") && !hit)
-                {
-                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
-                    hit = true;
-                    Debug.Log("Watson slammed the player!");
-                }
-            }
             yield return new WaitForSeconds(3f);
             sweeping = false;
         }
@@ -157,17 +150,6 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Kick");
-            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
-
-            bool hit = false;
-            foreach (Collider col in hitPlayers)
-            {
-                if (col.transform.root.CompareTag("Player") && !hit)
-                {
-                    hit = true;
-                    Debug.Log("Watson slammed the player!");
-                }
-            }
             yield return new WaitForSeconds(1f);
             sweeping = false;
         }
@@ -246,18 +228,6 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
-            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
-
-            bool hit = false;
-            foreach (Collider col in hitPlayers)
-            {
-                if (col.transform.root.CompareTag("Player") && !hit)
-                {
-                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
-                    hit = true;
-                    Debug.Log("Watson slammed the player!");
-                }
-            }
             yield return new WaitForSeconds(3f);
             sweeping = false;
         }
@@ -266,18 +236,6 @@ public class MrWatsonAI : MonoBehaviour
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
             yield return new WaitForSeconds(3f);
-            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
-
-            bool hit = false;
-            foreach (Collider col in hitPlayers)
-            {
-                if (col.transform.root.CompareTag("Player") && !hit)
-                {
-                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
-                    hit = true;
-                    Debug.Log("Watson slammed the player!");
-                }
-            }
             sweeping = false;
             controller.anim.SetTrigger("MeleeAttack");
             yield return new WaitForSeconds(1.5f);
@@ -399,18 +357,6 @@ public class MrWatsonAI : MonoBehaviour
         {
             sweeping = true;
             controller.anim.SetTrigger("Sweep");
-            Collider[] hitPlayers = Physics.OverlapSphere(transform.position, 11);
-
-            bool hit = false;
-            foreach (Collider col in hitPlayers)
-            {
-                if (col.transform.root.CompareTag("Player") && !hit)
-                {
-                    col.transform.root.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 500f);
-                    hit = true;
-                    Debug.Log("Watson slammed the player!");
-                }
-            }
             yield return new WaitForSeconds(3f);
             sweeping = false;
         }

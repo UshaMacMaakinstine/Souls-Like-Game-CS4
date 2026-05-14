@@ -51,11 +51,11 @@ public class TargetLock : MonoBehaviour
 
         foreach (var enemy in enemies)
         {
-            Debug.Log("Checking object: " + enemy.transform.root.name + " Tag: " + enemy.transform.root.tag);
-            if (enemy.transform.root.CompareTag("Enemy"))
+            Debug.Log("Checking object: " + enemy.name + " Tag: " + enemy.tag);
+            if (enemy.CompareTag("Enemy"))
             {
-                AssignTarget(enemy.transform.root);
-                Debug.Log("Locked onto: " + enemy.transform.root.name);
+                AssignTarget(enemy.transform);
+                Debug.Log("Locked onto: " + enemy.name);
                 return;
             }
         }

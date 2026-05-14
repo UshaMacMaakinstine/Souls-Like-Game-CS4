@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using GLTFast;
 
 public class MrWatsonController : MonoBehaviour
 {
     [Header("Health Settings")]
     public float bodyHealth;
+    public float maxBodyHealth;
     public float legHealth;
     public float phase2Health;
     public float damageRadius;
@@ -45,6 +47,7 @@ public class MrWatsonController : MonoBehaviour
     public AudioClip Attete;
     public AudioClip PawsUp;
     public AudioClip playerDiedLine;
+    public AudioClip watsonDied;
     public AudioClip[] singingLines;
 
     private MrWatsonAI ai;
@@ -57,7 +60,8 @@ public class MrWatsonController : MonoBehaviour
         PlayVoice(introLine);
         
         ai = GetComponent<MrWatsonAI>();
-        if (bossHealthBar != null) bossHealthBar.SetMax(bodyHealth);
+        if (bossHealthBar != null) bossHealthBar.SetMax(maxBodyHealth);
+        if (bossHealthBar != null) bossHealthBar.stat = bodyHealth;
         SetBossMode(BossState.Phase1);
     }
 
@@ -86,6 +90,11 @@ public class MrWatsonController : MonoBehaviour
         if(bodyHealth < phase2Health && currentState == BossState.Phase1 && !isDown && !ai.isAttacking)
         {
             StartCoroutine(phaseChange());
+        }
+
+        if(bodyHealth <= 0)
+        {
+            StartCoroutine(Die());
         }
     }
 
@@ -159,9 +168,20 @@ public class MrWatsonController : MonoBehaviour
         damageStackCoroutine = StartCoroutine(ResetDamageStack());
     }
 
+    IEnumerator Die()
+    {
+        ai.agent.isStopped = true;
+        anim.SetTrigger("Die");
+        yield return new WaitForSeconds(3.6f);
+        PlayVoice(watsonDied);
+        NextBossController controller = GameObject.Find("NextBossController").GetComponent<NextBossController>();
+        controller.readyForNext = true;
+    }
+
     public void KickKnockBack()
     {
-        ai.playerTransform.gameObject.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 300f);
+        if(!ai.playerTransform.gameObject.GetComponent<ThirdPersonController>().isInvincible)
+            ai.playerTransform.gameObject.GetComponent<ThirdPersonController>().ApplyKnockback(transform.position, 300f);
     }
 
     IEnumerator ResetDamageStack()

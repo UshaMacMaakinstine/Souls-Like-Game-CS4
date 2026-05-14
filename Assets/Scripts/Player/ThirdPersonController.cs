@@ -360,7 +360,7 @@ public class ThirdPersonController : MonoBehaviour
 
     IEnumerator Heal()
     {
-        if (playerProperties.Heal(100f))
+        if (playerProperties.Heal(300f))
         {
             isAttacking = true;
             animator.SetTrigger("Heal");
@@ -425,28 +425,44 @@ public class ThirdPersonController : MonoBehaviour
     {
         isInvincible = true;
         isRolling = true;
-        //controller.center = new Vector3(0f, (standingHeight / 2f) + 1f, 0f);
         animator.SetTrigger("RollTrigger");
 
         float elapsed = 0f;
-        Vector3 rollDirection = transform.forward;
+        
+        // --- CALCULATE DYNAMIC ROLL DIRECTION ---
+        Vector3 rollDirection;
+
+        // Check if player is actually pushing the stick/keys
+        if (moveInput.magnitude > 0.1f)
+        {
+            // 1. Get camera directions (flattened to ignore tilt)
+            Vector3 camForward = cameraTransform.forward;
+            Vector3 camRight = cameraTransform.right;
+            camForward.y = 0;
+            camRight.y = 0;
+            camForward.Normalize();
+            camRight.Normalize();
+
+            // 2. Calculate direction relative to camera
+            rollDirection = (camForward * moveInput.y + camRight * moveInput.x).normalized;
+
+            // 3. Optional: Snap character rotation to face the roll direction instantly
+            transform.rotation = Quaternion.LookRotation(rollDirection);
+        }
+        else
+        {
+            // If standing still, roll forward
+            rollDirection = transform.forward;
+        }
+        // ----------------------------------------
 
         while (elapsed < rollDuration)
         {
             elapsed += Time.deltaTime;
+            // Move the controller in that specific direction
             controller.Move(rollDirection * rollSpeed * Time.deltaTime);
             yield return null;
         }
-
-        //while (elapsed < rollDuration)
-        //{
-        //    elapsed += Time.deltaTime;
-        //    float t = Mathf.Clamp01(elapsed / rollDuration);
-        //    float centerY = Mathf.Lerp((standingHeight / 2f) + 1f, (standingHeight / 2f), t);
-        //    controller.center = new Vector3(0f, centerY, 0f);
-        //    controller.Move(rollDirection * rollSpeed * Time.deltaTime);
-        //    yield return null;
-        //}
 
         isRolling = false;
         isInvincible = false;

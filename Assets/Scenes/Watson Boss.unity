@@ -1069,7 +1069,7 @@ GameObject:
   - component: {fileID: 143686972}
   - component: {fileID: 143686971}
   m_Layer: 8
-  m_Name: Ankle Hitbox
+  m_Name: RightAnkleHitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9681,7 +9681,7 @@ GameObject:
   - component: {fileID: 1512393987}
   - component: {fileID: 1512393986}
   m_Layer: 8
-  m_Name: Ankle Hitbox
+  m_Name: LeftAnkleHitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
