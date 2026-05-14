@@ -1599,20 +1599,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a647635d16de74ea2acd9ff0914e0d28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIController
-  sens: 0
+  sens: 50
   sensSlider: {fileID: 1619047634}
   sensInput: {fileID: 454104947}
   freeLook: {fileID: 0}
-  mainAudio: 0
+  mainAudio: 100
   mainAudioSlider: {fileID: 1504778775}
   mainAudioInput: {fileID: 1916026155}
-  musicAudio: 0
+  musicAudio: 100
   musicAudioSlider: {fileID: 1712768831}
   musicAudioInput: {fileID: 263759781}
-  sfxAudio: 0
+  sfxAudio: 100
   sfxAudioSlider: {fileID: 81429157}
   sfxAudioInput: {fileID: 1734645213}
-  voiceAudio: 0
+  voiceAudio: 100
   voiceAudioSlider: {fileID: 518495509}
   voiceAudioInput: {fileID: 1180271056}
   settingsTab:

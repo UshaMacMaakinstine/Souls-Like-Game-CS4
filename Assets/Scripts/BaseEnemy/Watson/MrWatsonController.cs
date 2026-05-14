@@ -81,7 +81,7 @@ public class MrWatsonController : MonoBehaviour
         }
 
         // Transition to Special Modes
-        if (performanceGauge >= maxPerformance && currentState != BossState.Transitioning && !isDown && !ai.isAttacking)
+        if (performanceGauge >= maxPerformance && currentState != BossState.Transitioning && !isDown && !ai.isAttacking && currentState != BossState.Karaoke)
         {
             PlayVoice(KarokeLine);
             SetBossMode(BossState.Karaoke);
@@ -120,7 +120,7 @@ public class MrWatsonController : MonoBehaviour
             currentLegDamage += damage;
             bodyHealth -= damage * 0.4f;
             UpdateStackedDamage(damage);
-            if(currentState != BossState.Phase1)
+            if(currentState != BossState.Phase1 && currentState != BossState.Karaoke)
                 performanceGauge += damage * 0.05f;
             if (currentLegDamage >= legHealth) StartCoroutine(DownedSequence());
         }
@@ -129,7 +129,7 @@ public class MrWatsonController : MonoBehaviour
             bodyHealth -= (damage * 2f); // Massive damage window
             damageTakenToHead += damage * 2f;
             UpdateStackedDamage(damage * 2f);
-            if (currentState != BossState.Phase1)
+            if (currentState != BossState.Phase1 && currentState != BossState.Karaoke)
                 performanceGauge += damage * 0.08f; // Punish the player with Rage for doing high damage
             if (damageTakenToHead > 1000f) tooMuchDmg = true;
         }

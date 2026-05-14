@@ -14,6 +14,8 @@ public class PlayerProperties : MonoBehaviour
     public BoxCollider[] hurtboxes;
     public TMP_Text healthText;
     public GameObject HUD;
+    public bool pawsUp = false;
+    public MrWatsonController controller;
 
     [Header("Death UI")]
     public GameObject deathScreenCanvas;
@@ -45,7 +47,7 @@ public class PlayerProperties : MonoBehaviour
     public void TakeDamage(DamageData data)
     {
         // Use the player reference already cached in Start()
-        if (currentHealth <= 0 || (player != null && player.isInvincible)) return;
+        if ((currentHealth <= 0 || (player != null && player.isInvincible)) && !pawsUp) return;
 
         currentHealth -= data.damageAmount;
         UpdateUI();
@@ -101,6 +103,8 @@ public class PlayerProperties : MonoBehaviour
 
         // Optional: Extreme slow motion
         //Time.timeScale = 0.2f;
+
+        controller.PlayVoice(controller.playerDiedLine);
     }
 
     private IEnumerator FadeInDeathScreen()

@@ -28800,6 +28800,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 406007501}
     - target: {fileID: 1320382204650428827, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 1970079532}
+    - target: {fileID: 1320382204650428827, guid: f97abc018141ad346b6682857f2fdc46, type: 3}
       propertyPath: healthText
       value: 
       objectReference: {fileID: 314030752}
@@ -32708,7 +32712,7 @@ MonoBehaviour:
   sens: 0
   sensSlider: {fileID: 882052677}
   sensInput: {fileID: 234974083}
-  freeLook: {fileID: 0}
+  freeLook: {fileID: 1341556100}
   mainAudio: 0
   mainAudioSlider: {fileID: 81172939}
   mainAudioInput: {fileID: 270064129}
@@ -33098,7 +33102,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1852899646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34953,7 +34957,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!54 &1970079529
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -35116,10 +35120,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8b1bc96e3d2a4323b40d344ac293e1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonController
-  bodyHealth: 10000
-  maxBodyHealth: 10000
+  bodyHealth: 5000
+  maxBodyHealth: 7500
   legHealth: 1000
-  phase2Health: 5000
+  phase2Health: 5500
   damageRadius: 9
   foot: {fileID: 1314231340}
   isDown: 0
