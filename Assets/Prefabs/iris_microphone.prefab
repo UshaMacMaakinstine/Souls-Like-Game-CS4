@@ -105,8 +105,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WatsonProjectile
   launchSpeed: 200
   returnSpeed: 400
-  damage: 10
+  damage: 250
   lifetime: 5
+  force: 30
 --- !u!65 &828137857703157256
 BoxCollider:
   m_ObjectHideFlags: 0
