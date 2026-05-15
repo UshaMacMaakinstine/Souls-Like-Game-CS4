@@ -85,13 +85,39 @@ public class SilverForecastBoss : BaseEnemy
 
         StartCoroutine(GaleForceRepel());
 
-        // float rand = Random.value;
-        // if (rand > 0.7f)
-        //     yield return StartCoroutine(AtmosphericErasure());
-        // else
-        //     yield return StartCoroutine(RapidStabAttack(5));
+        float rand = Random.value;
+        if(rand >0.9f)
+        {
+            StartCoroutine(PressureJavilen());
+        }
+        else if (rand > 0.8f)
+        {
+            StartCoroutine(AtmosphericErasure());
+        }
+        else if (rand > 0.6f)
+        {
+            StartCoroutine(GaleForceRepel());
+        }
+        else if (rand > 0.4f)
+        {
+            StartCoroutine(HailstormValley());
+        }
+        else if (rand > 0.2f)
+        {
+            StartCoroutine(RapidStabAttack((int)Random.value * 10));
+        }
+        else
+        {
+            StartCoroutine(VortexSpin());
+        }
 
-        yield return new WaitForSeconds(1f);
+            // float rand = Random.value;
+            // if (rand > 0.7f)
+            //     yield return StartCoroutine(AtmosphericErasure());
+            // else
+            //     yield return StartCoroutine(RapidStabAttack(5));
+
+            yield return new WaitForSeconds(1f);
 
         agent.isStopped = false;
         isAttacking = false;

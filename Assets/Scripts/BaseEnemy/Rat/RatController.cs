@@ -22,6 +22,8 @@ public class RatController : BaseEnemy
     public Animator anim;
     private bool isMoving;
 
+    
+
     protected override void InitializeEnemy()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -58,6 +60,9 @@ public class RatController : BaseEnemy
             playerTransform = playerObj.transform;
 
         if (biteHitbox != null) biteHitbox.SetActive(false);
+
+        bossHealthBar.GetComponent<StatisticBar>().SetMax(currentHealth); 
+        bossHealthBar.GetComponent<StatisticBar>().SetStat(currentHealth);
     }
 
     private void Update()

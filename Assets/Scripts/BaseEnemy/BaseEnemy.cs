@@ -20,6 +20,8 @@ public class BaseEnemy : MonoBehaviour
     public float maxSizeMultiplier = 0.15f;
     public float particleLifetime = 6.0f; // Increased for "staying around longer"
 
+    public StatisticBar bossHealthBar;
+
     private void Start()
     {
         if (stats != null) currentHealth = stats.maxHealth;
@@ -50,6 +52,7 @@ public class BaseEnemy : MonoBehaviour
         if (currentState == EnemyState.Dead) return;
         currentHealth -= amount;
         if (currentHealth <= 0) Die();
+        if (bossHealthBar != null) bossHealthBar.stat = currentHealth;
     }
 
     protected virtual void Die()
@@ -78,6 +81,8 @@ public class BaseEnemy : MonoBehaviour
         {
             StartCoroutine(DeathSequence(null));
         }
+        NextBossController controller = GameObject.Find("NextBossController").GetComponent<NextBossController>();
+        controller.readyForNext = true;
     }
 
     private IEnumerator DeathSequence(ParticleSystem ps)

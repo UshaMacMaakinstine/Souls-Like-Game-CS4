@@ -2212,7 +2212,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -5201,7 +5201,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -12238,7 +12238,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -12994,7 +12994,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -13245,7 +13245,7 @@ MonoBehaviour:
   m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 2
+  m_KeyboardType: 4
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
@@ -13766,8 +13766,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -13789,7 +13787,6 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -14475,7 +14472,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2086108309}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.02027705, y: 0.973613, z: 0.09576845, w: -0.20614302}
+  m_LocalRotation: {x: 0.020562222, y: 0.9729947, z: 0.09570764, w: -0.20904219}
   m_LocalPosition: {x: -1.23198, y: 12.1, z: 248.216}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -14966,8 +14963,6 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -14989,7 +14984,6 @@ SkinnedMeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -15150,8 +15144,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -15173,7 +15165,6 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -15623,8 +15614,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -15646,7 +15635,6 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -15898,6 +15886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c4efcb77e7f942bf933dc892e83b197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonAI
+  agent: {fileID: 0}
   playerTransform: {fileID: 1348140346}
   meleeRadius: 30
   chargeRadius: 120
@@ -15910,6 +15899,7 @@ MonoBehaviour:
   rb: {fileID: 6080294520784904073}
   micPrefab: {fileID: 3147821954587886679, guid: 067e8150d59e74c42ae38534bd2b7c5c, type: 3}
   shockwave: {fileID: 652961211955919835, guid: c19e81574d47342aca8e5fae59e89147, type: 3}
+  move: 0
 --- !u!114 &6080294520784904071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15923,6 +15913,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MrWatsonController
   bodyHealth: 10000
+  maxBodyHealth: 10000
   legHealth: 1000
   phase2Health: 5000
   damageRadius: 11
@@ -15950,6 +15941,7 @@ MonoBehaviour:
   Attete: {fileID: 8300000, guid: 0ee9e3611c00b6c4c972c8edf9d2ca82, type: 3}
   PawsUp: {fileID: 8300000, guid: 276e3ce2d5cc23b4d86920fd84f93e23, type: 3}
   playerDiedLine: {fileID: 8300000, guid: 13c300412c8fbfa488430f2a16f36e4e, type: 3}
+  watsonDied: {fileID: 0}
   singingLines:
   - {fileID: 8300000, guid: 2369dd187818d474f8a3a312d1483365, type: 3}
   - {fileID: 8300000, guid: db891ad705502ac49b9bb5ac9db541ad, type: 3}
@@ -15986,10 +15978,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705508091280416579}
-  serializedVersion: 5
+  serializedVersion: 4
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

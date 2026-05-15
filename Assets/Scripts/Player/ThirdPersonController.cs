@@ -61,7 +61,7 @@ public class ThirdPersonController : MonoBehaviour
     private bool isGrounded;
     private bool sprintHeld;
     private bool isCrouching;
-    private bool isRolling;
+    public bool isRolling;
     private bool isTransitioningCrouch;
     public bool isAttacking;
     private bool _isAttackingInternal = false;
@@ -360,15 +360,16 @@ public class ThirdPersonController : MonoBehaviour
 
     IEnumerator Heal()
     {
+        animator.SetTrigger("Heal");
+        yield return new WaitForSeconds(2f);
         if (playerProperties.Heal(300f))
         {
             isAttacking = true;
-            animator.SetTrigger("Heal");
             potion.SetActive(true);
-            yield return new WaitForSeconds(4f);
             potion.SetActive(false);
             isAttacking = false;
         }
+        yield return new WaitForSeconds(2f);
     }
 
     IEnumerator EnterCrouch()

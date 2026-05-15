@@ -36,7 +36,7 @@ public class MrWatsonAI : MonoBehaviour
     [SerializeField] private GameObject micPrefab;
     public GameObject shockwave;
 
-    public bool move = false;
+    public bool move = true;
 
     void Start()
     {
@@ -47,8 +47,6 @@ public class MrWatsonAI : MonoBehaviour
 
     void Update()
     {
-        if(move)
-        {
             animationSpeedAdjustment();
             if (controller.isDown || controller.currentState == BossState.Transitioning) return;
 
@@ -70,13 +68,12 @@ public class MrWatsonAI : MonoBehaviour
                 if (Time.time > lastAttackTime + attackCooldown)
                     DecideAttack(dist);
             }
-        }
     }
 
     void DecideAttack(float dist)
     {
         // Gimmick: Paws Up (Phase 2+)
-        if (controller.currentState != BossState.Phase1 && Random.value < 0.15f)
+        if (controller.currentState != BossState.Phase1 && Random.value < 0.267f)
         {
             StartCoroutine(PawsUpRoutine());
             return;
@@ -502,15 +499,17 @@ public class MrWatsonAI : MonoBehaviour
         isAttacking = true;
         controller.PlayVoice(controller.PawsUp);
         controller.anim.SetTrigger("PawsUp");
-        yield return new WaitForSeconds(2f); // Warning period
+        yield return new WaitForSeconds(1f); // Warning period
 
-        float timer = 2f;
+        float timer = 1f;
         ThirdPersonController player = playerTransform.GetComponent<ThirdPersonController>();
+
+        playerTransform.GetComponent<PlayerProperties>().pawsUp = true;
         
         while(timer > 0)
         {
             // If player moves or attacks during Paws Up
-            if (player.isAttacking || player.GetComponent<ThirdPersonController>().isMoving)
+            if (player.isAttacking || player.isMoving || player.isRolling)
             {
                 player.GetComponent<PlayerProperties>().TakeDamage(new DamageData { damageAmount = 250f });
                 break;
@@ -518,6 +517,7 @@ public class MrWatsonAI : MonoBehaviour
             timer -= Time.deltaTime;
             yield return null;
         }
+        playerTransform.GetComponent<PlayerProperties>().pawsUp = false;
         EndAttack();
     }
 

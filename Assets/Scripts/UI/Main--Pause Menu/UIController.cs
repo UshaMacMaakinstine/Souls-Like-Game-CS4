@@ -215,6 +215,14 @@ public class UIController : MonoBehaviour
 
     public void LoadScene(string Scene)
     {
+        SaveData( new GameData
+        {
+            savedSens = sens,
+            savedMainAudio = mainAudio,
+            savedMusicAudio = musicAudio,
+            savedSFXAudio = sfxAudio,
+            savedVoiceLinesAudio = voiceAudio
+        });
         SceneManager.LoadScene(Scene);
     }
 
